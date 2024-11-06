@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace JuniorProject.Backend.BackendManager
+namespace JuniorProject.Backend
 {
-	class BackendManager
-	{
-	}
+    internal class BackendManager
+    {
+    }
 }

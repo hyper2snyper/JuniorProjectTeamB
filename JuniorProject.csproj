@@ -4,8 +4,13 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>net8.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
-    <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <StartupObject>JuniorProject.ProgramMain</StartupObject>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Frontend\Windows\" />
+  </ItemGroup>
 
 </Project>

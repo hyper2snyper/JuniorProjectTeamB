@@ -2,7 +2,7 @@
 
 namespace JuniorProject.Backend.World
 {
-	class World
+	internal class World
 	{
 
 

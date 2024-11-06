@@ -1,16 +1,20 @@
-using System.Threading;
+﻿using JuniorProject.Backend;
 using JuniorProject.Frontend;
-using JuniorProject.Backend;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace JuniorProject
 {
-	static class ProgramStart
+	static class ProgramMain
 	{
 		static void Main()
 		{
-
 			FrontendMain frontend = new FrontendMain();
 			Thread frontendThread = new Thread(new ThreadStart(frontend.FrontendStart));
+			frontendThread.SetApartmentState(ApartmentState.STA);
 
 
 			BackendMain backend = new BackendMain();
@@ -18,7 +22,7 @@ namespace JuniorProject
 
 			frontendThread.Start();
 			backendThread.Start();
-
+			
 		}
 	}
 }

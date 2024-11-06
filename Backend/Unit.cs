@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace JuniorProject.Backend.Unit
+namespace JuniorProject.Backend
 {
-	class Unit
-	{
-	}
+    internal class Unit
+    {
+    }
 }

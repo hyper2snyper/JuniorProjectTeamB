@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace JuniorProject.Backend.Nation
+namespace JuniorProject.Backend
 {
-	class Nation
-	{
+    internal class Nation
+    {
 
-	}
+    }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace JuniorProject.Backend
 {
-	class BackendMain
+	internal class BackendMain
 	{
 		public void BackendStart()
 		{
