@@ -2,9 +2,27 @@
 
 namespace JuniorProject.Backend.World
 {
-	internal class World
+	class World
 	{
 
+		class TerrainData
+		{ 
+		
+		}
+
+
+
+
+
+
+		public void GenerateWorldImage()
+		{
+
+
+
+
+
+		}
 
 	}
 
