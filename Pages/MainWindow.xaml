@@ -1,0 +1,21 @@
+﻿<Window x:Class="JuniorProject.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:JuniorProject"
+        mc:Ignorable="d"
+        Height="600" Width="800" Background="#FF424242">
+
+    <Grid>
+        <Grid>
+            <TextBlock HorizontalAlignment="Center" Foreground="White" FontSize="50" Text="WorSim" Margin="0,111,0,267" Width="172"/>
+        </Grid>
+        <StackPanel HorizontalAlignment="Center" Margin="0,185,0,122">
+            <Button Content="Start Simulation" HorizontalAlignment="Center" Height="32" Margin="0, 5" Width="91" Click="StartSimulation"/>
+            <Button Content="Catalog" HorizontalAlignment="Center" Height="32" Margin="0, 5" Width="91" Click="Catalog"/>
+            <Button Content="Settings" HorizontalAlignment="Center" Height="32" Margin="0, 5" Width="90" Click="Settings"/>
+        </StackPanel>
+        <Frame x:Name="MainFrame" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+    </Grid>
+</Window>
