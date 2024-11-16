@@ -61,7 +61,7 @@ namespace JuniorProject.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to a.
+        ///   Looks up a localized string similar to C:\Users\wythe\Desktop\JuniorProject\.
         /// </summary>
         internal static string ProjectDir {
             get {
