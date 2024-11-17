@@ -19,7 +19,7 @@
                 AcceptsTab="False"/>
 
 
-        <Image x:Name="MapImage" HorizontalAlignment="Left" Height="401" VerticalAlignment="Top" Width="790" Margin="10,32,0,0" Source="/Map.png"/>
+        <Image x:Name="MapImage" HorizontalAlignment="Left" Height="401" VerticalAlignment="Top" Width="790" Margin="10,32,0,0"/>
 
 
     </Grid>

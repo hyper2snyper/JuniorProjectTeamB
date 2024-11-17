@@ -10,7 +10,7 @@ namespace JuniorProject.Backend.WorldData
 		public World()
 		{
 			map = new Map();
-			map.GenerateWorld(0.0008f, 5f);
+			map.GenerateWorld();
 		}
 
 	}
