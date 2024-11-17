@@ -16,6 +16,7 @@ namespace JuniorProject.Backend
 
 		public void BackendStart()
 		{
+
 			Console.WriteLine($"Back end thread started on thread {Thread.CurrentThread.ManagedThreadId}.");
 			Thread.CurrentThread.Name = "backend";
 			DatabaseManager.LoadDB("LocalData\\BackendDatabase.db");

@@ -7,11 +7,19 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800" Background="#FF424242">
     <Grid>
-        <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="32" VerticalAlignment="Top" Width="226"/>
+        <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="32" VerticalAlignment="Top" Width="340"/>
         <Button Content="Refresh" HorizontalAlignment="Left" Height="32" Margin="5,0,0,0" VerticalAlignment="Top" Width="45" Click="RefreshClicked"/>
         <Button Content="Start" HorizontalAlignment="Left" Height="32" Margin="68,0,0,0" VerticalAlignment="Top" Width="45" Click="StartClicked"/>
         <Button Content="Pause" HorizontalAlignment="Left" Height="32" Margin="118,0,0,0" VerticalAlignment="Top" Width="48" Click="PauseClicked"/>
-        <Image x:Name="Map" HorizontalAlignment="Left" Height="401" VerticalAlignment="Top" Width="790" Margin="10,32,0,0"/>
+        <TextBox Name="Freq" HorizontalAlignment="Left" Height="22" Margin="237,5,0,0" TextWrapping="Wrap" Text="1" VerticalAlignment="Top" Width="61"
+                 AcceptsReturn="False"
+                 AcceptsTab="False"/>
+        <TextBox Name="Amp" HorizontalAlignment="Left" Height="22" Margin="171,5,0,0" TextWrapping="Wrap" Text="0.001" VerticalAlignment="Top" Width="61"
+                 AcceptsReturn="False"
+                AcceptsTab="False"/>
+
+
+        <Image x:Name="MapImage" HorizontalAlignment="Left" Height="401" VerticalAlignment="Top" Width="790" Margin="10,32,0,0" Source="/Map.png"/>
 
 
     </Grid>
