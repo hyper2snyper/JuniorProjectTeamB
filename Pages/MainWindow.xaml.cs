@@ -29,12 +29,24 @@ namespace JuniorProject
 
 		private void Catalog(object sender, RoutedEventArgs e)
 		{
+            string messageBoxText = "Other Simulations";
+            string caption = "Coming Soon";
+            MessageBoxButton button = MessageBoxButton.OK;
+            MessageBoxImage icon = MessageBoxImage.Information;
+            MessageBoxResult result;
 
-		}
+            result = MessageBox.Show(messageBoxText, caption, button, icon, MessageBoxResult.Yes);
+        }
 
 		private void Settings(object sender, RoutedEventArgs e)
 		{
+            string messageBoxText = "Settings";
+            string caption = "Coming Soon";
+            MessageBoxButton button = MessageBoxButton.OK;
+            MessageBoxImage icon = MessageBoxImage.Information;
+            MessageBoxResult result;
 
-		}
+            result = MessageBox.Show(messageBoxText, caption, button, icon, MessageBoxResult.Yes);
+        }
 	}
 }

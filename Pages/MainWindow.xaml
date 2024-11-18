@@ -12,9 +12,9 @@
             <TextBlock HorizontalAlignment="Center" Foreground="White" FontSize="50" Text="WorSim" Margin="0,111,0,267" Width="172"/>
         </Grid>
         <StackPanel HorizontalAlignment="Center" Margin="0,185,0,122">
-            <Button Content="Start Simulation" HorizontalAlignment="Center" Height="32" Margin="0, 5" Width="91" Click="StartSimulation"/>
-            <Button Content="Catalog" HorizontalAlignment="Center" Height="32" Margin="0, 5" Width="91" Click="Catalog"/>
-            <Button Content="Settings" HorizontalAlignment="Center" Height="32" Margin="0, 5" Width="90" Click="Settings"/>
+            <Button x:Name="startSimButton" Content="Start Simulation" HorizontalAlignment="Center" Height="32" Margin="0, 5" Width="91" Click="StartSimulation"/>
+            <Button x:Name="catalogButton" Content="Catalog" HorizontalAlignment="Center" Height="32" Margin="0, 5" Width="91" Click="Catalog"/>
+            <Button x:Name="settingsButton" Content="Settings" HorizontalAlignment="Center" Height="32" Margin="0, 5" Width="90" Click="Settings"/>
         </StackPanel>
         <Frame x:Name="MainFrame" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
     </Grid>

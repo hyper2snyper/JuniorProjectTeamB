@@ -35,12 +35,24 @@ namespace JuniorProject
 
         private void StartClicked(object sender, RoutedEventArgs e)
         {
+            string messageBoxText = "StartButton";
+            string caption = "Information";
+            MessageBoxButton button = MessageBoxButton.OK;
+            MessageBoxImage icon = MessageBoxImage.Information;
+            MessageBoxResult result;
 
+            result = MessageBox.Show(messageBoxText, caption, button, icon, MessageBoxResult.Yes);
         }
 
         private void PauseClicked(object sender, RoutedEventArgs e)
         {
+            string messageBoxText = "Pause";
+            string caption = "Information";
+            MessageBoxButton button = MessageBoxButton.OK;
+            MessageBoxImage icon = MessageBoxImage.Information;
+            MessageBoxResult result;
 
+            result = MessageBox.Show(messageBoxText, caption, button, icon, MessageBoxResult.Yes);
         }
 
         public void DrawPixel(int row, int column)
@@ -80,7 +92,9 @@ namespace JuniorProject
 
         public void BackToMainMenu(object sender, RoutedEventArgs e) 
         {
-            // implement
+            var mainWindow = new MainWindow();
+            mainWindow.Show();
+
         }
     }
 }
