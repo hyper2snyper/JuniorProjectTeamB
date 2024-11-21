@@ -13,22 +13,21 @@ using System.Windows.Shapes;
 namespace JuniorProject
 {
 	/// <summary>
-	/// Interaction logic for MainWindow.xaml
+	/// Interaction logic for Simulation.xaml
 	/// </summary>
-	public partial class MainWindow : Window
+	public partial class MainMenu : Page
 	{
-		public MainWindow()
-		{
+		public MainMenu() { 
 			InitializeComponent();
 		}
 
-		private void StartSimulation(object sender, RoutedEventArgs e)
-		{
-			MainFrame.Navigate(new Simulation());
-		}
+        private void StartSimulation(object sender, RoutedEventArgs e)
+        {
+            NavigationService.Navigate(new Simulation());
+        }
 
-		private void Catalog(object sender, RoutedEventArgs e)
-		{
+        private void Catalog(object sender, RoutedEventArgs e)
+        {
             string messageBoxText = "Other Simulations";
             string caption = "Coming Soon";
             MessageBoxButton button = MessageBoxButton.OK;
@@ -38,8 +37,8 @@ namespace JuniorProject
             result = MessageBox.Show(messageBoxText, caption, button, icon, MessageBoxResult.Yes);
         }
 
-		private void Settings(object sender, RoutedEventArgs e)
-		{
+        private void Settings(object sender, RoutedEventArgs e)
+        {
             string messageBoxText = "Settings";
             string caption = "Coming Soon";
             MessageBoxButton button = MessageBoxButton.OK;
@@ -48,5 +47,5 @@ namespace JuniorProject
 
             result = MessageBox.Show(messageBoxText, caption, button, icon, MessageBoxResult.Yes);
         }
-	}
+    }
 }

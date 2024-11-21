@@ -92,9 +92,7 @@ namespace JuniorProject
 
         public void BackToMainMenu(object sender, RoutedEventArgs e) 
         {
-            var mainWindow = new MainWindow();
-            mainWindow.Show();
-
+            NavigationService.Navigate(new MainMenu());
         }
     }
 }

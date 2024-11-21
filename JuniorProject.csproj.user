@@ -7,10 +7,13 @@
     </ApplicationDefinition>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Pages\Simulation.xaml">
+    <Page Update="Frontend\Pages\MainMenu.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Pages\MainWindow.xaml">
+    <Page Update="Frontend\Pages\Simulation.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Frontend\MainWindow.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
