@@ -8,7 +8,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
+using System.IO;
 
 namespace JuniorProject
 {
@@ -19,29 +19,26 @@ namespace JuniorProject
 	{
 		WriteableBitmap map;
 		Image mapImage;
+
+        private string relativePath = "LocalData\\Map.png";
 		public Simulation() { 
 			InitializeComponent();
 
 			map = new WriteableBitmap(100, 100, 96, 96, PixelFormats.Bgr32, null);
 			mapImage = this.Map;
 			mapImage.Source = map;
+
+            
 		}
 
         private void RefreshClicked(object sender, RoutedEventArgs e)
         {
-            DrawPixel(9, 9);
-
+            LoadImage();
         }
 
         private void StartClicked(object sender, RoutedEventArgs e)
         {
-            string messageBoxText = "StartButton";
-            string caption = "Information";
-            MessageBoxButton button = MessageBoxButton.OK;
-            MessageBoxImage icon = MessageBoxImage.Information;
-            MessageBoxResult result;
-
-            result = MessageBox.Show(messageBoxText, caption, button, icon, MessageBoxResult.Yes);
+            LoadImage();
         }
 
         private void PauseClicked(object sender, RoutedEventArgs e)
@@ -87,6 +84,34 @@ namespace JuniorProject
             {
                 // Release the back buffer and make it available for display.
                 map.Unlock();
+            }
+        }
+
+        private void LoadImage()
+        {
+            // Combine the current directory with the relative path
+            string imagePath = Path.Combine(Environment.CurrentDirectory, relativePath);
+
+            if (File.Exists(imagePath))
+            {
+                try
+                {
+                    BitmapImage bitmap = new BitmapImage();
+                    bitmap.BeginInit();
+                    bitmap.UriSource = new Uri(imagePath, UriKind.Absolute);
+                    bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                    bitmap.EndInit();
+
+                    mapImage.Source = bitmap;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error loading image: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+            else
+            {
+                MessageBox.Show($"Image file not found: {imagePath}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
