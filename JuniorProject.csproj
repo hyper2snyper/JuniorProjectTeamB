@@ -11,6 +11,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="LocalData\Map.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="LocalData\Map.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Frontend\Windows\" />
   </ItemGroup>
 
