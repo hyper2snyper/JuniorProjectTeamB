@@ -82,8 +82,6 @@ namespace JuniorProject.Backend.WorldData
 			{
 				for (int y = 0; y < mapwidth; y++)
 				{
-					Color c = new Color();
-
 					float terrainHeight = baseTerrain[x, y];
 					if (terrainHeight > oceanHeightMax)
 					{
