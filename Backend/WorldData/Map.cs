@@ -100,14 +100,14 @@ namespace JuniorProject.Backend.WorldData
 
 		public void ApplyTerrain(int x, int y, float height)
 		{
-			TerrainData selected_terrain = terrains[0]; //This is probably not very good.
+			TerrainData selectedTerrain = terrains[0]; //This is probably not very good.
 			foreach(TerrainData d in terrains)
 			{
 				if (height > d.heightMax || height < d.heightMin) continue;
-				selected_terrain = d;
+				selectedTerrain = d;
 				break;
 			}
-			terrainMap[x, y] = selected_terrain;
+			terrainMap[x, y] = selectedTerrain;
 		}
 
 		public void GenerateImage()
