@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
+using System.Dynamic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,15 +32,29 @@ namespace JuniorProject.Backend
 
 		}
 
+		private int backendThread;
 		private Dictionary<string, Callback> registeredActions;
 		private Queue<CallingBundle> callingQue;
+
+
+		struct DataBundle
+		{
+			public object o;
+			public Type t;
+		}
+
+		private Dictionary<string, DataBundle> storedData;
 
 
 		private ClientCommunicator()
 		{
 			registeredActions = new Dictionary<string, Callback>();
 			callingQue = new Queue<CallingBundle>();
+			storedData = new Dictionary<string, DataBundle>();
+			backendThread = Thread.CurrentThread.ManagedThreadId;
 		}
+
+		//Action Controls
 
 		public static void RegisterAction(string name, Callback c)
 		{
@@ -57,13 +73,23 @@ namespace JuniorProject.Backend
 			}
 		}
 
+		static bool CanCallAction(string name)
+		{
+			if (!communicator.registeredActions.ContainsKey(name))
+			{
+				Console.WriteLine($"{name} was attempted to be called in CallAction, but there is no callback registered with that name.");
+				return false;
+			}
+			if(Thread.CurrentThread.ManagedThreadId == communicator.backendThread)
+			{
+				Console.WriteLine($"{name} was called in CallAction on the same thread as the Backend loop.");
+				return false;
+			}
+			return true;
+		}
+
 		static void _CallAction(CallingBundle calling)
 		{
-			if(!communicator.registeredActions.ContainsKey(calling.name))
-			{
-				Console.WriteLine($"{calling.name} was attempted to be called in _CallAction, but there is no callback registered with that name.");
-				return;
-			}
 			lock(communicator.callingQue)
 			{
 				communicator.callingQue.Enqueue(calling); //Queues the action by name;
@@ -72,12 +98,14 @@ namespace JuniorProject.Backend
 
 		public static void CallAction(string name)
 		{
+			if (!CanCallAction(name)) return;
 			CallingBundle calling = new CallingBundle(name);
 			_CallAction(calling);
 		}
 
 		public static void CallActionWaitFor(string name)
 		{
+			if (!CanCallAction(name)) return;
 			CallingBundle calling = new CallingBundle(name);
 			unsafe
 			{
@@ -88,6 +116,64 @@ namespace JuniorProject.Backend
 					_CallAction(calling);
 				}
 				while (!(finished)) ; //Todo, have a default max wait with options in case of infinite loop
+			}
+		}
+
+		//Data Storage
+
+		public static void RegisterData<T>(string name, object o)
+		{
+			DataBundle data;
+			data.o = o;
+			data.t = typeof(T);
+			lock (communicator.storedData)
+			{
+				communicator.storedData[name] = data;
+			}
+		}
+
+		public static void UnregisterData(string name)
+		{
+			if (!communicator.storedData.ContainsKey(name)) return;
+			lock (communicator.storedData)
+			{
+				communicator.storedData.Remove(name);
+			}
+		}
+
+
+		public static T GetData<T>(string name)
+		{
+			if(!communicator.storedData.ContainsKey(name))
+			{
+				Console.WriteLine($"Variable {name} was attempted to be retrieved from GetData<T>() but was not stored.");
+				return default(T);
+			}
+			lock(communicator.storedData)
+			{
+				DataBundle data = communicator.storedData[name];
+				if(typeof(T) != data.t)
+				{
+					Console.WriteLine($"Variable {name} was attempted to be retrieved with the type of {typeof(T).Name} when it is actually a {data.t.Name}");
+					return default(T);
+				}
+				return (T)data.o;
+			}
+		}
+
+		public static void UpdateData<T>(string name, object newData)
+		{
+			if (!communicator.storedData.ContainsKey(name))
+			{
+				Console.WriteLine($"Variable {name} was attempted to be updated, but was not registered.");
+				return;
+			}
+			lock (communicator.storedData)
+			{
+				DataBundle data;
+				data.t = typeof(T);
+				data.o = newData;
+				communicator.storedData[name] = data;
 			}
 		}
 
