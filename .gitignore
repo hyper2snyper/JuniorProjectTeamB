@@ -1,3 +1,5 @@
 .vs/
 obj/
 bin/
+LocalData/Map.png
+Properties/Resources.resx
