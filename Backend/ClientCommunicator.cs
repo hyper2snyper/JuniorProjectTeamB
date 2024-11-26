@@ -8,7 +8,7 @@ namespace JuniorProject.Backend
 {
 	public class ClientCommunicator
 	{
-		static ClientCommunicator _clientCommunicator;
+		static ClientCommunicator _clientCommunicator; //Singleton
 		static ClientCommunicator communicator { 
 			get { 
 				_clientCommunicator ??= new ClientCommunicator();
@@ -16,12 +16,11 @@ namespace JuniorProject.Backend
 			} 
 		}
 		public delegate void Callback();
-		public delegate void CallbackDone(ref bool done);
 
-		struct CallingBundle
+		struct CallingBundle //Used to track the action to call
 		{
 			public string name;
-			public unsafe bool* done;
+			public unsafe bool* done; //This will be done unless there is another thread CallActionWaitFor in a while loop waiting for this action to be completed.
 
 			public CallingBundle(string name)
 			{
@@ -82,14 +81,13 @@ namespace JuniorProject.Backend
 			CallingBundle calling = new CallingBundle(name);
 			unsafe
 			{
-				
 				bool finished = false;
 				lock (communicator.callingQue)
 				{
 					calling.done = &finished;
 					_CallAction(calling);
 				}
-				while (!(finished)) ;
+				while (!(finished)) ; //Todo, have a default max wait with options in case of infinite loop
 			}
 		}
 
@@ -98,13 +96,16 @@ namespace JuniorProject.Backend
 			if (communicator.callingQue.Count() == 0) return;
 			lock(communicator.callingQue)
 			{
-				CallingBundle c = communicator.callingQue.Dequeue();
-				communicator.registeredActions[c.name].Invoke();
-				unsafe
+				while(communicator.callingQue.Count() > 0)
 				{
-					if(c.done != null)
+					CallingBundle c = communicator.callingQue.Dequeue();
+					communicator.registeredActions[c.name].Invoke();
+					unsafe
 					{
-						*c.done = true;
+						if (c.done != null)
+						{
+							*c.done = true;
+						}
 					}
 				}
 			}
