@@ -7,15 +7,16 @@
         mc:Ignorable="d"
         Background="#FF424242">
     <Grid>
-        <Border BorderBrush="Black" BorderThickness="2" Margin="10" Padding="5"  Width="280" Height="45" HorizontalAlignment="Left" VerticalAlignment="Top">
+        <Border BorderBrush="Black" BorderThickness="2" Margin="10,10,0,0" Padding="5"  Width="369" Height="45" HorizontalAlignment="Left" VerticalAlignment="Top">
             <StackPanel Orientation="Horizontal" >
                 <Button Content="Refresh" HorizontalAlignment="Left" Height="32" Margin="10,0" VerticalAlignment="Top" Width="45" Click="RefreshClicked"/>
                 <Button Content="Start" HorizontalAlignment="Left" Height="32" Margin="10, 0" VerticalAlignment="Top" Width="45" Click="StartClicked"/>
+                <Button Content="Save" HorizontalAlignment="Left" Height="32" Margin="10, 0" VerticalAlignment="Top" Width="48" Click="SaveClicked"/>
                 <Button Content="Pause" HorizontalAlignment="Left" Height="32" Margin="10, 0" VerticalAlignment="Top" Width="48" Click="PauseClicked"/>
-                <Button Content="Back" HorizontalAlignment="Left" Height="32" Margin="10, 0" VerticalAlignment="Top" Width="48" Click="BackToMainMenu"/>
+                <Button Content="Back" Height="32" Width="48" Click="BackToMainMenu"/>
             </StackPanel>
         </Border>
-        <Image x:Name="Map" HorizontalAlignment="Left" Height="362" VerticalAlignment="Top" Width="790" Margin="10,60,0,0"/>
+        <Image x:Name="Map" HorizontalAlignment="Left" Height="448" VerticalAlignment="Top" Width="855" Margin="10,60,10,10"/>
 
 
     </Grid>

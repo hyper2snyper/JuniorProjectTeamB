@@ -10,9 +10,9 @@ namespace JuniorProject.Backend.WorldData
 		public World()
 		{
 			map = new Map();
-			map.GenerateWorld();
 			ClientCommunicator.RegisterAction("RegenerateWorld", map.GenerateWorld);
-
+			ClientCommunicator.RegisterAction("SaveWorld", map.SaveImage);
+			ClientCommunicator.RegisterData<Bitmap>("WorldImage", map.worldImage);
 		}
 
 	}

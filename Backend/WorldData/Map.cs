@@ -12,7 +12,7 @@ namespace JuniorProject.Backend.WorldData
 	{
 		const int mapwidth = 2000;
 		const int mapheight = 2000;
-		Bitmap worldImage = new Bitmap(mapheight, mapwidth);
+		public Bitmap worldImage = new Bitmap(mapheight, mapwidth);
 
 		class TerrainData
 		{
@@ -67,7 +67,6 @@ namespace JuniorProject.Backend.WorldData
 		{
 			GenerateHeightMap();
 			GenerateImage();
-			worldImage.Save($"{Properties.Resources.ProjectDir}\\LocalData\\Map.png", System.Drawing.Imaging.ImageFormat.Png);
 		}
 
 		public void GenerateHeightMap()
@@ -128,6 +127,11 @@ namespace JuniorProject.Backend.WorldData
 					worldImage.SetPixel(x, y, pixelColor);
 				}
 			}
+		}
+
+		public void SaveImage()
+		{
+			worldImage.Save($"{Properties.Resources.ProjectDir}\\LocalData\\Map.png", System.Drawing.Imaging.ImageFormat.Png);
 		}
 	}
 }
