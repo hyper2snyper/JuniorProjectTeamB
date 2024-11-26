@@ -4,15 +4,14 @@
 name: .NET
 
 on:
-  push:
-    branches: [ "main" ]
   pull_request:
-    branches: [ "main" ]
+    types:
+      - labeled
 
 jobs:
   build:
-
-    runs-on: ubuntu-latest
+    if: ${{ github.event.label.name == 'build' }}
+    runs-on: windows-latest
 
     steps:
     - uses: actions/checkout@v4
