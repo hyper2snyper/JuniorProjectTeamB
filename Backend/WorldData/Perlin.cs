@@ -9,7 +9,7 @@ namespace JuniorProject.Backend.WorldData
 {
 	internal class Perlin
 	{
-
+		static uint seed;
 
 		struct Vector2
 		{
@@ -31,8 +31,10 @@ namespace JuniorProject.Backend.WorldData
 			const uint w = 8 * sizeof(uint);
 			const uint s = w / 2; // rotation width
 			uint a = (uint)ix, b = (uint)iy;
-			a *= 3284157443; b ^= a << (int)s | a >> (int)(w - s);
-			b *= 1911520717; a ^= b << (int)s | b >> (int)(w - s);
+			a *= Perlin.seed; 
+				b ^= a << (int)s | a >> (int)(w - s);
+			b *= 1911520717; 
+				a ^= b << (int)s | b >> (int)(w - s);
 			a *= 2048419325;
 			double random = a * (3.14159265 / ~(~0u >> 1)); // in [0, 2*Pi]
 			Vector2 v;
@@ -83,15 +85,19 @@ namespace JuniorProject.Backend.WorldData
 			return value; // Will return in range -1 to 1. To make it in range 0 to 1, multiply by 0.5 and add 0.5
 		}
 
-		public static float[,] GeneratePerlinNoise(int width, int height, float freq, float amp)
+		public static float[,] GeneratePerlinNoise(int width, int height, float freq, float amp, uint seed)
 		{
+			Perlin.seed = seed;
 			float[,] map = new float[width,height];
 			freq /= (height + width) / 2;
 			for(int x = 0; x < width; x++)
 			{
 				for(int y = 0; y<height; y++)
 				{
-					map[x, y] = (GetPerlin(x*freq, y*freq)*amp);
+					float raw = (GetPerlin(x * freq, y * freq) * amp); //Unclamped
+					if (raw > 1) raw = 1;
+					if(raw < -1) raw = -1;
+					map[x, y] = raw;
 				}
 			}
 			return map;
