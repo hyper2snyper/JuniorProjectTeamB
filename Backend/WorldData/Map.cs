@@ -10,9 +10,9 @@ namespace JuniorProject.Backend.WorldData
 {
 	class Map
 	{
-		const int mapwidth = 2000;
-		const int mapheight = 2000;
-		public Bitmap worldImage = new Bitmap(mapheight, mapwidth);
+		const int MAP_WIDTH= 2000;
+		const int MAP_HEIGHT = 2000;
+		public Bitmap worldImage = new Bitmap(MAP_HEIGHT, MAP_WIDTH);
 
 		class TerrainData
 		{
@@ -36,8 +36,8 @@ namespace JuniorProject.Backend.WorldData
 		public Map()
 		{
 			LoadTerrain();
-			terrainMap = new TerrainData[mapwidth, mapheight];
-			heightMap = new float[mapwidth, mapheight];
+			terrainMap = new TerrainData[MAP_WIDTH, MAP_HEIGHT];
+			heightMap = new float[MAP_WIDTH, MAP_HEIGHT];
 		}
 
 		void LoadTerrain()
@@ -73,13 +73,13 @@ namespace JuniorProject.Backend.WorldData
 		{
 			Random random = new Random((int)DateTime.Now.Ticks);
 			
-			float[,] baseTerrain = Perlin.GeneratePerlinNoise(mapwidth, mapheight, 3, 1f, (uint) random.Next());
-			float[,] landBase = Perlin.GeneratePerlinNoise(mapwidth, mapheight, 8, 0.5f, (uint) random.Next());
-			float[,] mountainBase = Perlin.GeneratePerlinNoise(mapwidth, mapheight, 20, 3, (uint) random.Next());
+			float[,] baseTerrain = Perlin.GeneratePerlinNoise(MAP_WIDTH, MAP_HEIGHT, 3, 1f, (uint) random.Next());
+			float[,] landBase = Perlin.GeneratePerlinNoise(MAP_WIDTH, MAP_HEIGHT, 8, 0.5f, (uint) random.Next());
+			float[,] mountainBase = Perlin.GeneratePerlinNoise(MAP_WIDTH, MAP_HEIGHT, 20, 3, (uint) random.Next());
 
-			for (int x = 0; x < mapheight; x++)
+			for (int x = 0; x < MAP_HEIGHT; x++)
 			{
-				for (int y = 0; y < mapwidth; y++)
+				for (int y = 0; y < MAP_WIDTH; y++)
 				{
 					float terrainHeight = baseTerrain[x, y];
 					if (terrainHeight > oceanHeightMax)
@@ -111,9 +111,9 @@ namespace JuniorProject.Backend.WorldData
 
 		public void GenerateImage()
 		{
-			for(int x = 0; x < mapwidth; x++)
+			for(int x = 0; x < MAP_WIDTH; x++)
 			{
-				for(int y = 0; y < mapheight; y++)
+				for(int y = 0; y < MAP_HEIGHT; y++)
 				{
 					float adjustedHeight = heightMap[x,y];
 					adjustedHeight = (adjustedHeight / 2) + 0.5f; //set the value between 0 and 1
