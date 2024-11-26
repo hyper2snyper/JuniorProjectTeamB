@@ -9,6 +9,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.IO;
+using JuniorProject.Backend;
 
 namespace JuniorProject
 {
@@ -33,6 +34,7 @@ namespace JuniorProject
 
         private void RefreshClicked(object sender, RoutedEventArgs e)
         {
+            ClientCommunicator.CallActionWaitFor("RegenerateWorld");
             LoadImage();
         }
 
