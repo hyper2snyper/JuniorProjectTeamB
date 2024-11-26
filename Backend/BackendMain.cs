@@ -12,7 +12,7 @@ namespace JuniorProject.Backend
 	{
 
 		World mainWorld;
-
+		bool running = true;
 
 		public void BackendStart()
 		{
@@ -21,8 +21,30 @@ namespace JuniorProject.Backend
 			Thread.CurrentThread.Name = "backend";
 			DatabaseManager.LoadDB("LocalData\\BackendDatabase.db");
 			mainWorld = new World();
-			
+
+			MainLoop();
+		}
+
+		public void MainLoop()
+		{
+			ClientCommunicator.RegisterAction("EndMainLoop", () => { 
+				running = false;
+				Console.WriteLine("EndMainLoop was called.");
+			}); //Register an action to be called by the frontend that sets running to false;
+			Console.WriteLine("MainLoop Started.");
+			while ( running )
+			{
+				ClientCommunicator.ProcessActions();
+			}
+
 
 		}
+
+
+
+
+
+
+
 	}
 }

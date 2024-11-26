@@ -3,3 +3,4 @@ obj/
 bin/
 LocalData/Map.png
 Properties/Resources.resx
+*.TMP

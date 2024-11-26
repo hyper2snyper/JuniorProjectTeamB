@@ -11,6 +11,8 @@ namespace JuniorProject.Backend.WorldData
 		{
 			map = new Map();
 			map.GenerateWorld();
+			ClientCommunicator.RegisterAction("RegenerateWorld", map.GenerateWorld);
+
 		}
 
 	}

@@ -1,5 +1,7 @@
 ﻿
 
+using JuniorProject.Backend;
+
 namespace JuniorProject.Frontend
 {
 	internal class FrontendMain
@@ -13,6 +15,10 @@ namespace JuniorProject.Frontend
 			JuniorProject.App app = new JuniorProject.App();
 			app.InitializeComponent();
 			app.Run();
+
+
+			Console.WriteLine("Frontend Closed.");
+			ClientCommunicator.CallAction("EndMainLoop");
 		}
 
 
