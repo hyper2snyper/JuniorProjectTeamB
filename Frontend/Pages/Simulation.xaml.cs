@@ -14,19 +14,25 @@ using Drawing = System.Drawing;
 
 namespace JuniorProject
 {
-	/// <summary>
-	/// Interaction logic for Simulation.xaml
-	/// </summary>
-	public partial class Simulation : Page
-	{
-		Image mapImage;
+    /// <summary>
+    /// Interaction logic for Simulation.xaml
+    /// </summary>
+    public partial class Simulation : Page
+    {
+        WriteableBitmap map;
+        Image mapImage;
 
-		private string relativePath = "LocalData\\Map.png";
-		public Simulation() { 
-			InitializeComponent();
+        private string relativePath = "LocalData\\Map.png";
+        public Simulation()
+        {
+            InitializeComponent();
 
-			mapImage = this.Map;
-		}
+            map = new WriteableBitmap(100, 100, 96, 96, PixelFormats.Bgr32, null);
+            mapImage = this.Map;
+            mapImage.Source = map;
+
+
+        }
 
 		private void RefreshClicked(object sender, RoutedEventArgs e)
 		{
@@ -83,9 +89,51 @@ namespace JuniorProject
 			return writeableBitmap;
 		}
 
-		public void BackToMainMenu(object sender, RoutedEventArgs e) 
-		{
-			NavigationService.Navigate(new MainMenu());
-		}
-	}
+                    // Assign the color data to the pixel.
+                    *((int*)pBackBuffer) = color_data;
+                }
+
+                // Specify the area of the bitmap that changed.
+                map.AddDirtyRect(new Int32Rect(column, row, 1, 1));
+            }
+            finally
+            {
+                // Release the back buffer and make it available for display.
+                map.Unlock();
+            }
+        }
+
+        private void LoadImage()
+        {
+            // Combine the current directory with the relative path
+            string imagePath = Path.Combine(Environment.CurrentDirectory, relativePath);
+
+            if (File.Exists(imagePath))
+            {
+                try
+                {
+                    BitmapImage bitmap = new BitmapImage();
+                    bitmap.BeginInit();
+                    bitmap.UriSource = new Uri(imagePath, UriKind.Absolute);
+                    bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                    bitmap.EndInit();
+
+                    mapImage.Source = bitmap;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error loading image: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+            else
+            {
+                MessageBox.Show($"Image file not found: {imagePath}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        public void BackToMainMenu(object sender, RoutedEventArgs e)
+        {
+            NavigationService.Navigate(new MainMenu());
+        }
+    }
 }
