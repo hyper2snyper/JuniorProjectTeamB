@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace JuniorProject.Backend.WorldData
 {
-	internal class Weather
-	{
-	}
+    internal class Weather
+    {
+    }
 }

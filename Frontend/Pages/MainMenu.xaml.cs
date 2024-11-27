@@ -12,14 +12,15 @@ using System.Windows.Shapes;
 
 namespace JuniorProject
 {
-	/// <summary>
-	/// Interaction logic for Simulation.xaml
-	/// </summary>
-	public partial class MainMenu : Page
-	{
-		public MainMenu() { 
-			InitializeComponent();
-		}
+    /// <summary>
+    /// Interaction logic for Simulation.xaml
+    /// </summary>
+    public partial class MainMenu : Page
+    {
+        public MainMenu()
+        {
+            InitializeComponent();
+        }
 
         private void StartSimulation(object sender, RoutedEventArgs e)
         {
