@@ -22,3 +22,5 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build --no-restore
+    - name: Check formatting
+      run: dotnet format ./JuniorProject.csproj --verify-no-changes
