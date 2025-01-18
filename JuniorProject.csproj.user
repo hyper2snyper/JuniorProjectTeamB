@@ -10,6 +10,9 @@
     <Page Update="Frontend\Pages\MainMenu.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Update="Frontend\Pages\ApplicationSettings.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Frontend\Pages\Simulation.xaml">
       <SubType>Designer</SubType>
     </Page>

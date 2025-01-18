@@ -40,13 +40,7 @@ namespace JuniorProject
 
         private void Settings(object sender, RoutedEventArgs e)
         {
-            string messageBoxText = "Settings";
-            string caption = "Coming Soon";
-            MessageBoxButton button = MessageBoxButton.OK;
-            MessageBoxImage icon = MessageBoxImage.Information;
-            MessageBoxResult result;
-
-            result = MessageBox.Show(messageBoxText, caption, button, icon, MessageBoxResult.Yes);
+            NavigationService.Navigate(new ApplicationSettings());
         }
     }
 }
