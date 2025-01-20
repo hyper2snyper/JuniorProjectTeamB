@@ -24,7 +24,6 @@ namespace JuniorProject
 		private string relativePath = "LocalData\\Map.png";
 		public Simulation() { 
 			InitializeComponent();
-
 			mapImage = this.Map;
 		}
 
@@ -35,7 +34,7 @@ namespace JuniorProject
 
 		private void StartClicked(object sender, RoutedEventArgs e)
 		{
-
+			mapImage.Source = ReloadImage();
 		}
 
 		private void PauseClicked(object sender, RoutedEventArgs e)
@@ -87,5 +86,10 @@ namespace JuniorProject
 		{
 			NavigationService.Navigate(new MainMenu());
 		}
-	}
+
+        private void SimPage_Click(object sender, RoutedEventArgs e)
+        {
+			NavigationService.Navigate(new SimPage());
+        }
+    }
 }

@@ -47,5 +47,10 @@ namespace JuniorProject
 
             result = MessageBox.Show(messageBoxText, caption, button, icon, MessageBoxResult.Yes);
         }
+
+        private void MainFrame_Navigated(object sender, NavigationEventArgs e)
+        {
+
+        }
     }
 }
