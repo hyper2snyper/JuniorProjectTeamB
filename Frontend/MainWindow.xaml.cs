@@ -22,5 +22,7 @@ namespace JuniorProject
             InitializeComponent();
             MainFrame.Navigate(new MainMenu());
         }
+
+        public MediaElement GetMusicPlayer() { return MusicPlayer; }
     }
 }
