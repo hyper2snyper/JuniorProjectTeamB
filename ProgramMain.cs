@@ -8,21 +8,21 @@ using System.Threading.Tasks;
 
 namespace JuniorProject
 {
-	static class ProgramMain
-	{
-		static void Main()
-		{
-			FrontendMain frontend = new FrontendMain();
-			Thread frontendThread = new Thread(new ThreadStart(frontend.FrontendStart));
-			frontendThread.SetApartmentState(ApartmentState.STA);
+    static class ProgramMain
+    {
+        static void Main()
+        {
+            FrontendMain frontend = new FrontendMain();
+            Thread frontendThread = new Thread(new ThreadStart(frontend.FrontendStart));
+            frontendThread.SetApartmentState(ApartmentState.STA);
 
 
-			BackendMain backend = new BackendMain();
-			Thread backendThread = new Thread(new ThreadStart(backend.BackendStart));
+            BackendMain backend = new BackendMain();
+            Thread backendThread = new Thread(new ThreadStart(backend.BackendStart));
 
-			frontendThread.Start();
-			backendThread.Start();
-			
-		}
-	}
+            frontendThread.Start();
+            backendThread.Start();
+
+        }
+    }
 }
