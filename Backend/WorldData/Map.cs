@@ -1,20 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.SQLite;
+﻿using System.Data.SQLite;
+using System.Diagnostics;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace JuniorProject.Backend.WorldData
 {
     class Map
     {
-        const int MAP_WIDTH = 2000;
-        const int MAP_HEIGHT = 2000;
-        public Bitmap worldImage = new Bitmap(MAP_HEIGHT, MAP_WIDTH);
+        const int MAP_PIXEL_WIDTH = 2000;
+        const int MAP_PIXEL_HEIGHT = 2000;
+        public Bitmap worldImage = new Bitmap(MAP_PIXEL_HEIGHT, MAP_PIXEL_WIDTH);
 
-        class TerrainData
+        public class TerrainData
         {
             public string name;
             public Color tileColor;
@@ -31,14 +27,35 @@ namespace JuniorProject.Backend.WorldData
         TerrainData[,] terrainMap;
         float[,] heightMap;
 
-        ~Map() { }
+
+        public class Tile
+        {
+            public Dictionary<string, float> terrainPercentages = new Dictionary<string, float>();
+            public int movementCost;
+        }
+        const int TILE_SIZE = 20;
+        int mapHeight, mapWidth;
+        Tile[,] tiles;
+        public Tile getTile(int x, int y)
+        {
+            return tiles[x, y];
+        }
+
+
+
 
         public Map()
         {
+            Debug.Print("Loading Terrain Data...");
             LoadTerrain();
-            terrainMap = new TerrainData[MAP_WIDTH, MAP_HEIGHT];
-            heightMap = new float[MAP_WIDTH, MAP_HEIGHT];
+            terrainMap = new TerrainData[MAP_PIXEL_WIDTH, MAP_PIXEL_HEIGHT];
+            heightMap = new float[MAP_PIXEL_WIDTH, MAP_PIXEL_HEIGHT];
+            mapWidth = MAP_PIXEL_WIDTH / TILE_SIZE;
+            mapHeight = MAP_PIXEL_HEIGHT / TILE_SIZE;
+            tiles = new Tile[mapWidth, mapHeight];
         }
+
+        ~Map() { }
 
         void LoadTerrain()
         {
@@ -65,21 +82,25 @@ namespace JuniorProject.Backend.WorldData
 
         public void GenerateWorld()
         {
+            Debug.Print("Generating Heightmap...");
             GenerateHeightMap();
+            Debug.Print("Generating Image...");
             GenerateImage();
+            Debug.Print("Generating Tiles...");
+            GenerateTiles();
         }
 
         public void GenerateHeightMap()
         {
             Random random = new Random((int)DateTime.Now.Ticks);
 
-            float[,] baseTerrain = Perlin.GeneratePerlinNoise(MAP_WIDTH, MAP_HEIGHT, 3, 1f, (uint)random.Next());
-            float[,] landBase = Perlin.GeneratePerlinNoise(MAP_WIDTH, MAP_HEIGHT, 8, 0.5f, (uint)random.Next());
-            float[,] mountainBase = Perlin.GeneratePerlinNoise(MAP_WIDTH, MAP_HEIGHT, 20, 3, (uint)random.Next());
+            float[,] baseTerrain = Perlin.GeneratePerlinNoise(MAP_PIXEL_WIDTH, MAP_PIXEL_HEIGHT, 3, 1f, (uint)random.Next());
+            float[,] landBase = Perlin.GeneratePerlinNoise(MAP_PIXEL_WIDTH, MAP_PIXEL_HEIGHT, 8, 0.5f, (uint)random.Next());
+            float[,] mountainBase = Perlin.GeneratePerlinNoise(MAP_PIXEL_WIDTH, MAP_PIXEL_HEIGHT, 20, 3, (uint)random.Next());
 
-            for (int x = 0; x < MAP_HEIGHT; x++)
+            for (int x = 0; x < MAP_PIXEL_HEIGHT; x++)
             {
-                for (int y = 0; y < MAP_WIDTH; y++)
+                for (int y = 0; y < MAP_PIXEL_WIDTH; y++)
                 {
                     float terrainHeight = baseTerrain[x, y];
                     if (terrainHeight > oceanHeightMax)
@@ -111,9 +132,9 @@ namespace JuniorProject.Backend.WorldData
 
         public void GenerateImage()
         {
-            for (int x = 0; x < MAP_WIDTH; x++)
+            for (int x = 0; x < MAP_PIXEL_WIDTH; x++)
             {
-                for (int y = 0; y < MAP_HEIGHT; y++)
+                for (int y = 0; y < MAP_PIXEL_HEIGHT; y++)
                 {
                     float adjustedHeight = heightMap[x, y];
                     adjustedHeight = (adjustedHeight / 2) + 0.5f; //set the value between 0 and 1
@@ -133,5 +154,46 @@ namespace JuniorProject.Backend.WorldData
         {
             worldImage.Save($"{Properties.Resources.ProjectDir}\\LocalData\\Map.png", System.Drawing.Imaging.ImageFormat.Png);
         }
+
+        public void GenerateTiles()
+        {
+            for (int tileX = 0; tileX < mapWidth; tileX++)
+            {
+                for (int tileY = 0; tileY < mapHeight; tileY++)
+                {
+                    Tile tile = new Tile();
+                    Dictionary<string, int> landTypes = new Dictionary<string, int>();
+                    int movementCostTotal = 0;
+
+                    for (int x = 0; x < TILE_SIZE; x++)
+                    {
+                        for (int y = 0; y < TILE_SIZE; y++)
+                        {
+                            if (tileX * TILE_SIZE + x > MAP_PIXEL_WIDTH) continue;
+                            if (tileY * TILE_SIZE + y > MAP_PIXEL_HEIGHT) continue;
+
+                            string landType = terrainMap[x, y].landType;
+                            if (landTypes.ContainsKey(landType))
+                            {
+                                landTypes[landType]++;
+                            }
+                            else
+                            {
+                                landTypes.Add(landType, 1);
+                            }
+                            movementCostTotal += terrainMap[x, y].movementCost;
+                        }
+                    }
+
+                    foreach (string landType in landTypes.Keys)
+                    {
+                        float relativePercentage = landTypes[landType] / (TILE_SIZE * TILE_SIZE);
+                        tile.terrainPercentages.Add(landType, relativePercentage);
+                    }
+                    tile.movementCost = movementCostTotal / (TILE_SIZE * TILE_SIZE);
+                }
+            }
+        }
     }
+
 }

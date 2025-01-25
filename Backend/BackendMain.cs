@@ -16,13 +16,13 @@ namespace JuniorProject.Backend
 
         public void BackendStart()
         {
-
-            Console.WriteLine($"Back end thread started on thread {Thread.CurrentThread.ManagedThreadId}.");
-            Thread.CurrentThread.Name = "backend";
+            Thread.CurrentThread.Name = "Backend";
+            Debug.Print($"Back end thread started on thread {Thread.CurrentThread.ManagedThreadId}.");
             DatabaseManager.LoadDB("LocalData\\BackendDatabase.db");
             mainWorld = new World();
 
             MainLoop();
+            Debug.Print("Backend closed.");
         }
 
         public void MainLoop()
@@ -30,9 +30,9 @@ namespace JuniorProject.Backend
             ClientCommunicator.RegisterAction("EndMainLoop", () =>
             {
                 running = false;
-                Console.WriteLine("EndMainLoop was called.");
+                Debug.Print("EndMainLoop was called.");
             }); //Register an action to be called by the frontend that sets running to false;
-            Console.WriteLine("MainLoop Started.");
+            Debug.Print("MainLoop Started.");
             while (running)
             {
                 ClientCommunicator.ProcessActions();

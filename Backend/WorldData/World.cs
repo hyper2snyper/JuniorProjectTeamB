@@ -13,6 +13,7 @@ namespace JuniorProject.Backend.WorldData
             ClientCommunicator.RegisterAction("RegenerateWorld", map.GenerateWorld);
             ClientCommunicator.RegisterAction("SaveWorld", map.SaveImage);
             ClientCommunicator.RegisterData<Bitmap>("WorldImage", map.worldImage);
+            ClientCommunicator.RegisterData<World>("World", map);
         }
 
     }
