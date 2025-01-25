@@ -1,4 +1,5 @@
-﻿using JuniorProject.Backend.WorldData;
+﻿using JuniorProject.Backend.States;
+using JuniorProject.Backend.WorldData;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,18 +9,25 @@ using System.Threading.Tasks;
 
 namespace JuniorProject.Backend
 {
-    internal class BackendMain
+    class BackendMain
     {
-
-        World mainWorld;
         bool running = true;
+        
+        IState? currentState;
+        public void SetState(IState? newState)
+        {
+            currentState?.ExitState();
+            currentState = newState;
+            currentState?.EnterState();
+        }
 
         public void BackendStart()
         {   
             Thread.CurrentThread.Name = "Backend";
             Debug.Print($"Back end thread started on thread {Thread.CurrentThread.ManagedThreadId}.");
             DatabaseManager.LoadDB("LocalData\\BackendDatabase.db");
-            mainWorld = new World();
+
+            ClientCommunicator.RegisterAction<IState>("SetState", SetState);
 
             MainLoop();
 			Debug.Print("Backend closed.");
@@ -36,6 +44,7 @@ namespace JuniorProject.Backend
             while (running)
             {
                 ClientCommunicator.ProcessActions();
+                currentState?.Loop();
             }
 
 

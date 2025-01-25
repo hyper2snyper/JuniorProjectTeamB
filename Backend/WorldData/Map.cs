@@ -42,8 +42,6 @@ namespace JuniorProject.Backend.WorldData
 		}
 
 
-
-
 		public Map()
         {
 			Debug.Print("Loading Terrain Data...");
