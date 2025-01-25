@@ -12,7 +12,7 @@ namespace JuniorProject.Backend
 
         Map.Tile pos;
 
-        public Unit() 
+        public Unit()
         {
         }
 

@@ -79,12 +79,12 @@ namespace JuniorProject.Backend
         {
             if (!communicator.registeredActions.ContainsKey(name))
             {
-				Debug.Print($"{name} was attempted to be called in CallAction, but there is no callback registered with that name.");
+                Debug.Print($"{name} was attempted to be called in CallAction, but there is no callback registered with that name.");
                 return false;
             }
             if (Thread.CurrentThread.ManagedThreadId == communicator.backendThread)
             {
-				Debug.Print($"{name} was called in CallAction on the same thread as the Backend loop.");
+                Debug.Print($"{name} was called in CallAction on the same thread as the Backend loop.");
                 return false;
             }
             return true;

@@ -36,28 +36,28 @@ namespace JuniorProject.Backend.WorldData
         const int TILE_SIZE = 20;
         int mapHeight, mapWidth;
         Tile[,] tiles;
-		public Tile getTile(int x, int y)
-		{
-			return tiles[x, y];
-		}
-
-
-
-
-		public Map()
+        public Tile getTile(int x, int y)
         {
-			Debug.Print("Loading Terrain Data...");
-			LoadTerrain();
+            return tiles[x, y];
+        }
+
+
+
+
+        public Map()
+        {
+            Debug.Print("Loading Terrain Data...");
+            LoadTerrain();
             terrainMap = new TerrainData[MAP_PIXEL_WIDTH, MAP_PIXEL_HEIGHT];
             heightMap = new float[MAP_PIXEL_WIDTH, MAP_PIXEL_HEIGHT];
-            mapWidth = MAP_PIXEL_WIDTH/TILE_SIZE;
-            mapHeight = MAP_PIXEL_HEIGHT/TILE_SIZE;
+            mapWidth = MAP_PIXEL_WIDTH / TILE_SIZE;
+            mapHeight = MAP_PIXEL_HEIGHT / TILE_SIZE;
             tiles = new Tile[mapWidth, mapHeight];
         }
 
-		~Map() { }
+        ~Map() { }
 
-		void LoadTerrain()
+        void LoadTerrain()
         {
             SQLiteDataReader results = DatabaseManager.ReadDB("SELECT * FROM Terrain;");
             while (results.Read())
@@ -82,11 +82,11 @@ namespace JuniorProject.Backend.WorldData
 
         public void GenerateWorld()
         {
-			Debug.Print("Generating Heightmap...");
-			GenerateHeightMap();
-			Debug.Print("Generating Image...");
-			GenerateImage();
-			Debug.Print("Generating Tiles...");
+            Debug.Print("Generating Heightmap...");
+            GenerateHeightMap();
+            Debug.Print("Generating Image...");
+            GenerateImage();
+            Debug.Print("Generating Tiles...");
             GenerateTiles();
         }
 
@@ -157,39 +157,40 @@ namespace JuniorProject.Backend.WorldData
 
         public void GenerateTiles()
         {
-            for(int tileX = 0; tileX < mapWidth; tileX++)
+            for (int tileX = 0; tileX < mapWidth; tileX++)
             {
-                for(int tileY = 0; tileY < mapHeight; tileY++)
+                for (int tileY = 0; tileY < mapHeight; tileY++)
                 {
                     Tile tile = new Tile();
                     Dictionary<string, int> landTypes = new Dictionary<string, int>();
                     int movementCostTotal = 0;
 
-                    for(int x = 0; x < TILE_SIZE; x++)
+                    for (int x = 0; x < TILE_SIZE; x++)
                     {
-                        for(int y = 0; y < TILE_SIZE; y++)
+                        for (int y = 0; y < TILE_SIZE; y++)
                         {
                             if (tileX * TILE_SIZE + x > MAP_PIXEL_WIDTH) continue;
-							if (tileY * TILE_SIZE + y > MAP_PIXEL_HEIGHT) continue;
+                            if (tileY * TILE_SIZE + y > MAP_PIXEL_HEIGHT) continue;
 
-							string landType = terrainMap[x, y].landType;
-                            if(landTypes.ContainsKey(landType))
+                            string landType = terrainMap[x, y].landType;
+                            if (landTypes.ContainsKey(landType))
                             {
                                 landTypes[landType]++;
-                            } else
+                            }
+                            else
                             {
                                 landTypes.Add(landType, 1);
                             }
-                            movementCostTotal += terrainMap[x,y].movementCost;
+                            movementCostTotal += terrainMap[x, y].movementCost;
                         }
                     }
 
-                    foreach(string landType in landTypes.Keys)
+                    foreach (string landType in landTypes.Keys)
                     {
-                        float relativePercentage = landTypes[landType]/(TILE_SIZE * TILE_SIZE);
+                        float relativePercentage = landTypes[landType] / (TILE_SIZE * TILE_SIZE);
                         tile.terrainPercentages.Add(landType, relativePercentage);
                     }
-                    tile.movementCost = movementCostTotal/(TILE_SIZE * TILE_SIZE);
+                    tile.movementCost = movementCostTotal / (TILE_SIZE * TILE_SIZE);
                 }
             }
         }
