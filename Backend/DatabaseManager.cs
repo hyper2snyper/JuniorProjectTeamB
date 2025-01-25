@@ -22,7 +22,7 @@ namespace JuniorProject.Backend
         public static void LoadDB(string db_file)
         {
             string DBLocation = Properties.Resources.ProjectDir + db_file;
-            Console.WriteLine($"Attempting to load: {DBLocation}");
+			Debug.Print($"Attempting to load: {DBLocation}");
             if (!System.IO.File.Exists(DBLocation))
             {
                 throw new Exception($"No Database file found at: {DBLocation}");
@@ -36,7 +36,7 @@ namespace JuniorProject.Backend
 
             Instance.connection = new SQLiteConnection($"Data Source={DBLocation};Version=3;New=True;Compress=True;");
             Instance.connection.Open();
-            Console.WriteLine("Loaded.");
+			Debug.Print("Loaded.");
         }
         /// <summary>
         /// Returns the SQLiteDataReader results of the command, this can be used to parse through the output.

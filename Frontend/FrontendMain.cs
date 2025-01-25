@@ -9,15 +9,16 @@ namespace JuniorProject.Frontend
         [System.STAThreadAttribute()]
         public void FrontendStart()
         {
-            Console.WriteLine($"Front end thread started on thread {Thread.CurrentThread.ManagedThreadId}.");
-            Thread.CurrentThread.Name = "Frontend";
+			Thread.CurrentThread.Name = "Frontend";
+			Debug.Print($"Front end thread started on thread {Thread.CurrentThread.ManagedThreadId}.");
+            
 
             JuniorProject.App app = new JuniorProject.App();
             app.InitializeComponent();
             app.Run();
 
 
-            Console.WriteLine("Frontend Closed.");
+			Debug.Print("Frontend Closed.");
             ClientCommunicator.CallAction("EndMainLoop");
         }
 

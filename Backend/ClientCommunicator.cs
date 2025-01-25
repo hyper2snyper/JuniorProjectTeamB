@@ -79,12 +79,12 @@ namespace JuniorProject.Backend
         {
             if (!communicator.registeredActions.ContainsKey(name))
             {
-                Console.WriteLine($"{name} was attempted to be called in CallAction, but there is no callback registered with that name.");
+				Debug.Print($"{name} was attempted to be called in CallAction, but there is no callback registered with that name.");
                 return false;
             }
             if (Thread.CurrentThread.ManagedThreadId == communicator.backendThread)
             {
-                Console.WriteLine($"{name} was called in CallAction on the same thread as the Backend loop.");
+				Debug.Print($"{name} was called in CallAction on the same thread as the Backend loop.");
                 return false;
             }
             return true;
@@ -148,7 +148,7 @@ namespace JuniorProject.Backend
         {
             if (!communicator.storedData.ContainsKey(name))
             {
-                Console.WriteLine($"Variable {name} was attempted to be retrieved from GetData<T>() but was not stored.");
+                Debug.Print($"Variable {name} was attempted to be retrieved from GetData<T>() but was not stored.");
                 return default(T);
             }
             lock (communicator.storedData)
@@ -156,7 +156,7 @@ namespace JuniorProject.Backend
                 DataBundle data = communicator.storedData[name];
                 if (typeof(T) != data.t)
                 {
-                    Console.WriteLine($"Variable {name} was attempted to be retrieved with the type of {typeof(T).Name} when it is actually a {data.t.Name}");
+                    Debug.Print($"Variable {name} was attempted to be retrieved with the type of {typeof(T).Name} when it is actually a {data.t.Name}");
                     return default(T);
                 }
                 return (T)data.o;
@@ -167,7 +167,7 @@ namespace JuniorProject.Backend
         {
             if (!communicator.storedData.ContainsKey(name))
             {
-                Console.WriteLine($"Variable {name} was attempted to be updated, but was not registered.");
+                Debug.Print($"Variable {name} was attempted to be updated, but was not registered.");
                 return;
             }
             lock (communicator.storedData)
