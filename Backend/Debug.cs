@@ -8,27 +8,27 @@ using System.Threading.Tasks;
 
 namespace JuniorProject
 {
-	class Debug
-	{
+    class Debug
+    {
 
-		static int backendThread;
-		static int frontendThread;
+        static int backendThread;
+        static int frontendThread;
 
-		[Conditional("DEBUG")]
-		public static void SetThreads(int backendThread, int frontendThread)
-		{
-			Debug.backendThread = backendThread;
-			Debug.frontendThread = frontendThread;
-		}
-		
-		[Conditional("DEBUG")]
-		public static void Print(string message)
-		{
-			string caller = Thread.CurrentThread.Name;
-			Console.WriteLine($"[{DateTime.Now.TimeOfDay}][{caller}]: {message}");
-		}
+        [Conditional("DEBUG")]
+        public static void SetThreads(int backendThread, int frontendThread)
+        {
+            Debug.backendThread = backendThread;
+            Debug.frontendThread = frontendThread;
+        }
+
+        [Conditional("DEBUG")]
+        public static void Print(string message)
+        {
+            string caller = Thread.CurrentThread.Name;
+            Console.WriteLine($"[{DateTime.Now.TimeOfDay}][{caller}]: {message}");
+        }
 
 
 
-	}
+    }
 }

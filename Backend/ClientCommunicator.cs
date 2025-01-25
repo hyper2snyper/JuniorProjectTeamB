@@ -1,4 +1,4 @@
-﻿namespace JuniorProject.Backend
+namespace JuniorProject.Backend
 {
 	public class ClientCommunicator //Technically speaking, this is an inter-thread communicator.
 	{
