@@ -30,16 +30,16 @@ namespace JuniorProject.Backend.WorldData
 
         }
 
-        public override void SerializeFields(List<byte[]> serializedFields)
+        public override void SerializeFields()
         {
-            serializedFields.Add(SerializeField(health));
-            serializedFields.Add(SerializeField("12345"));
+            SerializeField(health);
+            SerializeField("sssssaaaaa");
         }
 
-        public override void Deserialize(BinaryReader reader)
+        public override void DeserializeFields()
         {
-            health = reader.ReadInt32();
-            string r = reader.ReadString();
+            health = DeserializeField<int>();
+            string r = DeserializeField<string>();
         }
     }
 }

@@ -40,6 +40,9 @@ namespace JuniorProject.Backend.WorldData
             Debug.Print("Writing to file...");
             serializer.Save();
             Debug.Print("Saved!");
+
+
+            serializer.Load();
         }
 
     }

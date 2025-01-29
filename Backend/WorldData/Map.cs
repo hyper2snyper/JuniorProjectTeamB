@@ -36,27 +36,18 @@ namespace JuniorProject.Backend.WorldData
 
             public override int fieldCount { get { return -1; } }
 
-            public override void Deserialize(BinaryReader reader)
+            public override void SerializeFields()
             {
-                movementCost = reader.ReadInt32();
-                int terrainPercentagesCount = reader.ReadInt32();
-                for (int i = 0; i < terrainPercentagesCount; i++)
-                {
-                    terrainPercentages.Add(reader.ReadString(), reader.ReadSingle());
-                }
+                SerializeField(movementCost);
+                SerializeDictionary(terrainPercentages);
             }
 
-            public override void SerializeFields(List<byte[]> serializedFields)
-            {
-                serializedFields.Add(SerializeField(movementCost));
-                serializedFields.Add(SerializeField(terrainPercentages.Count));
-                foreach (KeyValuePair<string, float> percentage in terrainPercentages)
-                {
-                    serializedFields.Add(SerializeField(percentage.Key));
-                    serializedFields.Add(SerializeField(percentage.Value));
-                }
-            }
-        }
+			public override void DeserializeFields()
+			{
+                movementCost = DeserializeField<int>();
+                terrainPercentages = DeserializeDictionary<string, float>();
+			}
+		}
 
 
         const int TILE_SIZE = 20;
