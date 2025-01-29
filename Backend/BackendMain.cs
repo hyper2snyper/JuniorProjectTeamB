@@ -12,7 +12,7 @@ namespace JuniorProject.Backend
     class BackendMain
     {
         bool running = true;
-        
+
         IState? currentState;
         public void SetState(IState? newState)
         {
