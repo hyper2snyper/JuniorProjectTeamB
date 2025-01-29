@@ -1,14 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.SqlTypes;
-using System.Dynamic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace JuniorProject.Backend
 {
-    public class ClientCommunicator
+    public class ClientCommunicator //Technically speaking, this is an inter-thread communicator.
     {
         static ClientCommunicator _clientCommunicator; //Singleton
         static ClientCommunicator communicator
@@ -19,23 +11,40 @@ namespace JuniorProject.Backend
                 return _clientCommunicator;
             }
         }
-        public delegate void Callback();
+
+        struct ArgumentBundle
+        {
+            public Delegate @delegate;
+            public Type? argType;
+
+            public ArgumentBundle(Delegate @delegate, Type? argType = null)
+            {
+                this.@delegate = @delegate;
+                this.argType = argType;
+            }
+        }
 
         struct CallingBundle //Used to track the action to call
         {
             public string name;
             public unsafe bool* done; //This will be done unless there is another thread CallActionWaitFor in a while loop waiting for this action to be completed.
+            public object? arg = null;
 
             public CallingBundle(string name)
             {
                 this.name = name;
                 unsafe { done = null; }
             }
+            public CallingBundle(string name, object arg)
+            {
+                this = new CallingBundle(name);
+                this.arg = arg;
+            }
 
         }
 
         private int backendThread;
-        private Dictionary<string, Callback> registeredActions;
+        private Dictionary<string, ArgumentBundle> registeredActions;
         private Queue<CallingBundle> callingQue;
 
 
@@ -50,7 +59,7 @@ namespace JuniorProject.Backend
 
         private ClientCommunicator()
         {
-            registeredActions = new Dictionary<string, Callback>();
+            registeredActions = new Dictionary<string, ArgumentBundle>();
             callingQue = new Queue<CallingBundle>();
             storedData = new Dictionary<string, DataBundle>();
             backendThread = Thread.CurrentThread.ManagedThreadId;
@@ -58,11 +67,22 @@ namespace JuniorProject.Backend
 
         //Action Controls
 
-        public static void RegisterAction(string name, Callback c)
+        public static void RegisterAction(string name, Delegate @delegate)
         {
+            ArgumentBundle argumentBundle = new ArgumentBundle(@delegate);
             lock (communicator.registeredActions)
             {
-                communicator.registeredActions.Add(name, c);
+                communicator.registeredActions.Add(name, argumentBundle);
+            }
+        }
+
+        public static void RegisterAction<T>(string name, Delegate @delegate)
+        {
+            ArgumentBundle argumentBundle = new ArgumentBundle(@delegate, typeof(T));
+            argumentBundle.argType = typeof(T);
+            lock (communicator.registeredActions)
+            {
+                communicator.registeredActions.Add(name, argumentBundle);
             }
         }
 
@@ -90,6 +110,18 @@ namespace JuniorProject.Backend
             return true;
         }
 
+        static bool CanCallAction<T>(string name)
+        {
+            if (!CanCallAction(name)) return false;
+            ArgumentBundle argumentBundle = communicator.registeredActions[name];
+            if (argumentBundle.argType != typeof(T))
+            {
+                Debug.Print($"{name} was called in CallAction<{typeof(T).Name}>, however, the argument passed was of type {argumentBundle.argType.Name}.");
+                return false;
+            }
+            return true;
+        }
+
         static void _CallAction(CallingBundle calling)
         {
             lock (communicator.callingQue)
@@ -105,10 +137,33 @@ namespace JuniorProject.Backend
             _CallAction(calling);
         }
 
+        public static void CallAction<T>(string name, T arg)
+        {
+            if (!CanCallAction<T>(name)) return;
+            CallingBundle calling = new CallingBundle(name, arg);
+            _CallAction(calling);
+        }
+
         public static void CallActionWaitFor(string name)
         {
             if (!CanCallAction(name)) return;
             CallingBundle calling = new CallingBundle(name);
+            unsafe
+            {
+                bool finished = false;
+                lock (communicator.callingQue)
+                {
+                    calling.done = &finished;
+                    _CallAction(calling);
+                }
+                while (!(finished)) ; //Todo, have a default max wait with options in case of infinite loop
+            }
+        }
+
+        public static void CallActionWaitFor<T>(string name, T arg)
+        {
+            if (!CanCallAction(name)) return;
+            CallingBundle calling = new CallingBundle(name, arg);
             unsafe
             {
                 bool finished = false;
@@ -187,9 +242,16 @@ namespace JuniorProject.Backend
                 while (communicator.callingQue.Count() > 0)
                 {
                     CallingBundle c = communicator.callingQue.Dequeue();
-                    communicator.registeredActions[c.name].Invoke();
                     unsafe
                     {
+                        if (c.arg == null)
+                        {
+                            communicator.registeredActions[c.name].@delegate.DynamicInvoke();
+                        }
+                        else
+                        {
+                            communicator.registeredActions[c.name].@delegate.DynamicInvoke(c.arg);
+                        }
                         if (c.done != null)
                         {
                             *c.done = true;

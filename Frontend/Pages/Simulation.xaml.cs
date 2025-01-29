@@ -27,6 +27,8 @@ namespace JuniorProject
             InitializeComponent();
 
             mapImage = this.Map;
+
+            ClientCommunicator.CallAction<IState>("SetState", new Backend.States.Simulation());
         }
 
         private void RefreshClicked(object sender, RoutedEventArgs e)
