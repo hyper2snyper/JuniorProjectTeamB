@@ -10,6 +10,7 @@ namespace JuniorProject.Backend.States
     internal class Simulation : IState
     {
         World world;
+        const int TILE_SIZE = 20;
 
 
         public void Loop()
@@ -19,6 +20,8 @@ namespace JuniorProject.Backend.States
         public void EnterState()
         {
             Debug.Print("Entered Simulation State.");
+            Debug.Print("Registering TILE_SIZE into Client Communicator...");
+            ClientCommunicator.RegisterData<int>("TILE_SIZE", TILE_SIZE);
             world = new World();
         }
         public void ExitState() { }

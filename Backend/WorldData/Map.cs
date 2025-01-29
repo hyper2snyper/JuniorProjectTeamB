@@ -1,3 +1,4 @@
+using JuniorProject.Frontend.Components;
 using System.Data.SQLite;
 using System.Diagnostics;
 using System.Drawing;
@@ -49,8 +50,7 @@ namespace JuniorProject.Backend.WorldData
             }
         }
 
-
-        const int TILE_SIZE = 20;
+        private int TILE_SIZE;
         int mapHeight, mapWidth;
         Tile[,] tiles;
         public Tile getTile(int x, int y)
@@ -62,8 +62,8 @@ namespace JuniorProject.Backend.WorldData
         {
             Debug.Print("Loading Terrain Data...");
             LoadTerrain();
-            Debug.Print("Registering TILE_SIZE into Client Communicator");
-            ClientCommunicator.RegisterData<int>("TILE_SIZE", TILE_SIZE);
+            Debug.Print(String.Format("Printing TILE_SIZE from Map class: {0:N}", ClientCommunicator.GetData<int>("TILE_SIZE")));
+            TILE_SIZE = ClientCommunicator.GetData<int>("TILE_SIZE");
             terrainMap = new TerrainData[MAP_PIXEL_WIDTH, MAP_PIXEL_HEIGHT];
             heightMap = new float[MAP_PIXEL_WIDTH, MAP_PIXEL_HEIGHT];
             mapWidth = MAP_PIXEL_WIDTH / TILE_SIZE;
