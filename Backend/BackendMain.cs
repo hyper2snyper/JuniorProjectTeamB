@@ -9,17 +9,17 @@ using System.Threading.Tasks;
 
 namespace JuniorProject.Backend
 {
-	class BackendMain
-	{
-		bool running = true;
-		
-		IState? currentState;
-		public void SetState(IState? newState)
-		{
-			currentState?.ExitState();
-			currentState = newState;
-			currentState?.EnterState();
-		}
+    class BackendMain
+    {
+        bool running = true;
+
+        IState? currentState;
+        public void SetState(IState? newState)
+        {
+            currentState?.ExitState();
+            currentState = newState;
+            currentState?.EnterState();
+        }
 
 		public void BackendStart()
 		{

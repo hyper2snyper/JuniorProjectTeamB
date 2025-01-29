@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace JuniorProject.Backend
 {
-	internal interface IState
-	{
-		public void Loop();
-		public void EnterState();
-		public void ExitState();
-	}
+    internal interface IState
+    {
+        public void Loop();
+        public void EnterState();
+        public void ExitState();
+    }
 }

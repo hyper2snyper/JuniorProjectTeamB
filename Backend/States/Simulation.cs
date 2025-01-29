@@ -7,21 +7,21 @@ using JuniorProject.Backend.WorldData;
 
 namespace JuniorProject.Backend.States
 {
-	internal class Simulation : IState
-	{
-		World world;
+    internal class Simulation : IState
+    {
+        World world;
 
 
-		public void Loop()
-		{
-			
-		}
-		public void EnterState() 
-		{
-			Debug.Print("Entered Simulation State.");
-			world = new World();
-		}
-		public void ExitState() { }
+        public void Loop()
+        {
 
-	}
+        }
+        public void EnterState()
+        {
+            Debug.Print("Entered Simulation State.");
+            world = new World();
+        }
+        public void ExitState() { }
+
+    }
 }
