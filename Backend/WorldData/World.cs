@@ -17,20 +17,20 @@ namespace JuniorProject.Backend.WorldData
             ClientCommunicator.RegisterData<World>("World", map);
 
             units.Add(new Unit());
-			units.Add(new Unit());
-			units.Add(new Unit());
-			units.Add(new Unit());
-			units.Add(new Unit());
-			units.Add(new Unit());
+            units.Add(new Unit());
+            units.Add(new Unit());
+            units.Add(new Unit());
+            units.Add(new Unit());
+            units.Add(new Unit());
 
-		}
+        }
 
         public void SaveWorld()
         {
             map.SaveImage();
-			Serializer serializer = new Serializer("LocalData\\Savetest.chs");
+            Serializer serializer = new Serializer("LocalData\\Savetest.chs");
             Debug.Print("Saving units...");
-            foreach(Unit unit in units)
+            foreach (Unit unit in units)
             {
                 serializer.SaveObject(unit);
             }
@@ -40,7 +40,7 @@ namespace JuniorProject.Backend.WorldData
             Debug.Print("Writing to file...");
             serializer.Save();
             Debug.Print("Saved!");
-		}
+        }
 
     }
 

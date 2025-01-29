@@ -21,40 +21,40 @@ namespace JuniorProject.Backend
             currentState?.EnterState();
         }
 
-		public void BackendStart()
-		{
-			Thread.CurrentThread.Name = "Backend";
-			Debug.Print($"Back end thread started on thread {Thread.CurrentThread.ManagedThreadId}.");
-			DatabaseManager.LoadDB("LocalData\\BackendDatabase.db");
+        public void BackendStart()
+        {
+            Thread.CurrentThread.Name = "Backend";
+            Debug.Print($"Back end thread started on thread {Thread.CurrentThread.ManagedThreadId}.");
+            DatabaseManager.LoadDB("LocalData\\BackendDatabase.db");
 
-			ClientCommunicator.RegisterAction<IState>("SetState", SetState);
+            ClientCommunicator.RegisterAction<IState>("SetState", SetState);
 
-			MainLoop();
-			Debug.Print("Backend closed.");
-		}
+            MainLoop();
+            Debug.Print("Backend closed.");
+        }
 
-		public void MainLoop()
-		{
-			ClientCommunicator.RegisterAction("EndMainLoop", () =>
-			{
-				running = false;
-				Debug.Print("EndMainLoop was called.");
-			}); //Register an action to be called by the frontend that sets running to false;
-			Debug.Print("MainLoop Started.");
-			while (running)
-			{
-				ClientCommunicator.ProcessActions();
-				currentState?.Loop();
-			}
-
-
-		}
+        public void MainLoop()
+        {
+            ClientCommunicator.RegisterAction("EndMainLoop", () =>
+            {
+                running = false;
+                Debug.Print("EndMainLoop was called.");
+            }); //Register an action to be called by the frontend that sets running to false;
+            Debug.Print("MainLoop Started.");
+            while (running)
+            {
+                ClientCommunicator.ProcessActions();
+                currentState?.Loop();
+            }
 
 
+        }
 
 
 
 
 
-	}
+
+
+    }
 }
