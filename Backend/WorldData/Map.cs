@@ -62,6 +62,8 @@ namespace JuniorProject.Backend.WorldData
         {
             Debug.Print("Loading Terrain Data...");
             LoadTerrain();
+            Debug.Print("Registering TILE_SIZE into Client Communicator");
+            ClientCommunicator.RegisterData<int>("TILE_SIZE", TILE_SIZE);
             terrainMap = new TerrainData[MAP_PIXEL_WIDTH, MAP_PIXEL_HEIGHT];
             heightMap = new float[MAP_PIXEL_WIDTH, MAP_PIXEL_HEIGHT];
             mapWidth = MAP_PIXEL_WIDTH / TILE_SIZE;
