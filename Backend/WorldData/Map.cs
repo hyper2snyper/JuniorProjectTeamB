@@ -1,6 +1,7 @@
 using System.Data.SQLite;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 
 namespace JuniorProject.Backend.WorldData
 {
@@ -28,11 +29,36 @@ namespace JuniorProject.Backend.WorldData
         float[,] heightMap;
 
 
-        public class Tile
+        public class Tile : Serializable
         {
             public Dictionary<string, float> terrainPercentages = new Dictionary<string, float>();
             public int movementCost;
+
+            public override int fieldCount { get { return -1; } }
+
+            public override void Deserialize(BinaryReader reader)
+            {
+                movementCost = reader.ReadInt32();
+                int terrainPercentagesCount = reader.ReadInt32();
+                for (int i = 0; i < terrainPercentagesCount; i++)
+                {
+                    terrainPercentages.Add(reader.ReadString(), reader.ReadSingle());
+                }
+            }
+
+            public override void SerializeFields(List<byte[]> serializedFields)
+            {
+                serializedFields.Add(SerializeField(movementCost));
+                serializedFields.Add(SerializeField(terrainPercentages.Count));
+                foreach (KeyValuePair<string, float> percentage in terrainPercentages)
+                {
+                    serializedFields.Add(SerializeField(percentage.Key));
+                    serializedFields.Add(SerializeField(percentage.Value));
+                }
+            }
         }
+
+
         const int TILE_SIZE = 20;
         int mapHeight, mapWidth;
         Tile[,] tiles;
@@ -40,9 +66,6 @@ namespace JuniorProject.Backend.WorldData
         {
             return tiles[x, y];
         }
-
-
-
 
         public Map()
         {
@@ -56,6 +79,17 @@ namespace JuniorProject.Backend.WorldData
         }
 
         ~Map() { }
+
+        public void SaveMap(Serializer serializable)
+        {
+            for (int tileX = 0; tileX < mapWidth; tileX++)
+            {
+                for (int tileY = 0; tileY < mapHeight; tileY++)
+                {
+                    serializable.SaveObject(getTile(tileX, tileY));
+                }
+            }
+        }
 
         void LoadTerrain()
         {
@@ -172,7 +206,7 @@ namespace JuniorProject.Backend.WorldData
                             if (tileX * TILE_SIZE + x > MAP_PIXEL_WIDTH) continue;
                             if (tileY * TILE_SIZE + y > MAP_PIXEL_HEIGHT) continue;
 
-                            string landType = terrainMap[x, y].landType;
+                            string landType = terrainMap[x, y].name;
                             if (landTypes.ContainsKey(landType))
                             {
                                 landTypes[landType]++;
@@ -191,6 +225,7 @@ namespace JuniorProject.Backend.WorldData
                         tile.terrainPercentages.Add(landType, relativePercentage);
                     }
                     tile.movementCost = movementCostTotal / (TILE_SIZE * TILE_SIZE);
+                    tiles[tileX, tileY] = tile;
                 }
             }
         }
