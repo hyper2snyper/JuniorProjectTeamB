@@ -42,12 +42,12 @@ namespace JuniorProject.Backend.WorldData
                 SerializeDictionary(terrainPercentages);
             }
 
-			public override void DeserializeFields()
-			{
+            public override void DeserializeFields()
+            {
                 movementCost = DeserializeField<int>();
                 terrainPercentages = DeserializeDictionary<string, float>();
-			}
-		}
+            }
+        }
 
 
         const int TILE_SIZE = 20;
@@ -196,7 +196,7 @@ namespace JuniorProject.Backend.WorldData
                         {
                             int pixelPosX = (tileX * TILE_SIZE) + x;
                             int pixelPosY = (tileY * TILE_SIZE) + y;
-							if (pixelPosX > MAP_PIXEL_WIDTH) continue;
+                            if (pixelPosX > MAP_PIXEL_WIDTH) continue;
                             if (pixelPosY > MAP_PIXEL_HEIGHT) continue;
 
                             string landType = terrainMap[pixelPosX, pixelPosY].name;

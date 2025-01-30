@@ -37,7 +37,7 @@ namespace JuniorProject.Backend.WorldData
 
         public override void DeserializeFields()
         {
-            
+
         }
     }
 }
