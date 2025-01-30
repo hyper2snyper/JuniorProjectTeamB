@@ -32,14 +32,12 @@ namespace JuniorProject.Backend.WorldData
 
         public override void SerializeFields()
         {
-            SerializeField(health);
-            SerializeField("sssssaaaaa");
+
         }
 
         public override void DeserializeFields()
         {
-            health = DeserializeField<int>();
-            string r = DeserializeField<string>();
+            
         }
     }
 }
