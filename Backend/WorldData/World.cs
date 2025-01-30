@@ -16,12 +16,6 @@ namespace JuniorProject.Backend.WorldData
             ClientCommunicator.RegisterData<Bitmap>("WorldImage", map.worldImage);
             ClientCommunicator.RegisterData<World>("World", map);
 
-            units.Add(new Unit());
-            units.Add(new Unit());
-            units.Add(new Unit());
-            units.Add(new Unit());
-            units.Add(new Unit());
-            units.Add(new Unit());
 
         }
 
@@ -40,6 +34,9 @@ namespace JuniorProject.Backend.WorldData
             Debug.Print("Writing to file...");
             serializer.Save();
             Debug.Print("Saved!");
+
+
+            serializer.Load();
         }
 
     }

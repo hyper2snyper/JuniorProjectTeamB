@@ -36,25 +36,16 @@ namespace JuniorProject.Backend.WorldData
 
             public override int fieldCount { get { return -1; } }
 
-            public override void Deserialize(BinaryReader reader)
+            public override void SerializeFields()
             {
-                movementCost = reader.ReadInt32();
-                int terrainPercentagesCount = reader.ReadInt32();
-                for (int i = 0; i < terrainPercentagesCount; i++)
-                {
-                    terrainPercentages.Add(reader.ReadString(), reader.ReadSingle());
-                }
+                SerializeField(movementCost);
+                SerializeDictionary(terrainPercentages);
             }
 
-            public override void SerializeFields(List<byte[]> serializedFields)
+            public override void DeserializeFields()
             {
-                serializedFields.Add(SerializeField(movementCost));
-                serializedFields.Add(SerializeField(terrainPercentages.Count));
-                foreach (KeyValuePair<string, float> percentage in terrainPercentages)
-                {
-                    serializedFields.Add(SerializeField(percentage.Key));
-                    serializedFields.Add(SerializeField(percentage.Value));
-                }
+                movementCost = DeserializeField<int>();
+                terrainPercentages = DeserializeDictionary<string, float>();
             }
         }
 
@@ -108,7 +99,7 @@ namespace JuniorProject.Backend.WorldData
                 terrain.heightMax = results.GetFloat(4);
                 terrain.landType = results.GetString(5);
                 if (terrain.landType == "Ocean" && terrain.heightMax > oceanHeightMax) oceanHeightMax = terrain.heightMax;
-                if (terrain.landType == "Highland" && terrain.heightMin < highlandMin) highlandMin = terrain.heightMin;
+                if (terrain.landType == "Mountain" && terrain.heightMin < highlandMin) highlandMin = terrain.heightMin;
                 terrains.Add(terrain);
             }
 
@@ -203,10 +194,12 @@ namespace JuniorProject.Backend.WorldData
                     {
                         for (int y = 0; y < TILE_SIZE; y++)
                         {
-                            if (tileX * TILE_SIZE + x > MAP_PIXEL_WIDTH) continue;
-                            if (tileY * TILE_SIZE + y > MAP_PIXEL_HEIGHT) continue;
+                            int pixelPosX = (tileX * TILE_SIZE) + x;
+                            int pixelPosY = (tileY * TILE_SIZE) + y;
+                            if (pixelPosX > MAP_PIXEL_WIDTH) continue;
+                            if (pixelPosY > MAP_PIXEL_HEIGHT) continue;
 
-                            string landType = terrainMap[x, y].name;
+                            string landType = terrainMap[pixelPosX, pixelPosY].name;
                             if (landTypes.ContainsKey(landType))
                             {
                                 landTypes[landType]++;
