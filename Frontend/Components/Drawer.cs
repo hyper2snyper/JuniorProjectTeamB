@@ -1,22 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 using System.Windows.Media.Imaging;
 using Drawing = System.Drawing;
 using JuniorProject.Backend;
 using System.Windows;
-using System.Windows.Media;
-using Pen = System.Windows.Media.Pen;
-using Point = System.Windows.Point;
-using Brushes = System.Windows.Media.Brushes;
-using System;
-using System.Drawing; // For Bitmap, Color, etc.
-using System.Drawing.Imaging; // For ImageFormat
-using System.IO; // For MemoryStream
-using System.Windows.Media.Imaging; // 
+using System.Drawing.Drawing2D;
 
 namespace JuniorProject.Frontend.Components
 {
@@ -30,22 +17,22 @@ namespace JuniorProject.Frontend.Components
             TILE_SIZE = ClientCommunicator.GetData<int>("TILE_SIZE");
         }
 
-        public void Draw(Drawing.Bitmap worldBitmap, ref WriteableBitmap map)
+        public void Draw(Bitmap worldBitmap, ref WriteableBitmap map)
         {
-            Debug.Print("Drawing onto map...");
-            Layer(worldBitmap, ref map);
-            Layer(GetGridlines(), ref map);
+            /* Layer everything onto given Bitmap from backend, then put it on WriteableBitmap */
+            Debug.Print("Starting layering onto map...");
+            Layer(worldBitmap, GetGridlines());
+            TransferToWriteableBitmap(worldBitmap, ref map);
+            Debug.Print("Done layering...");
         }
-
-        public void Layer(Drawing.Bitmap worldBitmap, ref WriteableBitmap map) 
+        public void TransferToWriteableBitmap(Bitmap worldBitmap, ref WriteableBitmap map)
         {
-            /* Used to draw the initial map given from the backend */
             byte[] pixels = new byte[4 * (worldBitmap.Width * worldBitmap.Height)]; //pixel color buffer. each color is four bytes.
             for (int y = 0; y < worldBitmap.Width; y++)
             {
                 for (int x = 0; x < worldBitmap.Height; x++)
                 {
-                    Drawing.Color c = worldBitmap.GetPixel(x, y);
+                    Color c = worldBitmap.GetPixel(x, y);
                     int pos = ((y * worldBitmap.Width) + x) * 4;
                     pixels[pos] = c.B;
                     pixels[pos + 1] = c.G;
@@ -55,40 +42,47 @@ namespace JuniorProject.Frontend.Components
             }
             map.WritePixels(new Int32Rect(0, 0, worldBitmap.Width, worldBitmap.Height), pixels, (worldBitmap.Width * 4), 0); //Update the bitmap
         }
-
-        public void Layer(WriteableBitmap layer, ref WriteableBitmap map)
+        public void Layer(Bitmap worldBitmap, Bitmap layerMap)
         {
             for (int y = 0; y < MAP_PIXEL_HEIGHT; y++)
             {
-                for (int x = 0; x < MAP_PIXEL_WIDTH; x++) 
+                for (int x = 0; x < MAP_PIXEL_WIDTH; x++)
                 {
+                    if (layerMap.GetPixel(x, y).A > 0)
+                    {
+                        worldBitmap.SetPixel(x, y, layerMap.GetPixel(x, y));
+                    }
                 }
             }
         }
 
-        public WriteableBitmap GetGridlines()
+        public void Layer(WriteableBitmap layer, ref WriteableBitmap map)
         {
-            WriteableBitmap gridBitmap = new WriteableBitmap(MAP_PIXEL_WIDTH, MAP_PIXEL_HEIGHT, 96, 96, PixelFormats.Bgra32, null);
-            DrawingVisual drawingVisual = new DrawingVisual();
+        }
 
-            using (DrawingContext drawingContext = drawingVisual.RenderOpen()) {
-                Pen gridPen = new Pen(Brushes.Black, 1);
+        public Bitmap GetGridlines()
+        {
+            Bitmap gridBitmap = new Bitmap(MAP_PIXEL_WIDTH, MAP_PIXEL_HEIGHT);
 
-                for (int x = TILE_SIZE; x < MAP_PIXEL_WIDTH / TILE_SIZE; x += TILE_SIZE)
+            using (Graphics g = Graphics.FromImage(gridBitmap))
+            {
+                g.Clear(Color.Transparent);
+                g.SmoothingMode = SmoothingMode.None;
+                g.PixelOffsetMode = PixelOffsetMode.None;
+                using (Pen gridPen = new Pen(Color.Black, 5))
                 {
-                    drawingContext.DrawLine(gridPen, new Point(x, 0), new Point(x, MAP_PIXEL_HEIGHT));
-                }
-                for (int y = TILE_SIZE; y < MAP_PIXEL_HEIGHT / TILE_SIZE; y += TILE_SIZE) 
-                { 
-                    drawingContext.DrawLine(gridPen, new Point(0, y), new Point(MAP_PIXEL_WIDTH, y));
+                    gridPen.Alignment = PenAlignment.Inset;
+                    for (int y = TILE_SIZE; y < gridBitmap.Width; y += TILE_SIZE)
+                    {
+                        g.DrawLine(gridPen, 0, y, MAP_PIXEL_WIDTH, y);
+                    }
+
+                    for (int x = TILE_SIZE; x < gridBitmap.Height; x += TILE_SIZE)
+                    {
+                        g.DrawLine(gridPen, x, 0, x, MAP_PIXEL_HEIGHT);
+                    }
                 }
             }
-
-            RenderTargetBitmap renderTarget = new RenderTargetBitmap(MAP_PIXEL_WIDTH, MAP_PIXEL_HEIGHT, 96, 96, PixelFormats.Pbgra32);
-            renderTarget.Render(drawingVisual);
-
-            renderTarget.CopyPixels(new Int32Rect(0, 0, MAP_PIXEL_WIDTH, MAP_PIXEL_HEIGHT), gridBitmap.BackBuffer, gridBitmap.BackBufferStride * MAP_PIXEL_HEIGHT, gridBitmap.BackBufferStride);
-            gridBitmap.AddDirtyRect(new Int32Rect(0, 0, MAP_PIXEL_WIDTH, MAP_PIXEL_HEIGHT));
 
             return gridBitmap;
         }

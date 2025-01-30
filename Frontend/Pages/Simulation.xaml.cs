@@ -22,6 +22,7 @@ namespace JuniorProject
     {
         Image mapImage;
         Drawer drawer;
+        const int TILE_SIZE = 50;
 
         private string relativePath = "LocalData\\Map.png";
         public Simulation()
@@ -29,6 +30,9 @@ namespace JuniorProject
             InitializeComponent();
 
             mapImage = this.Map;
+
+            Debug.Print("Registering TILE_SIZE into Client Communicator...");
+            ClientCommunicator.RegisterData<int>("TILE_SIZE", TILE_SIZE);
 
             ClientCommunicator.CallAction<IState>("SetState", new Backend.States.Simulation());
             drawer = new Drawer();
