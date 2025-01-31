@@ -8,8 +8,6 @@ namespace JuniorProject
         public Simulation()
         {
             InitializeComponent();
-
-            // Pass the UI Image to SimulationService so it can update the map
             SimulationService.Instance.SetMapImage(Map);
         }
 
