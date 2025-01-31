@@ -26,7 +26,7 @@ namespace JuniorProject
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            NavigationService?.Navigate(new Simulation());
+            NavigationService.GoBack();
         }
 
         private void UpdateSimulationDetails()
