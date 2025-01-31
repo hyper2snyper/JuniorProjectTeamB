@@ -18,5 +18,7 @@
         <Label Content="Elapsed Time" HorizontalAlignment="Left" Margin="415,205,0,0" VerticalAlignment="Top" Height="54" Width="196" AutomationProperties.Name="ETime" Foreground="White" FontSize="18" FontWeight="Bold"/>
         <TextBlock Name="TxtElapsedTime" Text="00:00:00" Margin="415,250,302,163" Foreground="White" FontSize="16" FontWeight="Bold" />
         <Button x:Name="UpdateButton" Content="Update" HorizontalAlignment="Left" Margin="456,344,0,0" VerticalAlignment="Top" Click="UpdateButton_Click" Width="70"/>
+        <Button x:Name="StartButton" Content="Start" HorizontalAlignment="Left" Margin="306,319,0,0" VerticalAlignment="Top" Click="StartButton_Click" Width="70"/>
+        <Button x:Name="PauseButton" Content="Refresh" HorizontalAlignment="Left" Margin="382,319,0,0" VerticalAlignment="Top" Click="RefreshButton_Click" Width="70"/>
     </Grid>
 </Page>

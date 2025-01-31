@@ -1,37 +1,38 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace JuniorProject
 {
-    /// <summary>
-    /// Interaction logic for SimPage.xaml
-    /// </summary>
     public partial class SimPage : Page
     {
-        private DateTime simStartTime;
-        private bool isRunning;
         public SimPage()
         {
             InitializeComponent();
-            simStartTime = DateTime.Now;
-            isRunning = false;
+            UpdateSimulationDetails();
+        }
+
+        private void StartButton_Click(object sender, RoutedEventArgs e)
+        {
+            SimulationService.Instance.StartSimulation();
+            UpdateSimulationDetails();
+        }
+
+        private void UpdateButton_Click(object sender, RoutedEventArgs e)
+        {
+            SimulationService.Instance.UpdateSimulationTime(TimeSpan.FromMinutes(5)); // Example update
+            UpdateSimulationDetails();
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            NavigationService.GoBack();
+            NavigationService?.Navigate(new Simulation());
+        }
+
+        private void UpdateSimulationDetails()
+        {
+            TxtSimulationTime.Text = SimulationService.Instance.SimulationTime.ToString(@"hh\:mm\:ss");
+            TxtElapsedTime.Text = SimulationService.Instance.IsRunning ? "Running" : "Stopped";
         }
 
         private void SettingsButton_Click(object sender, RoutedEventArgs e)
@@ -45,11 +46,10 @@ namespace JuniorProject
             result = MessageBox.Show(messageBoxText, caption, button, icon, MessageBoxResult.Yes);
         }
 
-        private void UpdateButton_Click(object sender, RoutedEventArgs e)
+        private void RefreshButton_Click(object sender, RoutedEventArgs e)
         {
-            
-            TxtSimulationTime.Text = DateTime.Now.ToString("HH:mm:ss");
-            TxtElapsedTime.Text = (DateTime.Now - simStartTime).ToString(@"hh\:mm\:ss");
+            SimulationService.Instance.RefreshSimulation();
+            UpdateSimulationDetails();
         }
     }
 }
