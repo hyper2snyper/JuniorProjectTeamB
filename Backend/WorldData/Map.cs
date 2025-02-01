@@ -209,7 +209,7 @@ namespace JuniorProject.Backend.WorldData
                         {
                             int pixelPosX = (tileX * TILE_SIZE) + x;
                             int pixelPosY = (tileY * TILE_SIZE) + y;
-							if (pixelPosX > MAP_PIXEL_WIDTH) continue;
+                            if (pixelPosX > MAP_PIXEL_WIDTH) continue;
                             if (pixelPosY > MAP_PIXEL_HEIGHT) continue;
 							if (biomeMap[pixelPosX, pixelPosY] == null) continue;
 

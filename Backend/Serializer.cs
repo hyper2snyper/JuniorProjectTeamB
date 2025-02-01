@@ -11,7 +11,7 @@ namespace JuniorProject.Backend
         public abstract int fieldCount { get; } //If -1, ignore.
         public struct SField
         {
-			public bool isString;
+            public bool isString;
             public byte[] bytes;
             public string str;
         }
@@ -20,24 +20,24 @@ namespace JuniorProject.Backend
         List<string>? stringCache;
 
 
-		public List<SField> Serialize()
-		{
-			fields = new List<SField>();
-			SerializeFields();
-			if (fields.Count == 0)
-			{
-				Debug.Print($"{this} was passed into Serialization, but there were no fields saved.");
-			}
-			List<SField> fieldsToReturn = fields;
-			fields = null;
-			return fieldsToReturn;
-		}
-
-		public abstract void SerializeFields();
-
-		public bool OrderCheck()
+        public List<SField> Serialize()
         {
-            if(fields == null)
+            fields = new List<SField>();
+            SerializeFields();
+            if (fields.Count == 0)
+            {
+                Debug.Print($"{this} was passed into Serialization, but there were no fields saved.");
+            }
+            List<SField> fieldsToReturn = fields;
+            fields = null;
+            return fieldsToReturn;
+        }
+
+        public abstract void SerializeFields();
+
+        public bool OrderCheck()
+        {
+            if (fields == null)
             {
                 Debug.Print($"SerializeField() was called outside of a Serialize() call.");
                 return false;
@@ -47,9 +47,9 @@ namespace JuniorProject.Backend
 
         //Serializes all built-in types except string, object, dynamic
         public unsafe void SerializeField<T>(T objectToSerialize) where T : notnull
-		{
+        {
             if (!OrderCheck()) return;
-            if(typeof(T) == typeof(string))
+            if (typeof(T) == typeof(string))
             {
                 _SerializeString((string)(object)objectToSerialize);
                 return;
@@ -66,65 +66,65 @@ namespace JuniorProject.Backend
             fields.Add(f);
         }
 
-		public void _SerializeString(string stringToSerialize)
-		{
-			SField f = new SField();
-			f.str = stringToSerialize;
-			f.isString = true;
-			fields.Add(f);
-		}
+        public void _SerializeString(string stringToSerialize)
+        {
+            SField f = new SField();
+            f.str = stringToSerialize;
+            f.isString = true;
+            fields.Add(f);
+        }
 
-		public void SerializeList<T>(List<T> listToSerialize) where T : notnull
-		{
+        public void SerializeList<T>(List<T> listToSerialize) where T : notnull
+        {
             if (!OrderCheck()) return;
             int listCount = listToSerialize.Count;
             SerializeField(listCount); //Prefix List saving with size.
-            for(int i = 0; i < listCount;   i++) 
+            for (int i = 0; i < listCount; i++)
             {
-				SerializeField(listToSerialize[i]);
+                SerializeField(listToSerialize[i]);
             }
         }
 
         public void SerializeNestedList<T>(List<List<T>> listToSerialize) where T : notnull
-		{
-            if(!OrderCheck()) return;
-			int listCount = listToSerialize.Count;
-			SerializeField(listCount); //Prefix List saving with size.
-			for (int i = 0; i < listCount; i++)
-			{
-				SerializeList(listToSerialize[i]);
-			}
-		}
+        {
+            if (!OrderCheck()) return;
+            int listCount = listToSerialize.Count;
+            SerializeField(listCount); //Prefix List saving with size.
+            for (int i = 0; i < listCount; i++)
+            {
+                SerializeList(listToSerialize[i]);
+            }
+        }
 
-        public void SerializeDictionary<K,V>(Dictionary<K,V> dictionaryToSerialize) 
+        public void SerializeDictionary<K, V>(Dictionary<K, V> dictionaryToSerialize)
             where K : notnull
-			where V : notnull
-		{
+            where V : notnull
+        {
             if (!OrderCheck()) return;
             int keyCount = dictionaryToSerialize.Count;
             SerializeField(keyCount);
-            foreach(KeyValuePair<K, V> pair in dictionaryToSerialize)
+            foreach (KeyValuePair<K, V> pair in dictionaryToSerialize)
             {
                 SerializeField(pair.Key);
                 SerializeField(pair.Value);
             }
         }
 
-		public void SerializeNestedDictionary<K, V>(Dictionary<K, List<V>> dictionaryToSerialize)
-			where K : notnull
-			where V : notnull
-		{
-			if (!OrderCheck()) return;
-			int keyCount = dictionaryToSerialize.Count;
-			SerializeField(keyCount);
-			foreach (KeyValuePair<K, List<V>> pair in dictionaryToSerialize)
-			{
-				SerializeField(pair.Key);
-				SerializeList(pair.Value);
-			}
-		}
+        public void SerializeNestedDictionary<K, V>(Dictionary<K, List<V>> dictionaryToSerialize)
+            where K : notnull
+            where V : notnull
+        {
+            if (!OrderCheck()) return;
+            int keyCount = dictionaryToSerialize.Count;
+            SerializeField(keyCount);
+            foreach (KeyValuePair<K, List<V>> pair in dictionaryToSerialize)
+            {
+                SerializeField(pair.Key);
+                SerializeList(pair.Value);
+            }
+        }
 
-		public void Deserialize(BinaryReader reader, List<string> stringCache)
+        public void Deserialize(BinaryReader reader, List<string> stringCache)
         {
             this.reader = reader;
             this.stringCache = stringCache;
@@ -133,36 +133,36 @@ namespace JuniorProject.Backend
             this.stringCache = null;
         }
 
-		public abstract void DeserializeFields();
+        public abstract void DeserializeFields();
 
         public bool DOrderCheck()
         {
-			if (fields == null || stringCache == null)
-			{
-				Debug.Print($"DeserializeField() was called outside of a Deserialize() call.");
-				return false;
-			}
-			return true;
-		}
+            if (fields == null || stringCache == null)
+            {
+                Debug.Print($"DeserializeField() was called outside of a Deserialize() call.");
+                return false;
+            }
+            return true;
+        }
 
         public T DeserializeField<T>()
         {
-			dynamic? v = null;
-			switch (Type.GetTypeCode(typeof(T)))
+            dynamic? v = null;
+            switch (Type.GetTypeCode(typeof(T)))
             {
-                case TypeCode.Boolean:   v = reader.ReadBoolean();   return v;
-                case TypeCode.Byte:      v = reader.ReadByte();      return v;
-                case TypeCode.SByte:     v = reader.ReadSByte();     return v;
-                case TypeCode.Char:      v = reader.ReadChar();      return v;
-                case TypeCode.Int16:     v = reader.ReadInt16();     return v;
-                case TypeCode.UInt16:    v = reader.ReadUInt16();    return v;
-                case TypeCode.Int32:     v = reader.ReadInt32();     return v;
-                case TypeCode.UInt32:    v = reader.ReadUInt32();    return v;
-                case TypeCode.Int64:     v = reader.ReadInt64();     return v;
-                case TypeCode.UInt64:    v = reader.ReadUInt64();    return v;
-                case TypeCode.Single:    v = reader.ReadSingle();    return v;
-                case TypeCode.Double:    v = reader.ReadDouble();    return v;
-                case TypeCode.Decimal:   v = reader.ReadDecimal();   return v;
+                case TypeCode.Boolean: v = reader.ReadBoolean(); return v;
+                case TypeCode.Byte: v = reader.ReadByte(); return v;
+                case TypeCode.SByte: v = reader.ReadSByte(); return v;
+                case TypeCode.Char: v = reader.ReadChar(); return v;
+                case TypeCode.Int16: v = reader.ReadInt16(); return v;
+                case TypeCode.UInt16: v = reader.ReadUInt16(); return v;
+                case TypeCode.Int32: v = reader.ReadInt32(); return v;
+                case TypeCode.UInt32: v = reader.ReadUInt32(); return v;
+                case TypeCode.Int64: v = reader.ReadInt64(); return v;
+                case TypeCode.UInt64: v = reader.ReadUInt64(); return v;
+                case TypeCode.Single: v = reader.ReadSingle(); return v;
+                case TypeCode.Double: v = reader.ReadDouble(); return v;
+                case TypeCode.Decimal: v = reader.ReadDecimal(); return v;
                 case TypeCode.String:
                     {
                         int stringPos = reader.ReadInt32();
@@ -179,7 +179,7 @@ namespace JuniorProject.Backend
         {
             List<T> returnList = new List<T>();
             int listCount = DeserializeField<int>();
-            for(int i = 0; i < listCount; i++)
+            for (int i = 0; i < listCount; i++)
             {
                 returnList.Add(DeserializeField<T>());
             }
@@ -187,15 +187,15 @@ namespace JuniorProject.Backend
         }
 
         public List<List<T>> DeserializeNestedList<T>() where T : notnull
-		{
-			List<List<T>> returnList = new List<List<T>>();
-			int listCount = DeserializeField<int>();
-			for (int i = 0; i < listCount; i++)
-			{
-				returnList.Add(DeserializeList<T>());
-			}
-			return returnList;
-		}
+        {
+            List<List<T>> returnList = new List<List<T>>();
+            int listCount = DeserializeField<int>();
+            for (int i = 0; i < listCount; i++)
+            {
+                returnList.Add(DeserializeList<T>());
+            }
+            return returnList;
+        }
 
         public Dictionary<K, V> DeserializeDictionary<K, V>()
             where K : notnull
@@ -203,27 +203,27 @@ namespace JuniorProject.Backend
         {
             Dictionary<K, V> returnDictionary = new Dictionary<K, V>();
             int listCount = DeserializeField<int>();
-            for(int i =0; i < listCount; i++)
+            for (int i = 0; i < listCount; i++)
             {
                 returnDictionary.Add(DeserializeField<K>(), DeserializeField<V>());
             }
             return returnDictionary;
         }
 
-		public Dictionary<K, List<V>> DeserializeNestedDictionary<K, V>()
-			where K : notnull
-			where V : notnull
-		{
-			Dictionary<K, List<V>> returnDictionary = new Dictionary<K, List<V>>();
-			int listCount = DeserializeField<int>();
-			for (int i = 0; i < listCount; i++)
-			{
-				returnDictionary.Add(DeserializeField<K>(), DeserializeList<V>());
-			}
-			return returnDictionary;
-		}
+        public Dictionary<K, List<V>> DeserializeNestedDictionary<K, V>()
+            where K : notnull
+            where V : notnull
+        {
+            Dictionary<K, List<V>> returnDictionary = new Dictionary<K, List<V>>();
+            int listCount = DeserializeField<int>();
+            for (int i = 0; i < listCount; i++)
+            {
+                returnDictionary.Add(DeserializeField<K>(), DeserializeList<V>());
+            }
+            return returnDictionary;
+        }
 
-	}
+    }
 
     class Serializer
     {
@@ -250,7 +250,7 @@ namespace JuniorProject.Backend
             File.WriteAllText(file_location, string.Empty);
             FileStream fileStream = File.OpenWrite(file_location);
             BinaryWriter writer = new BinaryWriter(fileStream, Encoding.ASCII, false);
-            
+
             Stream buffer = new MemoryStream();
             BinaryWriter bufferWriter = new BinaryWriter(buffer); //For storing object data.
 
@@ -259,7 +259,7 @@ namespace JuniorProject.Backend
 
             int typeCount = objectList.Count;
             Dictionary<Type, int> fieldCounts = new Dictionary<Type, int>();
-            
+
             foreach (Type type in objectList.Keys)
             {
                 fieldCounts[type] = objectList[type][0].fieldCount;
@@ -271,12 +271,12 @@ namespace JuniorProject.Backend
                 return;
             }
 
-			bufferWriter.Write(typeCount); //Save type count.
+            bufferWriter.Write(typeCount); //Save type count.
             foreach (KeyValuePair<Type, int> fieldCount in fieldCounts)
             {
-				bufferWriter.Write(fieldCount.Key.ToString()); //Write the type.
-				bufferWriter.Write(objectList[fieldCount.Key].Count); //Write how many there are.
-				bufferWriter.Write(fieldCount.Value); //Write how many fields each object should have.
+                bufferWriter.Write(fieldCount.Key.ToString()); //Write the type.
+                bufferWriter.Write(objectList[fieldCount.Key].Count); //Write how many there are.
+                bufferWriter.Write(fieldCount.Value); //Write how many fields each object should have.
             }
 
             foreach (Type type in objectList.Keys)
@@ -286,19 +286,19 @@ namespace JuniorProject.Backend
                     List<Serializable.SField> fields = serializable.Serialize();
                     foreach (Serializable.SField field in fields)
                     {
-                        if(field.isString)
+                        if (field.isString)
                         {
                             int stringPos = 0;
-                            if(stringCache.ContainsKey(field.str))
+                            if (stringCache.ContainsKey(field.str))
                             {
                                 stringPos = stringCache[field.str];
                                 bufferWriter.Write(stringPos); //We write the position of the string cache.
                                 continue;
                             }
-							stringCache.Add(field.str, stringCacheSize); //Add the thing to the cache.
+                            stringCache.Add(field.str, stringCacheSize); //Add the thing to the cache.
                             bufferWriter.Write(stringCacheSize);
-							stringCacheSize++; //increase cache size.
-							continue;
+                            stringCacheSize++; //increase cache size.
+                            continue;
                         }
                         bufferWriter.Write(field.bytes);
                     }
@@ -306,7 +306,7 @@ namespace JuniorProject.Backend
             }
 
             writer.Write(stringCacheSize); //Write how big the string cache is.
-            foreach(string str in  stringCache.Keys)
+            foreach (string str in stringCache.Keys)
             {
                 writer.Write(str);
             }
@@ -324,7 +324,7 @@ namespace JuniorProject.Backend
             List<string> stringCache = new List<string>();
             int stringCacheSize = reader.ReadInt32();
             int pos = 0;
-            for(int i = 0; i < stringCacheSize; i++)
+            for (int i = 0; i < stringCacheSize; i++)
             {
                 stringCache.Add(reader.ReadString());
             }
