@@ -42,6 +42,7 @@ namespace JuniorProject
                 mapImage.Source = ReloadImage();
             }
             Console.WriteLine("Simulation started.");
+
         }
 
         public void PauseSimulation()
@@ -107,4 +108,5 @@ namespace JuniorProject
             return writeableBitmap;
         }
     }
+
 }

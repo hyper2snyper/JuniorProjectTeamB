@@ -7,11 +7,6 @@
     </ApplicationDefinition>
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="Frontend\Pages\SimPage.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Page Update="Frontend\Pages\MainMenu.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -19,9 +14,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Frontend\MainWindow.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Frontend\Pages\SimPage.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
