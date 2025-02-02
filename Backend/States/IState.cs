@@ -8,7 +8,7 @@ namespace JuniorProject.Backend
 {
     internal interface IState
     {
-        public void Loop();
+        public IState Loop();
         public void EnterState();
         public void ExitState();
     }

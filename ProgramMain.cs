@@ -20,8 +20,7 @@ namespace JuniorProject
             BackendMain backend = new BackendMain();
             Thread backendThread = new Thread(new ThreadStart(backend.BackendStart));
 
-            Debug.SetThreads(backendThread.ManagedThreadId, frontendThread.ManagedThreadId);
-
+            
             frontendThread.Start();
             backendThread.Start();
 

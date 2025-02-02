@@ -12,5 +12,12 @@ namespace JuniorProject.Backend.Helpers
 		{
 			return (1 - t) * v0 + t * v1;
 		}
+
+		/*
+		public static float Scale(float v0, float v1, float x)
+		{
+
+		}*/
+
 	}
 }

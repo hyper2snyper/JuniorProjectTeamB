@@ -16,6 +16,8 @@ namespace JuniorProject.Backend
         IState? currentState;
         public void SetState(IState? newState)
         {
+            if (newState == null) return;
+            if (newState == currentState) return;
             currentState?.ExitState();
             currentState = newState;
             currentState?.EnterState();
@@ -44,7 +46,7 @@ namespace JuniorProject.Backend
             while (running)
             {
                 ClientCommunicator.ProcessActions();
-                currentState?.Loop();
+                SetState(currentState?.Loop());
             }
 
 

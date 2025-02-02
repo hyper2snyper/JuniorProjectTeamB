@@ -318,6 +318,11 @@ namespace JuniorProject.Backend
         public Dictionary<Type, List<Serializable>> Load()
         {
             objectList = new Dictionary<Type, List<Serializable>>();
+            if(!File.Exists(file_location))
+            {
+                Debug.Print($"Tried to Load() [{file_location}], however, that file does not exist.");
+                return new Dictionary<Type, List<Serializable>>();
+            }
             FileStream fileStream = File.OpenRead(file_location);
             BinaryReader reader = new BinaryReader(fileStream);
 

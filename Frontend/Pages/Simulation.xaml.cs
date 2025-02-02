@@ -25,15 +25,14 @@ namespace JuniorProject
         public Simulation()
         {
             InitializeComponent();
-
             mapImage = this.Map;
-
-            ClientCommunicator.CallAction<IState>("SetState", new Backend.States.Simulation());
+            mapImage.Source = ReloadImage();
         }
 
         private void RefreshClicked(object sender, RoutedEventArgs e)
         {
-            mapImage.Source = ReloadImage();
+			ClientCommunicator.CallActionWaitFor("RegenerateWorld"); //First, tell the map to regenerate the world.
+			mapImage.Source = ReloadImage();
         }
 
         private void StartClicked(object sender, RoutedEventArgs e)
@@ -43,13 +42,8 @@ namespace JuniorProject
 
         private void PauseClicked(object sender, RoutedEventArgs e)
         {
-            string messageBoxText = "Pause";
-            string caption = "Information";
-            MessageBoxButton button = MessageBoxButton.OK;
-            MessageBoxImage icon = MessageBoxImage.Information;
-            MessageBoxResult result;
-
-            result = MessageBox.Show(messageBoxText, caption, button, icon, MessageBoxResult.Yes);
+            Debug.Print("Pause Clicked.");
+            ClientCommunicator.CallAction("TogglePause");
         }
 
         private async void SaveClicked(object sender, RoutedEventArgs e)
@@ -62,12 +56,9 @@ namespace JuniorProject
         }
 
 
-
         private WriteableBitmap ReloadImage()
         {
-            ClientCommunicator.CallActionWaitFor("RegenerateWorld"); //First, tell the map to regenerate the world.
-            Drawing.Bitmap worldBitmap;
-            worldBitmap = ClientCommunicator.GetData<Drawing.Bitmap>("WorldImage"); //Get the data from the backend
+            Drawing.Bitmap worldBitmap = ClientCommunicator.GetData<Drawing.Bitmap>("WorldImage"); //Get the data from the backend
             WriteableBitmap writeableBitmap = new WriteableBitmap(worldBitmap.Width, worldBitmap.Height, 96, 96, PixelFormats.Bgra32, null); //Create the writeableBitmap
             byte[] pixels = new byte[4 * (worldBitmap.Width * worldBitmap.Height)]; //pixel color buffer. each color is four bytes.
             for (int y = 0; y < worldBitmap.Width; y++)
