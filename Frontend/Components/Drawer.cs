@@ -9,12 +9,15 @@ namespace JuniorProject.Frontend.Components
 {
     public class Drawer
     {
-        private int TILE_SIZE;
-        const int MAP_PIXEL_WIDTH = 2000;
-        const int MAP_PIXEL_HEIGHT = 2000;
+        int TILE_SIZE;
+        int MAP_PIXEL_WIDTH;
+        int MAP_PIXEL_HEIGHT;
         public Drawer()
         {
             TILE_SIZE = ClientCommunicator.GetData<int>("TILE_SIZE");
+            MAP_PIXEL_WIDTH = ClientCommunicator.GetData<int>("MAP_PIXEL_WIDTH");
+            MAP_PIXEL_HEIGHT = ClientCommunicator.GetData<int>("MAP_PIXEL_HEIGHT");
+            Debug.Print(String.Format("Printing TILE_SIZE: {0:N}", TILE_SIZE));
         }
 
         public void Draw(Bitmap worldBitmap, ref WriteableBitmap map)

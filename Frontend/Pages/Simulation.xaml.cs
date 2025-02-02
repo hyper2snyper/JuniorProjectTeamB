@@ -22,7 +22,6 @@ namespace JuniorProject
     {
         Image mapImage;
         Drawer drawer;
-        const int TILE_SIZE = 50;
 
         private string relativePath = "LocalData\\Map.png";
         public Simulation()
@@ -31,11 +30,7 @@ namespace JuniorProject
 
             mapImage = this.Map;
 
-            Debug.Print("Registering TILE_SIZE into Client Communicator...");
-            ClientCommunicator.RegisterData<int>("TILE_SIZE", TILE_SIZE);
-
             ClientCommunicator.CallAction<IState>("SetState", new Backend.States.Simulation());
-            drawer = new Drawer();
         }
 
         private void RefreshClicked(object sender, RoutedEventArgs e)
@@ -72,6 +67,7 @@ namespace JuniorProject
 
         private WriteableBitmap ReloadImage()
         {
+            drawer = ClientCommunicator.GetData<Drawer>("Drawer");
             ClientCommunicator.CallActionWaitFor("RegenerateWorld"); //First, tell the map to regenerate the world.
             Drawing.Bitmap worldBitmap;
             worldBitmap = ClientCommunicator.GetData<Drawing.Bitmap>("WorldImage"); //Get the data from the backend
