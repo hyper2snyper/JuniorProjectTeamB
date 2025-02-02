@@ -18,10 +18,10 @@
         </Border>
         <Image x:Name="Map" HorizontalAlignment="Left" Height="448" VerticalAlignment="Top" Width="855" Margin="2,55,0,0"/>
         <Button Content="Update" HorizontalAlignment="Left" Margin="344,17,0,0" VerticalAlignment="Top" Height="31" Width="61" Click="UpdateButton_Click"/>
-        <Label Content="Simulation Time" HorizontalAlignment="Left" Margin="473,79,0,0" VerticalAlignment="Top" Height="45" Width="166" AutomationProperties.Name="Sim" Foreground="White" FontSize="18" FontWeight="Bold"/>
-        <TextBlock x:Name="TxtSimulationTime" Text="00:00:00" Grid.Row="0" Margin="481,129,41,349" Foreground="White" FontSize="16" FontWeight="Bold" />
+        <Label Content="Simulation Time" HorizontalAlignment="Left" Margin="473,79,0,0" VerticalAlignment="Top" Height="30" Width="166" AutomationProperties.Name="Sim" Foreground="White" FontSize="18" FontWeight="Bold"/>
+        <TextBlock x:Name="TxtSimulationTime" Text="00:00:00" Grid.Row="0" Margin="483,114,39,364" Foreground="White" FontSize="16" FontWeight="Bold" />
         <Label Content="Elapsed Time" HorizontalAlignment="Left" Margin="473,229,0,0" VerticalAlignment="Top" Height="35" Width="175" AutomationProperties.Name="ETime" Foreground="White" FontSize="18" FontWeight="Bold"/>
-        <TextBlock x:Name="TxtElapsedTime" Text="00:00:00" Margin="478,264,41,217" Foreground="White" FontSize="16" FontWeight="Bold" />
+        <TextBlock x:Name="TxtElapsedTime" Text="00:00:00" Margin="481,264,38,217" Foreground="White" FontSize="16" FontWeight="Bold" />
 
 
     </Grid>
