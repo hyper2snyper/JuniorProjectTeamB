@@ -2,52 +2,42 @@ using JuniorProject.Frontend.Components;
 using System.Data.SQLite;
 using System.Diagnostics;
 using System.Drawing;
-using System.IO;
+using JuniorProject.Backend.Helpers;
 
 namespace JuniorProject.Backend.WorldData
 {
     class Map
     {
-        const int MAP_PIXEL_WIDTH = 2000;
-        const int MAP_PIXEL_HEIGHT = 2000;
+        const int MAP_PIXEL_WIDTH = 1000;
+        const int MAP_PIXEL_HEIGHT = 1000;
         public Bitmap worldImage = new Bitmap(MAP_PIXEL_HEIGHT, MAP_PIXEL_WIDTH);
 
-        public class TerrainData
+
+        public float seaLevel = 0f;
+        public float treeLine = 0.8f;
+
+        public class BiomeData
         {
             public string name;
-            public Color tileColor;
+            public Color tileColorLow;
+            public Color tileColorHigh;
             public int movementCost;
             public float heightMin;
             public float heightMax;
-            public string landType;
         }
-        List<TerrainData> terrains = new List<TerrainData>(); //Loaded terrains from the DB
-        float oceanHeightMax = -1;
-        float highlandMin = 1;
+        List<BiomeData> biomeList = new List<BiomeData>(); //Loaded terrains from the DB
 
 
-        TerrainData[,] terrainMap;
+
+        BiomeData?[,] biomeMap;
         float[,] heightMap;
 
 
-        public class Tile : Serializable
+        public class Tile
         {
             public Dictionary<string, float> terrainPercentages = new Dictionary<string, float>();
             public int movementCost;
-
-            public override int fieldCount { get { return -1; } }
-
-            public override void SerializeFields()
-            {
-                SerializeField(movementCost);
-                SerializeDictionary(terrainPercentages);
-            }
-
-            public override void DeserializeFields()
-            {
-                movementCost = DeserializeField<int>();
-                terrainPercentages = DeserializeDictionary<string, float>();
-            }
+            public float elevationAvg;
         }
 
         const int TILE_SIZE = 50;
@@ -65,8 +55,9 @@ namespace JuniorProject.Backend.WorldData
             ClientCommunicator.RegisterData<int>("MAP_PIXEL_WIDTH", MAP_PIXEL_WIDTH);
             ClientCommunicator.RegisterData<int>("MAP_PIXEL_HEIGHT", MAP_PIXEL_HEIGHT);
             Debug.Print("Loading Terrain Data...");
+            Debug.Print("Loading Biome Data...");
             LoadTerrain();
-            terrainMap = new TerrainData[MAP_PIXEL_WIDTH, MAP_PIXEL_HEIGHT];
+            biomeMap = new BiomeData[MAP_PIXEL_WIDTH, MAP_PIXEL_HEIGHT];
             heightMap = new float[MAP_PIXEL_WIDTH, MAP_PIXEL_HEIGHT];
             mapWidth = MAP_PIXEL_WIDTH / TILE_SIZE;
             mapHeight = MAP_PIXEL_HEIGHT / TILE_SIZE;
@@ -81,30 +72,32 @@ namespace JuniorProject.Backend.WorldData
             {
                 for (int tileY = 0; tileY < mapHeight; tileY++)
                 {
-                    serializable.SaveObject(getTile(tileX, tileY));
+
                 }
             }
         }
 
         void LoadTerrain()
         {
-            SQLiteDataReader results = DatabaseManager.ReadDB("SELECT * FROM Terrain;");
+            SQLiteDataReader results = DatabaseManager.ReadDB("SELECT * FROM Biomes;");
             while (results.Read())
             {
-                TerrainData terrain = new TerrainData();
+                BiomeData terrain = new BiomeData();
                 terrain.name = results.GetString(0);
                 string unparsedRGB = results.GetString(1);
                 int r = int.Parse(unparsedRGB[..3]);
                 int g = int.Parse(unparsedRGB[4..7]);
                 int b = int.Parse(unparsedRGB[8..11]);
-                terrain.tileColor = Color.FromArgb(255, r, g, b);
-                terrain.movementCost = results.GetInt32(2);
-                terrain.heightMin = results.GetFloat(3);
-                terrain.heightMax = results.GetFloat(4);
-                terrain.landType = results.GetString(5);
-                if (terrain.landType == "Ocean" && terrain.heightMax > oceanHeightMax) oceanHeightMax = terrain.heightMax;
-                if (terrain.landType == "Mountain" && terrain.heightMin < highlandMin) highlandMin = terrain.heightMin;
-                terrains.Add(terrain);
+                terrain.tileColorLow = Color.FromArgb(255, r, g, b);
+                unparsedRGB = results.GetString(2);
+                r = int.Parse(unparsedRGB[..3]);
+                g = int.Parse(unparsedRGB[4..7]);
+                r = int.Parse(unparsedRGB[8..11]);
+                terrain.tileColorHigh = Color.FromArgb(255, r, g, b);
+                terrain.movementCost = results.GetInt32(3);
+                terrain.heightMin = results.GetFloat(4);
+                terrain.heightMax = results.GetFloat(5);
+                biomeList.Add(terrain);
             }
 
         }
@@ -121,42 +114,50 @@ namespace JuniorProject.Backend.WorldData
 
         public void GenerateHeightMap()
         {
-            Random random = new Random((int)DateTime.Now.Ticks);
+            int seed = (int)DateTime.Now.Ticks;
 
-            float[,] baseTerrain = Perlin.GeneratePerlinNoise(MAP_PIXEL_WIDTH, MAP_PIXEL_HEIGHT, 3, 1f, (uint)random.Next());
-            float[,] landBase = Perlin.GeneratePerlinNoise(MAP_PIXEL_WIDTH, MAP_PIXEL_HEIGHT, 8, 0.5f, (uint)random.Next());
-            float[,] mountainBase = Perlin.GeneratePerlinNoise(MAP_PIXEL_WIDTH, MAP_PIXEL_HEIGHT, 20, 3, (uint)random.Next());
+            heightMap = Perlin.GenerateNoise(new Vector2Int(MAP_PIXEL_WIDTH, MAP_PIXEL_HEIGHT), seed, 2, 0.002f, 8);
 
-            for (int x = 0; x < MAP_PIXEL_HEIGHT; x++)
+            Dictionary<BiomeData, float[,]> biomePainting = new Dictionary<BiomeData, float[,]>();
+
+            for (int i = 1; i < biomeList.Count; i++)
             {
-                for (int y = 0; y < MAP_PIXEL_WIDTH; y++)
-                {
-                    float terrainHeight = baseTerrain[x, y];
-                    if (terrainHeight > oceanHeightMax)
-                    {
-                        terrainHeight += MathF.Max(landBase[x, y], 0);
-                    }
-                    if (terrainHeight > highlandMin)
-                    {
-                        terrainHeight = MathF.Max(mountainBase[x, y], 0.45f);
-                    }
+                biomePainting.Add(biomeList[i], Perlin.GenerateNoise(new Vector2Int(MAP_PIXEL_WIDTH, MAP_PIXEL_HEIGHT), seed, 2, 0.009f, 8));
+            }
 
-                    heightMap[x, y] = terrainHeight;
-                    ApplyTerrain(x, y, terrainHeight);
+            for (int x = 0; x < MAP_PIXEL_WIDTH; x++)
+            {
+                for (int y = 0; y < MAP_PIXEL_HEIGHT; y++)
+                {
+                    if (heightMap[x, y] < seaLevel || heightMap[x, y] > treeLine) //Oceans and mountains have no biome.
+                    {
+                        biomeMap[x, y] = null;
+                        continue;
+                    }
+                    float elevation = (heightMap[x, y] + seaLevel) * (1 - seaLevel);
+                    biomeMap[x, y] = biomeList[0];
+                    foreach (KeyValuePair<BiomeData, float[,]> biomePaint in biomePainting)
+                    {
+                        if (biomePaint.Value[x, y] < 0) continue;
+                        if (elevation < biomePaint.Key.heightMin) continue;
+                        if (elevation > biomePaint.Key.heightMax) continue;
+                        biomeMap[x, y] = biomePaint.Key;
+                        break;
+                    }
                 }
             }
         }
 
         public void ApplyTerrain(int x, int y, float height)
         {
-            TerrainData selectedTerrain = terrains[0]; //This is probably not very good.
-            foreach (TerrainData d in terrains)
+            BiomeData selectedTerrain = biomeList[0]; //This is probably not very good.
+            foreach (BiomeData d in biomeList)
             {
                 if (height > d.heightMax || height < d.heightMin) continue;
                 selectedTerrain = d;
                 break;
             }
-            terrainMap[x, y] = selectedTerrain;
+            biomeMap[x, y] = selectedTerrain;
         }
 
         public void GenerateImage()
@@ -165,16 +166,29 @@ namespace JuniorProject.Backend.WorldData
             {
                 for (int y = 0; y < MAP_PIXEL_HEIGHT; y++)
                 {
-                    float adjustedHeight = heightMap[x, y];
-                    adjustedHeight = (adjustedHeight / 2) + 0.5f; //set the value between 0 and 1
+                    int r = 0, g = 0, b = 0;
+                    if (biomeMap[x, y] != null)
+                    {
+                        float elevation = (heightMap[x, y] + seaLevel) * (1 - seaLevel);
+                        r = (int)MathH.Lerp(biomeMap[x, y].tileColorLow.R, biomeMap[x, y].tileColorHigh.R, elevation);
+                        g = (int)MathH.Lerp(biomeMap[x, y].tileColorLow.G, biomeMap[x, y].tileColorHigh.G, elevation);
+                        b = (int)MathH.Lerp(biomeMap[x, y].tileColorLow.B, biomeMap[x, y].tileColorHigh.B, elevation);
+                    }
+                    if (heightMap[x, y] < seaLevel)
+                    {
+                        b = (int)(255 * ((heightMap[x, y] * 0.5) + 0.5));
+                    }
+                    if (heightMap[x, y] > treeLine)
+                    {
+                        r = (int)(175 * ((heightMap[x, y] * 0.5) + 0.5));
+                        g = (int)(175 * ((heightMap[x, y] * 0.5) + 0.5));
+                        b = (int)(175 * ((heightMap[x, y] * 0.5) + 0.5));
+                    }
+                    r = int.Clamp(r, 0, 255);
+                    g = int.Clamp(g, 0, 255);
+                    b = int.Clamp(b, 0, 255);
 
-                    Color terrainColor = terrainMap[x, y].tileColor;
-                    Color pixelColor = Color.FromArgb(
-                        (int)(terrainMap[x, y].tileColor.R * adjustedHeight),
-                        (int)(terrainMap[x, y].tileColor.G * adjustedHeight),
-                        (int)(terrainMap[x, y].tileColor.B * adjustedHeight));
-
-                    worldImage.SetPixel(x, y, pixelColor);
+                    worldImage.SetPixel(x, y, Color.FromArgb(r, g, b));
                 }
             }
         }
@@ -202,8 +216,9 @@ namespace JuniorProject.Backend.WorldData
                             int pixelPosY = (tileY * TILE_SIZE) + y;
                             if (pixelPosX > MAP_PIXEL_WIDTH) continue;
                             if (pixelPosY > MAP_PIXEL_HEIGHT) continue;
+                            if (biomeMap[pixelPosX, pixelPosY] == null) continue;
 
-                            string landType = terrainMap[pixelPosX, pixelPosY].name;
+                            string landType = biomeMap[pixelPosX, pixelPosY].name;
                             if (landTypes.ContainsKey(landType))
                             {
                                 landTypes[landType]++;
@@ -212,7 +227,7 @@ namespace JuniorProject.Backend.WorldData
                             {
                                 landTypes.Add(landType, 1);
                             }
-                            movementCostTotal += terrainMap[x, y].movementCost;
+                            movementCostTotal += biomeMap[pixelPosX, pixelPosY].movementCost;
                         }
                     }
 
