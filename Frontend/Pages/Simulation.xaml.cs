@@ -61,9 +61,7 @@ namespace JuniorProject
         private WriteableBitmap ReloadImage()
         {
             drawer = ClientCommunicator.GetData<Drawer>("Drawer");
-            ClientCommunicator.CallActionWaitFor("RegenerateWorld"); //First, tell the map to regenerate the world.
-            Drawing.Bitmap worldBitmap;
-            worldBitmap = ClientCommunicator.GetData<Drawing.Bitmap>("WorldImage"); //Get the data from the backend
+            Drawing.Bitmap worldBitmap = ClientCommunicator.GetData<Drawing.Bitmap>("WorldImage"); //Get the data from the backend
             WriteableBitmap writeableBitmap = new WriteableBitmap(worldBitmap.Width, worldBitmap.Height, 96, 96, PixelFormats.Bgra32, null); //Create the writeableBitmap
 
             drawer.Draw(worldBitmap, ref writeableBitmap);
