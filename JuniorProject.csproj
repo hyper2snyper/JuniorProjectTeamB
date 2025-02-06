@@ -11,6 +11,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Frontend\Images\gui\CatalogButton.png" />
+    <None Remove="Frontend\Images\gui\SettingsButton.png" />
+    <None Remove="Frontend\Images\gui\StartSimulationButton.png" />
     <None Remove="LocalData\Map.png" />
   </ItemGroup>
 
@@ -27,6 +30,12 @@
   <ItemGroup>
     <PackageReference Include="System.Data.SQLite" Version="1.0.119" />
     <PackageReference Include="System.Drawing.Common" Version="9.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Frontend\Images\gui\CatalogButton.png" />
+    <Resource Include="Frontend\Images\gui\SettingsButton.png" />
+    <Resource Include="Frontend\Images\gui\StartSimulationButton.png" />
   </ItemGroup>
 
   <ItemGroup>
