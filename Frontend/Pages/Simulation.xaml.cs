@@ -2,6 +2,7 @@ using System.Data.Common;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using Controls = System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -12,6 +13,7 @@ using System.IO;
 using JuniorProject.Backend;
 using Drawing = System.Drawing;
 using JuniorProject.Frontend.Components;
+using System.Drawing;
 
 namespace JuniorProject
 {
@@ -20,21 +22,29 @@ namespace JuniorProject
     /// </summary>
     public partial class Simulation : Page
     {
-        Image mapImage;
+        Controls.Image mapImage;
+        Canvas mapCanvas;
         Drawer drawer;
+        int imageCounter = 0;
 
         private string relativePath = "LocalData\\Map.png";
         public Simulation()
         {
             InitializeComponent();
-            mapImage = this.Map;
-            mapImage.Source = ReloadImage();
+            mapCanvas = this.Canvas;
+            drawer = new Drawer(ref mapCanvas);
         }
 
         private void RefreshClicked(object sender, RoutedEventArgs e)
         {
 			ClientCommunicator.CallActionWaitFor("RegenerateWorld"); //First, tell the map to regenerate the world.
-			mapImage.Source = ReloadImage();
+            drawer.Initialize();
+            drawer.Draw();
+        }
+
+        public void SetGridlines(object sender, RoutedEventArgs e)
+        { 
+            drawer.SetGridlines();
         }
 
         private void StartClicked(object sender, RoutedEventArgs e)
@@ -55,18 +65,6 @@ namespace JuniorProject
             {
                 ClientCommunicator.CallAction("SaveWorld");
             });
-        }
-
-
-        private WriteableBitmap ReloadImage()
-        {
-            drawer = ClientCommunicator.GetData<Drawer>("Drawer");
-            Drawing.Bitmap worldBitmap = ClientCommunicator.GetData<Drawing.Bitmap>("WorldImage"); //Get the data from the backend
-            WriteableBitmap writeableBitmap = new WriteableBitmap(worldBitmap.Width, worldBitmap.Height, 96, 96, PixelFormats.Bgra32, null); //Create the writeableBitmap
-
-            drawer.Draw(worldBitmap, ref writeableBitmap);
-
-            return writeableBitmap;
         }
 
         public void BackToMainMenu(object sender, RoutedEventArgs e)
