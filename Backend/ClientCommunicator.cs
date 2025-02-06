@@ -29,16 +29,18 @@ namespace JuniorProject.Backend
             public string name;
             public unsafe bool* done; //This will be done unless there is another thread CallActionWaitFor in a while loop waiting for this action to be completed.
             public object? arg = null;
+            public Delegate? @delegate;
 
             public CallingBundle(string name)
             {
                 this.name = name;
                 unsafe { done = null; }
             }
-            public CallingBundle(string name, object arg)
+            public CallingBundle(string name, object arg, Delegate? postCall = null)
             {
                 this = new CallingBundle(name);
                 this.arg = arg;
+                this.@delegate = postCall;
             }
 
         }
@@ -137,10 +139,10 @@ namespace JuniorProject.Backend
             _CallAction(calling);
         }
 
-        public static void CallAction<T>(string name, T arg)
+        public static void CallAction<T>(string name, T arg, Delegate? postCall = null)
         {
             if (!CanCallAction<T>(name)) return;
-            CallingBundle calling = new CallingBundle(name, arg);
+            CallingBundle calling = new CallingBundle(name, arg, postCall);
             _CallAction(calling);
         }
 
@@ -218,9 +220,9 @@ namespace JuniorProject.Backend
             }
         }
 
-        public static void UpdateData<T>(string name, object newData)
+        public static void UpdateData<T>(string name, object newData, bool suppressError = false)
         {
-            if (!communicator.storedData.ContainsKey(name))
+            if (!communicator.storedData.ContainsKey(name) && !suppressError)
             {
                 Debug.Print($"Variable {name} was attempted to be updated, but was not registered.");
                 return;
@@ -256,6 +258,10 @@ namespace JuniorProject.Backend
                         {
                             *c.done = true;
                         }
+                    }
+                    if(c.@delegate != null)
+                    {
+                        c.@delegate.DynamicInvoke();
                     }
                 }
             }

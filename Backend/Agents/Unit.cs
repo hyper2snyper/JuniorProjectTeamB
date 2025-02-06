@@ -2,12 +2,13 @@
 
 
 using System.IO;
+using JuniorProject.Backend.WorldData;
 
-namespace JuniorProject.Backend.WorldData
+namespace JuniorProject.Backend.Agents
 {
     class Unit : Serializable
     {
-        struct UnitTemplate //The template of the unit, the type if you will.
+        class UnitTemplate //The template of the unit, the type if you will.
         {
             public string name;
             public string description;
@@ -17,6 +18,7 @@ namespace JuniorProject.Backend.WorldData
         UnitTemplate unitType;
         public int health;
 
+        IObjective? objective;
 
         Map.Tile pos;
 
@@ -29,6 +31,23 @@ namespace JuniorProject.Backend.WorldData
         {
 
         }
+
+
+        public void SetObjective(IObjective objective)
+        {
+            this.objective = objective;
+        }
+
+        public void TakeTurn()
+        {
+
+        }
+
+        public void TakeDamage(int damage)
+        {
+
+        }
+
 
         public override void SerializeFields()
         {

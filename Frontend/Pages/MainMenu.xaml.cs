@@ -24,7 +24,7 @@ namespace JuniorProject
 
         private void StartSimulation(object sender, RoutedEventArgs e)
         {
-            NavigationService.Navigate(new Simulation());
+            NavigationService.Navigate(new Frontend.Pages.Loading());
         }
 
         private void Catalog(object sender, RoutedEventArgs e)
