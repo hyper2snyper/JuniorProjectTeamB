@@ -1,3 +1,4 @@
+using JuniorProject.Frontend.Components;
 using System.Data.SQLite;
 using System.Diagnostics;
 using System.Drawing;
@@ -39,8 +40,7 @@ namespace JuniorProject.Backend.WorldData
             public float elevationAvg;
         }
 
-
-        const int TILE_SIZE = 20;
+        const int TILE_SIZE = 50;
         int mapHeight, mapWidth;
         Tile[,] tiles;
         public Tile getTile(int x, int y)
@@ -50,6 +50,11 @@ namespace JuniorProject.Backend.WorldData
 
         public Map()
         {
+            Debug.Print("Registering TILE_SIZE, MAP_PIXEL_WIDTH, MAP_PIXEL_HEIGHT into Client Communicator...");
+            ClientCommunicator.RegisterData<int>("TILE_SIZE", TILE_SIZE);
+            ClientCommunicator.RegisterData<int>("MAP_PIXEL_WIDTH", MAP_PIXEL_WIDTH);
+            ClientCommunicator.RegisterData<int>("MAP_PIXEL_HEIGHT", MAP_PIXEL_HEIGHT);
+            Debug.Print("Loading Terrain Data...");
             Debug.Print("Loading Biome Data...");
             LoadTerrain();
             biomeMap = new BiomeData[MAP_PIXEL_WIDTH, MAP_PIXEL_HEIGHT];
