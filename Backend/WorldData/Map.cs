@@ -1,3 +1,4 @@
+using JuniorProject.Frontend.Components;
 using System.Data.SQLite;
 using System.Diagnostics;
 using System.Drawing;
@@ -33,19 +34,19 @@ namespace JuniorProject.Backend.WorldData
         BiomeData defaultBiome;
 
 
+
         BiomeData?[,] biomeMap;
         float[,] heightMap;
 
 
-        public class Tile 
+        public class Tile
         {
             public Dictionary<string, float> terrainPercentages = new Dictionary<string, float>();
             public int movementCost;
             public float elevationAvg;
-		}
+        }
 
-
-        const int TILE_SIZE = 20;
+        const int TILE_SIZE = 50;
         int mapHeight, mapWidth;
         Tile[,] tiles;
         public Tile getTile(int x, int y)
@@ -55,6 +56,11 @@ namespace JuniorProject.Backend.WorldData
 
         public Map()
         {
+            Debug.Print("Registering TILE_SIZE, MAP_PIXEL_WIDTH, MAP_PIXEL_HEIGHT into Client Communicator...");
+            ClientCommunicator.RegisterData<int>("TILE_SIZE", TILE_SIZE);
+            ClientCommunicator.RegisterData<int>("MAP_PIXEL_WIDTH", MAP_PIXEL_WIDTH);
+            ClientCommunicator.RegisterData<int>("MAP_PIXEL_HEIGHT", MAP_PIXEL_HEIGHT);
+            Debug.Print("Loading Terrain Data...");
             Debug.Print("Loading Biome Data...");
             LoadTerrain();
             biomeMap = new BiomeData[MAP_PIXEL_WIDTH, MAP_PIXEL_HEIGHT];
@@ -71,7 +77,7 @@ namespace JuniorProject.Backend.WorldData
             {
                 for (int tileY = 0; tileY < mapHeight; tileY++)
                 {
-                    
+
                 }
             }
         }
@@ -89,12 +95,12 @@ namespace JuniorProject.Backend.WorldData
                 int g = int.Parse(unparsedRGB[4..7]);
                 int b = int.Parse(unparsedRGB[8..11]);
                 terrain.tileColorLow = Color.FromArgb(255, r, g, b);
-				unparsedRGB = results.GetString(2);
-				r = int.Parse(unparsedRGB[..3]);
-				g = int.Parse(unparsedRGB[4..7]);
-				r = int.Parse(unparsedRGB[8..11]);
-				terrain.tileColorHigh = Color.FromArgb(255, r, g, b);
-				terrain.movementCost = results.GetInt32(3);
+                unparsedRGB = results.GetString(2);
+                r = int.Parse(unparsedRGB[..3]);
+                g = int.Parse(unparsedRGB[4..7]);
+                r = int.Parse(unparsedRGB[8..11]);
+                terrain.tileColorHigh = Color.FromArgb(255, r, g, b);
+                terrain.movementCost = results.GetInt32(3);
                 terrain.heightMin = results.GetFloat(4);
                 terrain.heightMax = results.GetFloat(5);
                 terrain.amp = results.GetFloat(6);
@@ -131,8 +137,8 @@ namespace JuniorProject.Backend.WorldData
         {
             int seed = (int)DateTime.Now.Ticks;
 
-			heightMap = Perlin.GenerateNoise(new Vector2Int(MAP_PIXEL_WIDTH, MAP_PIXEL_HEIGHT), seed, 2, 0.002f, 8);
-			
+            heightMap = Perlin.GenerateNoise(new Vector2Int(MAP_PIXEL_WIDTH, MAP_PIXEL_HEIGHT), seed, 2, 0.002f, 8);
+
             Dictionary<BiomeData, float[,]> biomePainting = new Dictionary<BiomeData, float[,]>();
 
             foreach(BiomeData biome in biomeList.Values)
@@ -146,13 +152,13 @@ namespace JuniorProject.Backend.WorldData
                         biome.octaves));
 			}
 
-			for (int x = 0; x < MAP_PIXEL_WIDTH; x++)
+            for (int x = 0; x < MAP_PIXEL_WIDTH; x++)
             {
-                for(int y = 0;  y < MAP_PIXEL_HEIGHT; y++)
+                for (int y = 0; y < MAP_PIXEL_HEIGHT; y++)
                 {
                     if (heightMap[x, y] < seaLevel || heightMap[x, y] > treeLine) //Oceans and mountains have no biome.
                     {
-                        biomeMap[x,y] = null;
+                        biomeMap[x, y] = null;
                         continue;
                     }
 					float elevation = (heightMap[x, y] + seaLevel) * (1 - seaLevel);
@@ -172,7 +178,7 @@ namespace JuniorProject.Backend.WorldData
                     }
                 }
             }
-		}
+        }
 
         public void GenerateImage()
         {
@@ -181,18 +187,18 @@ namespace JuniorProject.Backend.WorldData
                 for (int y = 0; y < MAP_PIXEL_HEIGHT; y++)
                 {
                     int r = 0, g = 0, b = 0;
-					if (biomeMap[x,y] != null)
+                    if (biomeMap[x, y] != null)
                     {
-						float elevation = (heightMap[x, y] + seaLevel) * (1 - seaLevel);
-						r = (int)MathH.Lerp(biomeMap[x,y].tileColorLow.R, biomeMap[x,y].tileColorHigh.R, elevation);
-						g = (int)MathH.Lerp(biomeMap[x, y].tileColorLow.G, biomeMap[x, y].tileColorHigh.G, elevation);
-						b = (int)MathH.Lerp(biomeMap[x, y].tileColorLow.B, biomeMap[x, y].tileColorHigh.B, elevation);
-					}
-                    if (heightMap[x,y] < seaLevel)
-                    {
-                        b = (int)(255 * ((heightMap[x, y]*0.5)+0.5));
+                        float elevation = (heightMap[x, y] + seaLevel) * (1 - seaLevel);
+                        r = (int)MathH.Lerp(biomeMap[x, y].tileColorLow.R, biomeMap[x, y].tileColorHigh.R, elevation);
+                        g = (int)MathH.Lerp(biomeMap[x, y].tileColorLow.G, biomeMap[x, y].tileColorHigh.G, elevation);
+                        b = (int)MathH.Lerp(biomeMap[x, y].tileColorLow.B, biomeMap[x, y].tileColorHigh.B, elevation);
                     }
-                    if (heightMap[x,y] > treeLine)
+                    if (heightMap[x, y] < seaLevel)
+                    {
+                        b = (int)(255 * ((heightMap[x, y] * 0.5) + 0.5));
+                    }
+                    if (heightMap[x, y] > treeLine)
                     {
                         float scale = ((heightMap[x, y] * 0.5f) + 0.5f);
                         
@@ -204,8 +210,8 @@ namespace JuniorProject.Backend.WorldData
                     g = int.Clamp(g, 0, 255);
                     b = int.Clamp(b, 0, 255);
 
-                    worldImage.SetPixel(x, y, Color.FromArgb(r,g,b));
-				}
+                    worldImage.SetPixel(x, y, Color.FromArgb(r, g, b));
+                }
             }
         }
 
@@ -232,9 +238,9 @@ namespace JuniorProject.Backend.WorldData
                             int pixelPosY = (tileY * TILE_SIZE) + y;
                             if (pixelPosX > MAP_PIXEL_WIDTH) continue;
                             if (pixelPosY > MAP_PIXEL_HEIGHT) continue;
-							if (biomeMap[pixelPosX, pixelPosY] == null) continue;
+                            if (biomeMap[pixelPosX, pixelPosY] == null) continue;
 
-							string landType = biomeMap[pixelPosX, pixelPosY].name;
+                            string landType = biomeMap[pixelPosX, pixelPosY].name;
                             if (landTypes.ContainsKey(landType))
                             {
                                 landTypes[landType]++;

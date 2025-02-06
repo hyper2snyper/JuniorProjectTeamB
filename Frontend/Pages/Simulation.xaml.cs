@@ -1,4 +1,4 @@
-﻿using System.Data.Common;
+using System.Data.Common;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -11,6 +11,7 @@ using System.Windows.Navigation;
 using System.IO;
 using JuniorProject.Backend;
 using Drawing = System.Drawing;
+using JuniorProject.Frontend.Components;
 
 namespace JuniorProject
 {
@@ -20,6 +21,7 @@ namespace JuniorProject
     public partial class Simulation : Page
     {
         Image mapImage;
+        Drawer drawer;
 
         private string relativePath = "LocalData\\Map.png";
         public Simulation()
@@ -58,22 +60,14 @@ namespace JuniorProject
 
         private WriteableBitmap ReloadImage()
         {
-            Drawing.Bitmap worldBitmap = ClientCommunicator.GetData<Drawing.Bitmap>("WorldImage"); //Get the data from the backend
+            drawer = ClientCommunicator.GetData<Drawer>("Drawer");
+            ClientCommunicator.CallActionWaitFor("RegenerateWorld"); //First, tell the map to regenerate the world.
+            Drawing.Bitmap worldBitmap;
+            worldBitmap = ClientCommunicator.GetData<Drawing.Bitmap>("WorldImage"); //Get the data from the backend
             WriteableBitmap writeableBitmap = new WriteableBitmap(worldBitmap.Width, worldBitmap.Height, 96, 96, PixelFormats.Bgra32, null); //Create the writeableBitmap
-            byte[] pixels = new byte[4 * (worldBitmap.Width * worldBitmap.Height)]; //pixel color buffer. each color is four bytes.
-            for (int y = 0; y < worldBitmap.Width; y++)
-            {
-                for (int x = 0; x < worldBitmap.Height; x++)
-                {
-                    Drawing.Color c = worldBitmap.GetPixel(x, y);
-                    int pos = ((y * worldBitmap.Width) + x) * 4;
-                    pixels[pos] = c.B;
-                    pixels[pos + 1] = c.G;
-                    pixels[pos + 2] = c.R;
-                    pixels[pos + 3] = c.A;
-                }
-            }
-            writeableBitmap.WritePixels(new Int32Rect(0, 0, worldBitmap.Width, worldBitmap.Height), pixels, (worldBitmap.Width * 4), 0); //Update the bitmap
+
+            drawer.Draw(worldBitmap, ref writeableBitmap);
+
             return writeableBitmap;
         }
 
