@@ -1,4 +1,4 @@
-﻿using JuniorProject.Backend;
+using JuniorProject.Backend;
 using System;
 using System.Collections.Generic;
 using System.Linq;

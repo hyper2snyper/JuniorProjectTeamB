@@ -1,4 +1,4 @@
-﻿using JuniorProject.Backend.Helpers;
+using JuniorProject.Backend.Helpers;
 using JuniorProject.Backend.WorldData;
 
 
