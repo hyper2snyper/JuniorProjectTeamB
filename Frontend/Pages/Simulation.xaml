@@ -17,6 +17,15 @@
                 <Button Content="Back" Height="32" Width="45" Margin="10, 0" Click="BackToMainMenu"/>
             </StackPanel>
         </Border>
-        <Canvas x:Name="Canvas" HorizontalAlignment="Left" Height="448" VerticalAlignment="Top" Width="855" Margin="10,60,10,10"/>
+        <ScrollViewer Margin="10,60,10,10" Name="ScrollViewer" VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Hidden">
+            <Canvas x:Name="Canvas" HorizontalAlignment="Left" Height="448" VerticalAlignment="Top" Width="855">
+                <Canvas.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform x:Name="CanvasScaleTransform"/>
+                        <TranslateTransform x:Name="CanvasTranslateTransform"/>
+                    </TransformGroup>
+                </Canvas.RenderTransform>
+            </Canvas>
+        </ScrollViewer>
     </Grid>
 </Page>
