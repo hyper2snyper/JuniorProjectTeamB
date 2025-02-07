@@ -28,7 +28,6 @@ namespace JuniorProject.Frontend.Pages
 		{
 			InitializeComponent();
 			Debug.Print("Entering Loading Screen.");
-			ClientCommunicator.CallAction<IState>("SetState", new Backend.States.Loading());
 			CompositionTarget.Rendering += Loop;
 		}
 

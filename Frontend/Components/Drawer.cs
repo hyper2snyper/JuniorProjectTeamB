@@ -4,20 +4,19 @@ using Drawing = System.Drawing;
 using JuniorProject.Backend;
 using System.Windows;
 using System.Drawing.Drawing2D;
+using JuniorProject.Backend.Helpers;
 
 namespace JuniorProject.Frontend.Components
 {
     public class Drawer
     {
-        int TILE_SIZE;
-        int MAP_PIXEL_WIDTH;
-        int MAP_PIXEL_HEIGHT;
+        int tileSize;
+        Vector2Int mapPixelSize;
         public Drawer()
         {
-            TILE_SIZE = ClientCommunicator.GetData<int>("TILE_SIZE");
-            MAP_PIXEL_WIDTH = ClientCommunicator.GetData<int>("MAP_PIXEL_WIDTH");
-            MAP_PIXEL_HEIGHT = ClientCommunicator.GetData<int>("MAP_PIXEL_HEIGHT");
-            Debug.Print(String.Format("Printing TILE_SIZE: {0:N}", TILE_SIZE));
+            tileSize = ClientCommunicator.GetData<int>("tileSize");
+            mapPixelSize = ClientCommunicator.GetData<Vector2Int>("mapPixelSize");
+            Debug.Print(String.Format("Printing tileSize: {0:N}", tileSize));
         }
 
         public void Draw(Bitmap worldBitmap, ref WriteableBitmap map)
@@ -47,9 +46,9 @@ namespace JuniorProject.Frontend.Components
         }
         public void Layer(Bitmap worldBitmap, Bitmap layerMap)
         {
-            for (int y = 0; y < MAP_PIXEL_HEIGHT; y++)
+            for (int y = 0; y < mapPixelSize.Y; y++)
             {
-                for (int x = 0; x < MAP_PIXEL_WIDTH; x++)
+                for (int x = 0; x < mapPixelSize.X; x++)
                 {
                     if (layerMap.GetPixel(x, y).A > 0)
                     {
@@ -65,7 +64,7 @@ namespace JuniorProject.Frontend.Components
 
         public Bitmap GetGridlines()
         {
-            Bitmap gridBitmap = new Bitmap(MAP_PIXEL_WIDTH, MAP_PIXEL_HEIGHT);
+            Bitmap gridBitmap = new Bitmap(mapPixelSize.X, mapPixelSize.Y);
 
             using (Graphics g = Graphics.FromImage(gridBitmap))
             {
@@ -75,14 +74,14 @@ namespace JuniorProject.Frontend.Components
                 using (Pen gridPen = new Pen(Color.Black, 5))
                 {
                     gridPen.Alignment = PenAlignment.Inset;
-                    for (int y = TILE_SIZE; y < gridBitmap.Width; y += TILE_SIZE)
+                    for (int y = tileSize; y < gridBitmap.Width; y += tileSize)
                     {
-                        g.DrawLine(gridPen, 0, y, MAP_PIXEL_WIDTH, y);
+                        g.DrawLine(gridPen, 0, y, mapPixelSize.X, y);
                     }
 
-                    for (int x = TILE_SIZE; x < gridBitmap.Height; x += TILE_SIZE)
+                    for (int x = tileSize; x < gridBitmap.Height; x += tileSize)
                     {
-                        g.DrawLine(gridPen, x, 0, x, MAP_PIXEL_HEIGHT);
+                        g.DrawLine(gridPen, x, 0, x, mapPixelSize.Y);
                     }
                 }
             }
