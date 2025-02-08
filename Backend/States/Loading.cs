@@ -29,11 +29,11 @@ namespace JuniorProject.Backend.States
 
         public IState Loop() 
         {
-            if (loadingDone) 
+            if (loadingDone)
                 return simulation;
             return this;
         }
-        public void EnterState() 
+        public void EnterState()
         {
             ClientCommunicator.RegisterData<bool>("LoadingDone", false);
             ClientCommunicator.RegisterData<string>("LoadingMessage", "Loading");
@@ -44,7 +44,7 @@ namespace JuniorProject.Backend.States
 				ClientCommunicator.UpdateData<bool>("LoadingDone", loadingDone);
 			});
         }
-        public void ExitState() 
+        public void ExitState()
         {
         }
     }

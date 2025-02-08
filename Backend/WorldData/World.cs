@@ -1,8 +1,7 @@
-
-using JuniorProject.Frontend.Components;
 using System.Drawing;
 using JuniorProject.Backend.Agents;
 using JuniorProject.Backend.Helpers;
+using JuniorProject.Frontend.Components;
 
 namespace JuniorProject.Backend.WorldData
 {
@@ -19,7 +18,6 @@ namespace JuniorProject.Backend.WorldData
         public void GenerateWorld(int tileSize, Vector2Int mapPixelSize, string seed, float amp, float freq, int octaves, float seaLevel, float treeLine)
         {
             map = new TileMap(tileSize, mapPixelSize, seed, amp, freq, octaves, seaLevel, treeLine);
-			ClientCommunicator.RegisterData<Drawer>("Drawer", new Drawer());
 		}
 
         public void FreeWorld()

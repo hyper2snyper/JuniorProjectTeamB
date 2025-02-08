@@ -6,32 +6,32 @@ using System.Threading.Tasks;
 
 namespace JuniorProject.Backend.Agents
 {
-	class Building : Serializable
-	{
+    class Building : Serializable
+    {
 
-		class BuildingTemplate()
-		{
-			int maxHealth;
+        class BuildingTemplate()
+        {
+            int maxHealth;
 
-		}
+        }
 
 		Nation owner;
 		int health;
 
 
 
-		public override void DeserializeFields()
-		{
-			throw new NotImplementedException();
-		}
+        public override void DeserializeFields()
+        {
+            throw new NotImplementedException();
+        }
 
-		public override void SerializeFields()
-		{
-			throw new NotImplementedException();
-		}
-
-
+        public override void SerializeFields()
+        {
+            throw new NotImplementedException();
+        }
 
 
-	}
+
+
+    }
 }
