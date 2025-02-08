@@ -1,5 +1,3 @@
-
-using JuniorProject.Frontend.Components;
 using System.Drawing;
 using JuniorProject.Backend.Agents;
 
@@ -17,9 +15,8 @@ namespace JuniorProject.Backend.WorldData
             ClientCommunicator.RegisterAction("SaveWorld", SaveWorld);
             ClientCommunicator.RegisterData<Bitmap>("WorldImage", map.worldImage);
             ClientCommunicator.RegisterData<World>("World", map);
-            ClientCommunicator.RegisterData<Drawer>("Drawer", new Drawer());
         }
-        
+
         public void GenerateWorld()
         {
             map.GenerateWorld();

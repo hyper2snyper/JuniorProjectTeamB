@@ -259,7 +259,7 @@ namespace JuniorProject.Backend
                             *c.done = true;
                         }
                     }
-                    if(c.@delegate != null)
+                    if (c.@delegate != null)
                     {
                         c.@delegate.DynamicInvoke();
                     }
