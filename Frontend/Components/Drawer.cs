@@ -41,7 +41,7 @@ namespace JuniorProject.Frontend.Components
         }
 
         public void ClearCanvas()
-        { 
+        {
             Canvas.Children.Clear();
         }
 
@@ -49,7 +49,8 @@ namespace JuniorProject.Frontend.Components
         {
             foreach (Drawable d in drawables.Values)
             {
-                if (d != null && d.shouldDraw) {
+                if (d != null && d.shouldDraw)
+                {
                     Canvas.Children.Add(d.image);
                 }
             }
@@ -73,14 +74,14 @@ namespace JuniorProject.Frontend.Components
         }
 
         public void AddImageToCanvas()
-        { 
-            
+        {
+
         }
 
         public void Draw()
         {
             ClearCanvas();
-            if (drawables.Count == 0) 
+            if (drawables.Count == 0)
             {
                 AddBitmapToCanvas("MainMap", worldBitmap);
                 AddBitmapToCanvas("Grid", GetGridlines());

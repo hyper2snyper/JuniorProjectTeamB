@@ -54,13 +54,13 @@ namespace JuniorProject
 
         private void RefreshClicked(object sender, RoutedEventArgs e)
         {
-			ClientCommunicator.CallActionWaitFor("RegenerateWorld"); //First, tell the map to regenerate the world.
+            ClientCommunicator.CallActionWaitFor("RegenerateWorld"); //First, tell the map to regenerate the world.
             drawer.Initialize();
             drawer.Draw();
         }
 
         public void SetGridlines(object sender, RoutedEventArgs e)
-        { 
+        {
             drawer.SetGridlines();
         }
 

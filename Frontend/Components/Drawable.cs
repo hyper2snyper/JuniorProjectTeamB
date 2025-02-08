@@ -12,7 +12,8 @@ namespace JuniorProject.Frontend.Components
         public Image image;
         public Boolean shouldDraw;
         public int x, y;
-        public Drawable(Image image, Boolean shouldDraw) {
+        public Drawable(Image image, Boolean shouldDraw)
+        {
             this.image = image;
             this.shouldDraw = shouldDraw;
         }

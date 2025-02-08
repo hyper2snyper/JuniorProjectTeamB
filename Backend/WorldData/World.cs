@@ -16,7 +16,7 @@ namespace JuniorProject.Backend.WorldData
             ClientCommunicator.RegisterData<Bitmap>("WorldImage", map.worldImage);
             ClientCommunicator.RegisterData<World>("World", map);
         }
-        
+
         public void GenerateWorld()
         {
             map.GenerateWorld();

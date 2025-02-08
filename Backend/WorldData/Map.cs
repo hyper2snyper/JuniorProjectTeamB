@@ -107,14 +107,14 @@ namespace JuniorProject.Backend.WorldData
                 terrain.freq = results.GetFloat(7);
                 terrain.octaves = results.GetInt32(8);
                 terrain.ignoreNoise = results.GetBoolean(9);
-                if(!results.IsDBNull(10))
+                if (!results.IsDBNull(10))
                 {
-					biomeLinking.Add(terrain, results.GetString(10));
-				}
+                    biomeLinking.Add(terrain, results.GetString(10));
+                }
                 biomeList.Add(terrain.name, terrain);
                 defaultBiome ??= terrain;
             }
-            foreach(KeyValuePair<BiomeData, string> biomeLinkPair in biomeLinking)
+            foreach (KeyValuePair<BiomeData, string> biomeLinkPair in biomeLinking)
             {
                 biomeLinkPair.Key.requiredBiome = biomeList[biomeLinkPair.Value];
             }
@@ -123,14 +123,14 @@ namespace JuniorProject.Backend.WorldData
         public void GenerateWorld()
         {
             Debug.Print("Generating Heightmap...");
-			ClientCommunicator.UpdateData<string>("LoadingMessage", "Generating Heightmap...", true);
-			GenerateHeightMap();
+            ClientCommunicator.UpdateData<string>("LoadingMessage", "Generating Heightmap...", true);
+            GenerateHeightMap();
             Debug.Print("Generating Image...");
-			ClientCommunicator.UpdateData<string>("LoadingMessage", "Generating Image...", true);
-			GenerateImage();
+            ClientCommunicator.UpdateData<string>("LoadingMessage", "Generating Image...", true);
+            GenerateImage();
             Debug.Print("Generating Tiles...");
-			ClientCommunicator.UpdateData<string>("LoadingMessage", "Generating Tiles...", true);
-			GenerateTiles();
+            ClientCommunicator.UpdateData<string>("LoadingMessage", "Generating Tiles...", true);
+            GenerateTiles();
         }
 
         public void GenerateHeightMap()
@@ -141,16 +141,16 @@ namespace JuniorProject.Backend.WorldData
 
             Dictionary<BiomeData, float[,]> biomePainting = new Dictionary<BiomeData, float[,]>();
 
-            foreach(BiomeData biome in biomeList.Values)
+            foreach (BiomeData biome in biomeList.Values)
             {
-                biomePainting.Add(biome, 
+                biomePainting.Add(biome,
                     Perlin.GenerateNoise(
-                        new Vector2Int(MAP_PIXEL_WIDTH, MAP_PIXEL_HEIGHT), 
-                        seed, 
-                        biome.amp, 
+                        new Vector2Int(MAP_PIXEL_WIDTH, MAP_PIXEL_HEIGHT),
+                        seed,
+                        biome.amp,
                         biome.freq,
                         biome.octaves));
-			}
+            }
 
             for (int x = 0; x < MAP_PIXEL_WIDTH; x++)
             {
@@ -161,12 +161,12 @@ namespace JuniorProject.Backend.WorldData
                         biomeMap[x, y] = null;
                         continue;
                     }
-					float elevation = (heightMap[x, y] + seaLevel) * (1 - seaLevel);
-                    biomeMap[x, y] = defaultBiome;                    
-					foreach (KeyValuePair<BiomeData, float[,]> biomePaint in biomePainting)
+                    float elevation = (heightMap[x, y] + seaLevel) * (1 - seaLevel);
+                    biomeMap[x, y] = defaultBiome;
+                    foreach (KeyValuePair<BiomeData, float[,]> biomePaint in biomePainting)
                     {
                         if (biomePaint.Value[x, y] < 0 && !biomePaint.Key.ignoreNoise) continue;
-                        if(biomePaint.Key.requiredBiome != null)
+                        if (biomePaint.Key.requiredBiome != null)
                         {
                             if (biomeMap[x, y].name != biomePaint.Key.requiredBiome.name) continue;
                             biomeMap[x, y] = biomePaint.Key;
@@ -201,11 +201,11 @@ namespace JuniorProject.Backend.WorldData
                     if (heightMap[x, y] > treeLine)
                     {
                         float scale = ((heightMap[x, y] * 0.5f) + 0.5f);
-                        
-                        r = (int)(200*scale);
-						g = (int)(200*scale);
-						b = (int)(200*scale);
-					}
+
+                        r = (int)(200 * scale);
+                        g = (int)(200 * scale);
+                        b = (int)(200 * scale);
+                    }
                     r = int.Clamp(r, 0, 255);
                     g = int.Clamp(g, 0, 255);
                     b = int.Clamp(b, 0, 255);
