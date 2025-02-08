@@ -1,5 +1,6 @@
-﻿
+using JuniorProject.Backend.Helpers;
 using JuniorProject.Backend.WorldData;
+
 
 namespace JuniorProject.Backend.States
 {
@@ -13,12 +14,12 @@ namespace JuniorProject.Backend.States
         ulong tickCount = 0;
 
 
-        public void CreateWorld()
+        public void CreateWorld(string seed, float freq, float amp, int octaves, float seaLevel, float treeLine)
         {
             world = new World();
             ClientCommunicator.UpdateData<string>("LoadingMessage", "Generating World");
-            world.GenerateWorld();
-        }
+            world.GenerateWorld(20, new Vector2Int(1000,1000), seed, freq, amp, octaves, seaLevel, treeLine);
+		}
 
         public IState Loop()
         {
@@ -29,7 +30,7 @@ namespace JuniorProject.Backend.States
             Debug.RePrint($"Tick count [{tickCount}]");
             tickCount++;
             lastTick = currentTick;
-
+            world.Update();
             return this;
         }
         public void EnterState()
@@ -38,8 +39,12 @@ namespace JuniorProject.Backend.States
             lastTick = (uint)DateTime.Now.Ticks;
             ClientCommunicator.RegisterAction("TogglePause", () => { paused = !paused; });
         }
-
-        public void ExitState() { }
+         
+        public void ExitState() 
+        {
+            world.FreeWorld();
+            ClientCommunicator.UnregisterAction("TogglePause");
+        }
 
     }
 }

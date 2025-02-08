@@ -1,4 +1,5 @@
-﻿using System.Data.Common;
+using JuniorProject.Frontend.Pages;
+using System.Data.Common;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -24,7 +25,7 @@ namespace JuniorProject
 
         private void StartSimulation(object sender, RoutedEventArgs e)
         {
-            NavigationService.Navigate(new Frontend.Pages.Loading());
+            NavigationService.Navigate(new MapCreation());
         }
 
         private void Catalog(object sender, RoutedEventArgs e)

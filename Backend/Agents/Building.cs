@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,13 +15,8 @@ namespace JuniorProject.Backend.Agents
 
         }
 
-
-        const int _fieldCount = -1;
-        public override int fieldCount { get { return _fieldCount; } }
-
-
-        Nation owner;
-        int health;
+		Nation owner;
+		int health;
 
 
 

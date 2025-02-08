@@ -8,13 +8,15 @@ namespace JuniorProject.Backend.WorldData
 {
     class Map
     {
-        const int MAP_PIXEL_WIDTH = 1000;
-        const int MAP_PIXEL_HEIGHT = 1000;
-        public Bitmap worldImage = new Bitmap(MAP_PIXEL_HEIGHT, MAP_PIXEL_WIDTH);
+        Vector2Int mapPixelSize;
+        public Bitmap worldImage;
 
 
-        public float seaLevel = 0f;
-        public float treeLine = 0.8f;
+        string seed;
+        float amp, freq;
+        int octaves;
+        public float seaLevel;
+        public float treeLine;
 
         public class BiomeData
         {
@@ -36,50 +38,29 @@ namespace JuniorProject.Backend.WorldData
 
 
         BiomeData?[,] biomeMap;
-        float[,] heightMap;
+        public BiomeData?[,] BiomeMap { get { return biomeMap; } }
+		float[,] heightMap;
 
-
-        public class Tile
+        public Map(Vector2Int mapPixelSize, string seed, float freq, float amp, int octaves, float seaLevel, float treeLine)
         {
-            public Dictionary<string, float> terrainPercentages = new Dictionary<string, float>();
-            public int movementCost;
-            public float elevationAvg;
-        }
-
-        const int TILE_SIZE = 50;
-        int mapHeight, mapWidth;
-        Tile[,] tiles;
-        public Tile getTile(int x, int y)
-        {
-            return tiles[x, y];
-        }
-
-        public Map()
-        {
-            Debug.Print("Registering TILE_SIZE, MAP_PIXEL_WIDTH, MAP_PIXEL_HEIGHT into Client Communicator...");
-            ClientCommunicator.RegisterData<int>("TILE_SIZE", TILE_SIZE);
-            ClientCommunicator.RegisterData<int>("MAP_PIXEL_WIDTH", MAP_PIXEL_WIDTH);
-            ClientCommunicator.RegisterData<int>("MAP_PIXEL_HEIGHT", MAP_PIXEL_HEIGHT);
-            Debug.Print("Loading Terrain Data...");
+            this.mapPixelSize = mapPixelSize;
+            this.seed = seed;
+            this.freq = freq;
+            this.amp = amp;
+            this.octaves = octaves;
+            this.seaLevel = seaLevel;
+            this.treeLine = treeLine;
+            worldImage = new Bitmap(mapPixelSize.X, mapPixelSize.Y);
             Debug.Print("Loading Biome Data...");
             LoadTerrain();
-            biomeMap = new BiomeData[MAP_PIXEL_WIDTH, MAP_PIXEL_HEIGHT];
-            heightMap = new float[MAP_PIXEL_WIDTH, MAP_PIXEL_HEIGHT];
-            mapWidth = MAP_PIXEL_WIDTH / TILE_SIZE;
-            mapHeight = MAP_PIXEL_HEIGHT / TILE_SIZE;
-            tiles = new Tile[mapWidth, mapHeight];
+            biomeMap = new BiomeData[mapPixelSize.X, mapPixelSize.Y];
+            heightMap = new float[mapPixelSize.X, mapPixelSize.Y];    
         }
 
 
         public void SaveMap(Serializer serializable)
         {
-            for (int tileX = 0; tileX < mapWidth; tileX++)
-            {
-                for (int tileY = 0; tileY < mapHeight; tileY++)
-                {
-
-                }
-            }
+            
         }
 
         void LoadTerrain()
@@ -120,24 +101,29 @@ namespace JuniorProject.Backend.WorldData
             }
         }
 
-        public void GenerateWorld()
+        public void GenerateMap()
         {
             Debug.Print("Generating Heightmap...");
             ClientCommunicator.UpdateData<string>("LoadingMessage", "Generating Heightmap...", true);
             GenerateHeightMap();
             Debug.Print("Generating Image...");
-            ClientCommunicator.UpdateData<string>("LoadingMessage", "Generating Image...", true);
-            GenerateImage();
-            Debug.Print("Generating Tiles...");
-            ClientCommunicator.UpdateData<string>("LoadingMessage", "Generating Tiles...", true);
-            GenerateTiles();
+			ClientCommunicator.UpdateData<string>("LoadingMessage", "Generating Image...", true);
+			GenerateImage();
         }
 
         public void GenerateHeightMap()
         {
-            int seed = (int)DateTime.Now.Ticks;
+            int seedInt = (int)DateTime.Now.Ticks;
+            if(seed != null)
+            {
+                seedInt = 0;
+                foreach(char c in seed)
+                {
+                    seedInt += c;
+                }
+            }
 
-            heightMap = Perlin.GenerateNoise(new Vector2Int(MAP_PIXEL_WIDTH, MAP_PIXEL_HEIGHT), seed, 2, 0.002f, 8);
+            heightMap = Perlin.GenerateNoise(new Vector2Int(mapPixelSize.X, mapPixelSize.Y), seedInt, amp, freq, octaves);
 
             Dictionary<BiomeData, float[,]> biomePainting = new Dictionary<BiomeData, float[,]>();
 
@@ -145,16 +131,16 @@ namespace JuniorProject.Backend.WorldData
             {
                 biomePainting.Add(biome,
                     Perlin.GenerateNoise(
-                        new Vector2Int(MAP_PIXEL_WIDTH, MAP_PIXEL_HEIGHT),
-                        seed,
-                        biome.amp,
+                        new Vector2Int(mapPixelSize.X, mapPixelSize.Y), 
+                        seedInt, 
+                        biome.amp, 
                         biome.freq,
                         biome.octaves));
             }
 
-            for (int x = 0; x < MAP_PIXEL_WIDTH; x++)
+            for (int x = 0; x < mapPixelSize.X; x++)
             {
-                for (int y = 0; y < MAP_PIXEL_HEIGHT; y++)
+                for (int y = 0; y < mapPixelSize.Y; y++)
                 {
                     if (heightMap[x, y] < seaLevel || heightMap[x, y] > treeLine) //Oceans and mountains have no biome.
                     {
@@ -182,9 +168,9 @@ namespace JuniorProject.Backend.WorldData
 
         public void GenerateImage()
         {
-            for (int x = 0; x < MAP_PIXEL_WIDTH; x++)
+            for (int x = 0; x < mapPixelSize.X; x++)
             {
-                for (int y = 0; y < MAP_PIXEL_HEIGHT; y++)
+                for (int y = 0; y < mapPixelSize.Y; y++)
                 {
                     int r = 0, g = 0, b = 0;
                     if (biomeMap[x, y] != null)
@@ -213,6 +199,7 @@ namespace JuniorProject.Backend.WorldData
                     worldImage.SetPixel(x, y, Color.FromArgb(r, g, b));
                 }
             }
+
         }
 
         public void SaveImage()
@@ -220,49 +207,7 @@ namespace JuniorProject.Backend.WorldData
             worldImage.Save($"{Properties.Resources.ProjectDir}\\LocalData\\Map.png", System.Drawing.Imaging.ImageFormat.Png);
         }
 
-        public void GenerateTiles()
-        {
-            for (int tileX = 0; tileX < mapWidth; tileX++)
-            {
-                for (int tileY = 0; tileY < mapHeight; tileY++)
-                {
-                    Tile tile = new Tile();
-                    Dictionary<string, int> landTypes = new Dictionary<string, int>();
-                    int movementCostTotal = 0;
-
-                    for (int x = 0; x < TILE_SIZE; x++)
-                    {
-                        for (int y = 0; y < TILE_SIZE; y++)
-                        {
-                            int pixelPosX = (tileX * TILE_SIZE) + x;
-                            int pixelPosY = (tileY * TILE_SIZE) + y;
-                            if (pixelPosX > MAP_PIXEL_WIDTH) continue;
-                            if (pixelPosY > MAP_PIXEL_HEIGHT) continue;
-                            if (biomeMap[pixelPosX, pixelPosY] == null) continue;
-
-                            string landType = biomeMap[pixelPosX, pixelPosY].name;
-                            if (landTypes.ContainsKey(landType))
-                            {
-                                landTypes[landType]++;
-                            }
-                            else
-                            {
-                                landTypes.Add(landType, 1);
-                            }
-                            movementCostTotal += biomeMap[pixelPosX, pixelPosY].movementCost;
-                        }
-                    }
-
-                    foreach (string landType in landTypes.Keys)
-                    {
-                        float relativePercentage = landTypes[landType] / (TILE_SIZE * TILE_SIZE);
-                        tile.terrainPercentages.Add(landType, relativePercentage);
-                    }
-                    tile.movementCost = movementCostTotal / (TILE_SIZE * TILE_SIZE);
-                    tiles[tileX, tileY] = tile;
-                }
-            }
-        }
+        
     }
 
 }
