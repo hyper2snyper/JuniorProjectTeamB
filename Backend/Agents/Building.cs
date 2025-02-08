@@ -11,8 +11,10 @@ namespace JuniorProject.Backend.Agents
 
 		class BuildingTemplate()
 		{
+			string name;
+			int cost;
 			int maxHealth;
-
+			int sprite;
 		}
 
 

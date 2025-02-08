@@ -12,7 +12,11 @@ namespace JuniorProject.Backend.Agents
         {
             public string name;
             public string description;
+            public int attackDamage;
+            public int attackRange;
             public int maxHealth;
+            public int sprite;
+            public int flags; //PLACEHOLDER
         }
 
         UnitTemplate unitType;

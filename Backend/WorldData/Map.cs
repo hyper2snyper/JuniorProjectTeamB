@@ -3,6 +3,7 @@ using System.Data.SQLite;
 using System.Diagnostics;
 using System.Drawing;
 using JuniorProject.Backend.Helpers;
+using System.Numerics;
 
 namespace JuniorProject.Backend.WorldData
 {
@@ -29,6 +30,8 @@ namespace JuniorProject.Backend.WorldData
             public int octaves;
             public bool ignoreNoise = false;
             public BiomeData? requiredBiome = null;
+            public Vector<string> resources = new Vector<string>();
+            public Vector<int> collectRate = new Vector<int>();
         }
         Dictionary<string, BiomeData> biomeList = new Dictionary<string, BiomeData>(); //Loaded terrains from the DB
         BiomeData defaultBiome;
