@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
 using System.Linq;
@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace JuniorProject.Backend.Agents
 {
-	class Building : Serializable
-	{
+    class Building : Serializable
+    {
 
 		class BuildingTemplate
 		{
@@ -29,28 +29,23 @@ namespace JuniorProject.Backend.Agents
 			}
 		}
 
-
-		const int _fieldCount = -1;
-		public override int fieldCount { get { return _fieldCount; } }
-
-
 		Nation owner;
 		int health;
 
 
 
-		public override void DeserializeFields()
-		{
-			throw new NotImplementedException();
-		}
+        public override void DeserializeFields()
+        {
+            throw new NotImplementedException();
+        }
 
-		public override void SerializeFields()
-		{
-			throw new NotImplementedException();
-		}
-
-
+        public override void SerializeFields()
+        {
+            throw new NotImplementedException();
+        }
 
 
-	}
+
+
+    }
 }
