@@ -4,9 +4,24 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:JuniorProject.Frontend.Windows"
+        Background="#FF424242"
         mc:Ignorable="d"
         Title="SimulationSettings" Height="450" Width="800">
-    <Grid>
-        
+    <Grid Margin="0,0,7,0">
+        <Rectangle HorizontalAlignment="Left" Height="69" Margin="160,53,0,0" Stroke="White" VerticalAlignment="Top" Width="112"/>
+        <TextBlock HorizontalAlignment="Left" Margin="178,66,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="27" Width="80" Foreground="White"><Run FontWeight="Bold" Text="Archer"/></TextBlock>
+        <Rectangle HorizontalAlignment="Left" Height="166" Margin="294,52,0,0" Stroke="White" VerticalAlignment="Top" Width="118"/>
+        <TextBlock HorizontalAlignment="Left" Margin="304,64,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="27" Width="98" Foreground="#FFF9F4F4"><Run FontWeight="Bold" Text="Building Options"/></TextBlock>
+        <Rectangle HorizontalAlignment="Left" Height="166" Margin="445,51,0,0" Stroke="White" VerticalAlignment="Top" Width="118"/>
+        <TextBlock HorizontalAlignment="Left" Margin="459,64,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="27" Width="92" Foreground="White"><Run FontWeight="Bold" Text="Nation Options"/></TextBlock>
+        <Rectangle HorizontalAlignment="Left" Height="166" Margin="445,226,0,0" Stroke="White" VerticalAlignment="Top" Width="118"/>
+        <TextBlock HorizontalAlignment="Left" Margin="451,239,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="27" Width="106" Foreground="White"><Run FontWeight="Bold" Text="Resource Options"/></TextBlock>
+        <Rectangle HorizontalAlignment="Left" Height="166" Margin="294,227,0,0" Stroke="White" VerticalAlignment="Top" Width="118"/>
+        <TextBlock HorizontalAlignment="Left" Margin="304,239,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="27" Width="96" Foreground="White"><Run FontWeight="Bold" Text="Biome Options"/></TextBlock>
+        <TextBox HorizontalAlignment="Left" Margin="166,93,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="92"/>
+        <Rectangle HorizontalAlignment="Left" Height="69" Margin="160,135,0,0" Stroke="White" VerticalAlignment="Top" Width="112"/>
+        <TextBlock HorizontalAlignment="Left" Margin="178,148,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="27" Width="80" Foreground="White"><Run FontWeight="Bold" Text="Soldier"/></TextBlock>
+        <TextBox HorizontalAlignment="Left" Margin="166,175,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="92"/>
+
     </Grid>
 </Window>

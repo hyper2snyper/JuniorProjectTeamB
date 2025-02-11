@@ -14,6 +14,7 @@ using JuniorProject.Backend;
 using Drawing = System.Drawing;
 using JuniorProject.Frontend.Components;
 using System.Drawing;
+using JuniorProject.Frontend.Windows;
 
 namespace JuniorProject
 {
@@ -138,6 +139,13 @@ namespace JuniorProject
                     _start = currentPosition;
                 }
             }
+        }
+
+        private void SettingsClicked(object sender, RoutedEventArgs e)
+        {
+            SimulationSettings simSettings = new SimulationSettings();
+            simSettings.Show();
+            Console.WriteLine("SimSettings Windows");
         }
     }
 }

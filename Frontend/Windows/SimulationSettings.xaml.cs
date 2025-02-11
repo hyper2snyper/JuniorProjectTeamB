@@ -17,11 +17,15 @@ namespace JuniorProject.Frontend.Windows
     /// <summary>
     /// Interaction logic for SimulationSettings.xaml
     /// </summary>
-    public partial class SimulationSettings : Window
-    {
+    public partial class SimulationSettings : Window    {
         public SimulationSettings()
         {
             InitializeComponent();
+        }
+
+        private void ScrollBar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+
         }
     }
 }
