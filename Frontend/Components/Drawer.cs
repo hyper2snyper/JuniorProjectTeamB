@@ -12,6 +12,15 @@ using System.Windows.Media;
 
 namespace JuniorProject.Frontend.Components
 {
+    public class VectorPoint
+    { 
+        public int x, y;
+        public VectorPoint(int x, int y)
+        {
+            this.x = x;
+            this.y = y;
+        }
+    }
     public class Drawer
     {
         int tileSize;
@@ -21,11 +30,21 @@ namespace JuniorProject.Frontend.Components
         Canvas Canvas;
 
         private Dictionary<string, Drawable> drawables;
+        private Dictionary<VectorPoint, string> drawableGridLocations;
 
         public Drawer(ref Canvas mapCanvas)
         {
             Canvas = mapCanvas;
             drawables = new Dictionary<string, Drawable>();
+            drawableGridLocations = new Dictionary<VectorPoint, string>();
+        }
+
+        public Controls.Image checkMouseClick(int x, int y)
+        { 
+            Controls.Image image = new Controls.Image();
+            VectorPoint p = ConvertPixelsToGridPosition(x, y);
+            Debug.Print(String.Format("GRID POS: [ {0:N}, {1:N}  ]", p.x, p.y));
+            return image;
         }
 
         public void Initialize()
@@ -74,7 +93,10 @@ namespace JuniorProject.Frontend.Components
                 Height = worldBitmap.Height,
                 Source = TransferToWriteableBitmap(worldBitmap)
             };
-            drawables.TryAdd(name, new Drawable(img, true));
+            if (!drawables.TryAdd(name, new Drawable(img, true)))
+            {
+                Debug.Print(String.Format("!!!ERROR: Cannot add {0:S} to drawables", name));
+            }
         }
 
         public void AddImageToCanvas(string name, Controls.Image img)
@@ -88,16 +110,32 @@ namespace JuniorProject.Frontend.Components
             {
                 Source = new BitmapImage(new Uri(source, UriKind.Absolute))
             };
-            Drawing.Point p = ConvertGridPositionToPixels(x, y);
-            drawables.TryAdd(name, new Drawable(img, true, p.X, p.Y));
+            VectorPoint p = ConvertGridPositionToPixels(x, y);
+
+            if (!drawables.TryAdd(name, new Drawable(img, true, p.x, p.y)))
+            {
+                Debug.Print(String.Format("!!!ERROR: Cannot add {0:S} to drawables", name));
+            }
+
+            if (!drawableGridLocations.TryAdd(p, name))
+            {
+                Debug.Print(String.Format("!!!ERROR: Cannot add {0:S} to drawableGridLocations", name));
+            }
         }
 
-        public Drawing.Point ConvertGridPositionToPixels(int x, int y)
+        public VectorPoint ConvertGridPositionToPixels(int x, int y)
         {
             // based on current Sprite being 20x20 sprites
             int xPixelWidth = x * tileSize + (tileSize - 20);
             int yPixelWidth = y * tileSize + (tileSize - 20);
-            return new Drawing.Point(xPixelWidth, yPixelWidth);
+            return new VectorPoint(xPixelWidth, yPixelWidth);
+        }
+
+        public VectorPoint ConvertPixelsToGridPosition(int x, int y)
+        {
+            int xGrid = x / tileSize;
+            int yGrid = y / tileSize;
+            return new VectorPoint(xGrid, yGrid);
         }
 
         public void Draw()

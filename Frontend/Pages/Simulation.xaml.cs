@@ -31,6 +31,8 @@ namespace JuniorProject
         private System.Windows.Point _startClicking;
         private double _zoomFactor = 1.1;
         private bool _isDragging = false;
+        private double _clickAbsoluteX = 0;
+        private double _clickAbsoluteY = 0;
         private ScaleTransform _scaleTransform = new ScaleTransform(1, 1);
         private TranslateTransform _translateTransform = new TranslateTransform();
 
@@ -128,7 +130,17 @@ namespace JuniorProject
 
             if ((Math.Abs(offsetX) < 1 && Math.Abs(offsetY) < 1))
             {
-                Debug.Print(String.Format("Clicked mouse at: {0:N}, {1:N}", currentPosition.X, currentPosition.Y));
+                //Debug.Print(String.Format("CURRENT_POS: Clicked mouse at: {0:N}, {1:N}", currentPosition.X, currentPosition.Y));
+                //Debug.Print(String.Format("LAST OFFSET: Clicked mouse at: {0:N}, {1:N}", _clickAbsoluteX, _clickAbsoluteY));
+                //Debug.Print(String.Format("CLICKED_POS: Clicked mouse at: {0:N}, {1:N}", _startClicking.X, _startClicking.Y));
+                //Debug.Print(String.Format("PANNING: Clicked mouse at: {0:N}, {1:N}", _startPanning.X, _startPanning.Y));
+                //Debug.Print(String.Format("Transform scale at: {0:N}, {1:N}", _scaleTransform.ScaleX, _scaleTransform.ScaleY));
+                Controls.Image img;//= drawer.checkMouseClick((int)currentPosition.X, (int)currentPosition.Y);
+                //img = drawer.checkMouseClick((int)_clickAbsoluteX, (int)_clickAbsoluteY);
+                int addX = -(int)_clickAbsoluteX;
+                int addY = -(int)_clickAbsoluteY;
+                Debug.Print(String.Format("COMBINED: Clicked mouse at: {0:N}, {1:N}", addX + (int)currentPosition.X, addY + (int)currentPosition.Y));
+                img = drawer.checkMouseClick(addX + (int)currentPosition.X, addY + (int)currentPosition.Y);
                 //Debug.Print(String.Format("Off set: {0:N}, {1:N}", offsetX, offsetY));
             }
 
@@ -145,7 +157,10 @@ namespace JuniorProject
 
                 if (Math.Abs(offsetX) > 1 || Math.Abs(offsetY) > 1)
                 {
+                    //Debug.Print(String.Format("OFFSET: {0:N}, {1:N}", _lastOffSetX, _lastOffSetY));
                     var currentMargin = mapCanvas.Margin;
+                    _clickAbsoluteX = currentMargin.Left + offsetX;
+                    _clickAbsoluteY = currentMargin.Top + offsetY;
                     mapCanvas.Margin = new Thickness(currentMargin.Left + offsetX, currentMargin.Top + offsetY, 0, 0);
                     _startPanning = currentPosition;
                 }
