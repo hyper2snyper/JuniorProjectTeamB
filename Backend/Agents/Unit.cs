@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using JuniorProject.Backend.Helpers;
 using JuniorProject.Backend.WorldData;
 
