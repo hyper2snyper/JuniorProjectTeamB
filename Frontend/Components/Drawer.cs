@@ -33,7 +33,7 @@ namespace JuniorProject.Frontend.Components
             tileSize = ClientCommunicator.GetData<int>("tileSize");
             mapPixelSize = ClientCommunicator.GetData<Vector2Int>("mapPixelSize");
             worldBitmap = ClientCommunicator.GetData<Drawing.Bitmap>("WorldImage");
-
+            Debug.Print(String.Format("{0:N}", tileSize));
             if (tileSize != default(int) && mapPixelSize.X != default(int) && mapPixelSize.Y != default(int) && worldBitmap != default(Bitmap))
             {
                 Debug.Print("Successfully loaded map values onto frontend. . .");
@@ -51,6 +51,10 @@ namespace JuniorProject.Frontend.Components
             {
                 if (d != null && d.shouldDraw)
                 {
+                    if (!d.isMapOrGridlines) {
+                        Canvas.SetLeft(d.image, d.x);
+                        Canvas.SetTop(d.image, d.y);
+                    }
                     Canvas.Children.Add(d.image);
                 }
             }
@@ -73,9 +77,27 @@ namespace JuniorProject.Frontend.Components
             drawables.TryAdd(name, new Drawable(img, true));
         }
 
-        public void AddImageToCanvas()
+        public void AddImageToCanvas(string name, Controls.Image img)
         {
 
+        }
+
+        public void AddImageToCanvas(string name, string source, int x = 0, int y = 0)
+        {
+            Controls.Image img = new Controls.Image
+            {
+                Source = new BitmapImage(new Uri(source, UriKind.Absolute))
+            };
+            Drawing.Point p = ConvertGridPositionToPixels(x, y);
+            drawables.TryAdd(name, new Drawable(img, true, p.X, p.Y));
+        }
+
+        public Drawing.Point ConvertGridPositionToPixels(int x, int y)
+        {
+            // based on current Sprite being 20x20 sprites
+            int xPixelWidth = x * tileSize + (tileSize - 20);
+            int yPixelWidth = y * tileSize + (tileSize - 20);
+            return new Drawing.Point(xPixelWidth, yPixelWidth);
         }
 
         public void Draw()
@@ -85,6 +107,8 @@ namespace JuniorProject.Frontend.Components
             {
                 AddBitmapToCanvas("MainMap", worldBitmap);
                 AddBitmapToCanvas("Grid", GetGridlines());
+                AddImageToCanvas("TestSpriteRed_1", $"{Properties.Resources.ProjectDir}\\Frontend\\Images\\Sprites\\TestSpriteRed.png", 3, 2);
+                AddImageToCanvas("TestSpriteYellow_1", $"{Properties.Resources.ProjectDir}\\Frontend\\Images\\Sprites\\TestSpriteYellow.png", 10, 15);
                 drawables["Grid"].shouldDraw = false;
                 drawables["Grid"].image.Opacity = 0.2;
             }

@@ -27,7 +27,8 @@ namespace JuniorProject
         Drawer drawer;
         int imageCounter = 0;
 
-        private System.Windows.Point _start;
+        private System.Windows.Point _startPanning;
+        private System.Windows.Point _startClicking;
         private double _zoomFactor = 1.1;
         private bool _isDragging = false;
         private ScaleTransform _scaleTransform = new ScaleTransform(1, 1);
@@ -112,13 +113,25 @@ namespace JuniorProject
         private void CanvasMouseLeftDown(object sender, MouseEventArgs e)
         {
             _isDragging = true;
-            _start = e.GetPosition(ScrollViewer);
+            _startPanning = e.GetPosition(ScrollViewer);
+            _startClicking = e.GetPosition(ScrollViewer);
             mapCanvas.CaptureMouse();
         }
 
         private void CanvasMouseLeftUp(object sender, MouseEventArgs e)
         {
             _isDragging = false;
+
+            System.Windows.Point currentPosition = e.GetPosition(ScrollViewer);
+            double offsetX = currentPosition.X - _startClicking.X;
+            double offsetY = currentPosition.Y - _startClicking.Y;
+
+            if ((Math.Abs(offsetX) < 1 && Math.Abs(offsetY) < 1))
+            {
+                Debug.Print(String.Format("Clicked mouse at: {0:N}, {1:N}", currentPosition.X, currentPosition.Y));
+                //Debug.Print(String.Format("Off set: {0:N}, {1:N}", offsetX, offsetY));
+            }
+
             mapCanvas.ReleaseMouseCapture();
         }
 
@@ -126,16 +139,15 @@ namespace JuniorProject
         {
             if (_isDragging)
             {
-                //Debug.Print("Attempting panning");
                 System.Windows.Point currentPosition = e.GetPosition(ScrollViewer);
-                double offsetX = currentPosition.X - _start.X;
-                double offsetY = currentPosition.Y - _start.Y;
+                double offsetX = currentPosition.X - _startPanning.X;
+                double offsetY = currentPosition.Y - _startPanning.Y;
 
                 if (Math.Abs(offsetX) > 1 || Math.Abs(offsetY) > 1)
                 {
                     var currentMargin = mapCanvas.Margin;
                     mapCanvas.Margin = new Thickness(currentMargin.Left + offsetX, currentMargin.Top + offsetY, 0, 0);
-                    _start = currentPosition;
+                    _startPanning = currentPosition;
                 }
             }
         }
