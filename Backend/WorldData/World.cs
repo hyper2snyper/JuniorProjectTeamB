@@ -1,41 +1,48 @@
+
+using JuniorProject.Frontend.Components;
 using System.Drawing;
 using JuniorProject.Backend.Agents;
-using JuniorProject.Backend.Helpers;
-using JuniorProject.Frontend.Components;
 
 namespace JuniorProject.Backend.WorldData
 {
     class World
     {
-        TileMap map;
+        Map map;
         List<Unit> units = new List<Unit>();
 
         public World()
         {
-
+            map = new Map();
+            ClientCommunicator.RegisterAction("RegenerateWorld", map.GenerateWorld);
+            ClientCommunicator.RegisterAction("SaveWorld", SaveWorld);
+            ClientCommunicator.RegisterData<Bitmap>("WorldImage", map.worldImage);
+            ClientCommunicator.RegisterData<World>("World", map);
+            ClientCommunicator.RegisterData<Drawer>("Drawer", new Drawer());
         }
         
-        public void GenerateWorld(int tileSize, Vector2Int mapPixelSize, string seed, float amp, float freq, int octaves, float seaLevel, float treeLine)
+        public void GenerateWorld()
         {
-            map = new TileMap(tileSize, mapPixelSize, seed, amp, freq, octaves, seaLevel, treeLine);
-		}
-
-        public void FreeWorld()
-        {
-            ClientCommunicator.UnregisterData("mapPixelSize");
-            ClientCommunicator.UnregisterData("tileSize");
+            map.GenerateWorld();
         }
-
-
-        public void Update()
-        {
-
-        }
-
 
         public void SaveWorld()
         {
-           
+            map.SaveImage();
+            Serializer serializer = new Serializer("LocalData\\Savetest.chs");
+            Debug.Print("Saving units...");
+            foreach (Unit unit in units)
+            {
+                serializer.SaveObject(unit);
+            }
+            Debug.Print("Saving tiles...");
+            map.SaveMap(serializer);
+
+            Debug.Print("Writing to file...");
+            serializer.Save();
+            Debug.Print("Saved!");
+
+
+            serializer.Load();
         }
 
     }

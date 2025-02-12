@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup />
   <ItemGroup>
@@ -8,9 +8,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Frontend\Pages\Loading.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="Frontend\Pages\MapCreation.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
@@ -27,9 +24,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Frontend\Pages\ApplicationSettings.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Frontend\Pages\MapCreation.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Frontend\Pages\Simulation.xaml">

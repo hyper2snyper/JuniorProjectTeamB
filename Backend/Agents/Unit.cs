@@ -1,10 +1,9 @@
-
+﻿
 
 
 using System.ComponentModel;
 using System.Data.SQLite;
 using System.IO;
-using JuniorProject.Backend.Helpers;
 using JuniorProject.Backend.WorldData;
 
 namespace JuniorProject.Backend.Agents
@@ -40,31 +39,14 @@ namespace JuniorProject.Backend.Agents
         UnitTemplate unitType;
         public int health;
 
-		public class Test : Serializable
-		{
-            public string name;
-            public int test;
-            public float test2;
-			public override void DeserializeFields()
-			{
-                name = DeserializeField<string>();
-                test = DeserializeField<int>();
-                test2 = DeserializeField<float>();
-			}
+        IObjective? objective;
 
-			public override void SerializeFields()
-			{
-				SerializeField(name);
-                SerializeField(test);
-                SerializeField(test2);
-			}
-		}
-        public Test t1;
+        Map.Tile pos;
 
-		IObjective? objective;
-
-        TileMap.Tile pos;
-        Vector2Int posV;
+        public override int fieldCount
+        {
+            get { return 2; }
+        }
 
         public Unit()
         {
@@ -90,12 +72,12 @@ namespace JuniorProject.Backend.Agents
 
         public override void SerializeFields()
         {
-           
+
         }
 
         public override void DeserializeFields()
         {
-           
+
         }
     }
 }

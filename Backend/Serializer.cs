@@ -7,6 +7,8 @@ namespace JuniorProject.Backend
 {
     public abstract class Serializable
     {
+
+        public abstract int fieldCount { get; } //If -1, ignore.
         public struct SField
         {
             public bool isString;
@@ -122,13 +124,6 @@ namespace JuniorProject.Backend
             }
         }
 
-        public void SerializeObject(Serializable obj)
-        {
-            if (!OrderCheck()) return;
-            SerializeField(obj.GetType().ToString());  
-            fields.AddRange(obj.Serialize());
-        }
-
         public void Deserialize(BinaryReader reader, List<string> stringCache)
         {
             this.reader = reader;
@@ -228,15 +223,6 @@ namespace JuniorProject.Backend
             return returnDictionary;
         }
 
-        public Serializable DeserializeObject()
-        {
-            string typeString = DeserializeField<string>();
-            Type type = Type.GetType(typeString);
-            Serializable objToReturn = (Serializable)Activator.CreateInstance(type);
-            objToReturn.Deserialize(reader, stringCache);
-            return objToReturn;
-        }
-
     }
 
     class Serializer
@@ -271,16 +257,26 @@ namespace JuniorProject.Backend
             Dictionary<string, int> stringCache = new Dictionary<string, int>(); //String value -> String Pos
             int stringCacheSize = 0;
 
-            if (objectList.Count == 0)
+            int typeCount = objectList.Count;
+            Dictionary<Type, int> fieldCounts = new Dictionary<Type, int>();
+
+            foreach (Type type in objectList.Keys)
+            {
+                fieldCounts[type] = objectList[type][0].fieldCount;
+            }
+
+            if (typeCount == 0)
             {
                 Debug.Print("Save was called without any objects to be saved.");
                 return;
             }
-			bufferWriter.Write(objectList.Count); //Save type count.
-			foreach (Type t in objectList.Keys)
+
+            bufferWriter.Write(typeCount); //Save type count.
+            foreach (KeyValuePair<Type, int> fieldCount in fieldCounts)
             {
-                bufferWriter.Write(t.ToString());
-                bufferWriter.Write(objectList[t].Count);
+                bufferWriter.Write(fieldCount.Key.ToString()); //Write the type.
+                bufferWriter.Write(objectList[fieldCount.Key].Count); //Write how many there are.
+                bufferWriter.Write(fieldCount.Value); //Write how many fields each object should have.
             }
 
             foreach (Type type in objectList.Keys)
@@ -322,7 +318,7 @@ namespace JuniorProject.Backend
         public Dictionary<Type, List<Serializable>> Load()
         {
             objectList = new Dictionary<Type, List<Serializable>>();
-            if (!File.Exists(file_location))
+            if(!File.Exists(file_location))
             {
                 Debug.Print($"Tried to Load() [{file_location}], however, that file does not exist.");
                 return new Dictionary<Type, List<Serializable>>();
@@ -346,6 +342,7 @@ namespace JuniorProject.Backend
             }
 
             Dictionary<Type, int> objectCounts = new Dictionary<Type, int>();
+            Dictionary<Type, int> fieldCounts = new Dictionary<Type, int>();
 
             for (int i = 0; i < typeCount; i++)
             {
@@ -358,7 +355,7 @@ namespace JuniorProject.Backend
                 }
                 objectList.Add(type, new List<Serializable>());
                 objectCounts.Add(type, reader.ReadInt32()); //Load the object count.
-                
+                fieldCounts.Add(type, reader.ReadInt32()); //load the object field count.
             }
 
             foreach (Type type in objectList.Keys)
@@ -366,6 +363,12 @@ namespace JuniorProject.Backend
                 for (int i = 0; i < objectCounts[type]; i++)
                 {
                     Serializable serializable = (Serializable)Activator.CreateInstance(type);
+                    if (serializable.fieldCount != fieldCounts[type] && (serializable.fieldCount != -1 && fieldCounts[type] != -1))
+                    {
+                        Debug.Print($"The type [{type.Name}] tried to be loaded from {file_location} with {serializable.fieldCount} fields, " +
+                            $"however, the file has {fieldCounts[type]} fields.");
+                        return new Dictionary<Type, List<Serializable>>();
+                    }
                     serializable.Deserialize(reader, stringCache);
                     objectList[type].Add(serializable);
                 }
