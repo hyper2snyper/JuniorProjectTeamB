@@ -4,6 +4,7 @@ using Drawing = System.Drawing;
 using JuniorProject.Backend;
 using System.Windows;
 using System.Drawing.Drawing2D;
+using JuniorProject.Backend.Helpers;
 using Controls = System.Windows.Controls;
 using Colors = System.Drawing;
 using System.Windows.Controls;
@@ -13,9 +14,9 @@ namespace JuniorProject.Frontend.Components
 {
     public class Drawer
     {
-        int TILE_SIZE;
-        int MAP_PIXEL_WIDTH;
-        int MAP_PIXEL_HEIGHT;
+        int tileSize;
+        Vector2Int mapPixelSize;
+
         Bitmap worldBitmap;
         Canvas Canvas;
 
@@ -29,12 +30,11 @@ namespace JuniorProject.Frontend.Components
 
         public void Initialize()
         {
-            TILE_SIZE = ClientCommunicator.GetData<int>("TILE_SIZE");
-            MAP_PIXEL_WIDTH = ClientCommunicator.GetData<int>("MAP_PIXEL_WIDTH");
-            MAP_PIXEL_HEIGHT = ClientCommunicator.GetData<int>("MAP_PIXEL_HEIGHT");
+            tileSize = ClientCommunicator.GetData<int>("tileSize");
+            mapPixelSize = ClientCommunicator.GetData<Vector2Int>("mapPixelSize");
             worldBitmap = ClientCommunicator.GetData<Drawing.Bitmap>("WorldImage");
 
-            if (TILE_SIZE != default(int) && MAP_PIXEL_WIDTH != default(int) && MAP_PIXEL_HEIGHT != default(int) && worldBitmap != default(Bitmap))
+            if (tileSize != default(int) && mapPixelSize.X != default(int) && mapPixelSize.Y != default(int) && worldBitmap != default(Bitmap))
             {
                 Debug.Print("Successfully loaded map values onto frontend. . .");
             }
@@ -85,6 +85,8 @@ namespace JuniorProject.Frontend.Components
             {
                 AddBitmapToCanvas("MainMap", worldBitmap);
                 AddBitmapToCanvas("Grid", GetGridlines());
+                drawables["Grid"].shouldDraw = false;
+                drawables["Grid"].image.Opacity = 0.2;
             }
             PopulateCanvas();
         }
@@ -110,7 +112,7 @@ namespace JuniorProject.Frontend.Components
 
         public Bitmap GetGridlines()
         {
-            Bitmap gridBitmap = new Bitmap(MAP_PIXEL_WIDTH, MAP_PIXEL_HEIGHT);
+            Bitmap gridBitmap = new Bitmap(mapPixelSize.X, mapPixelSize.Y);
 
             using (Graphics g = Graphics.FromImage(gridBitmap))
             {
@@ -120,14 +122,14 @@ namespace JuniorProject.Frontend.Components
                 using (Colors.Pen gridPen = new Colors.Pen(Colors.Color.Black, 2))
                 {
                     gridPen.Alignment = PenAlignment.Inset;
-                    for (int y = TILE_SIZE; y < gridBitmap.Width; y += TILE_SIZE)
+                    for (int y = tileSize; y < gridBitmap.Width; y += tileSize)
                     {
-                        g.DrawLine(gridPen, 0, y, MAP_PIXEL_WIDTH, y);
+                        g.DrawLine(gridPen, 0, y, mapPixelSize.X, y);
                     }
 
-                    for (int x = TILE_SIZE; x < gridBitmap.Height; x += TILE_SIZE)
+                    for (int x = tileSize; x < gridBitmap.Height; x += tileSize)
                     {
-                        g.DrawLine(gridPen, x, 0, x, MAP_PIXEL_HEIGHT);
+                        g.DrawLine(gridPen, x, 0, x, mapPixelSize.Y);
                     }
                 }
             }

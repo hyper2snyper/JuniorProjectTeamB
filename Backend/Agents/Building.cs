@@ -15,11 +15,6 @@ namespace JuniorProject.Backend.Agents
 
         }
 
-
-        const int _fieldCount = -1;
-        public override int fieldCount { get { return _fieldCount; } }
-
-
         Nation owner;
         int health;
 

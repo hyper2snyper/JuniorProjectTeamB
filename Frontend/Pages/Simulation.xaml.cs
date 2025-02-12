@@ -49,14 +49,14 @@ namespace JuniorProject
             transformGroup.Children.Add(_scaleTransform);
             transformGroup.Children.Add(_translateTransform);
             mapCanvas.RenderTransform = transformGroup;
+            drawer.Initialize();
+            drawer.Draw();
 
         }
 
         private void RefreshClicked(object sender, RoutedEventArgs e)
         {
-            ClientCommunicator.CallActionWaitFor("RegenerateWorld"); //First, tell the map to regenerate the world.
-            drawer.Initialize();
-            drawer.Draw();
+
         }
 
         public void SetGridlines(object sender, RoutedEventArgs e)
