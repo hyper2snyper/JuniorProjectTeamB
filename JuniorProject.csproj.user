@@ -10,11 +10,9 @@
     <Compile Update="Frontend\Pages\Loading.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Update="Properties\Resources.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
+    <Compile Update="Frontend\Pages\MapCreation.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Frontend\Pages\Loading.xaml">
@@ -24,6 +22,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Frontend\Pages\ApplicationSettings.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Frontend\Pages\MapCreation.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Frontend\Pages\Simulation.xaml">

@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 
 namespace JuniorProject.Backend.Agents
 {
-	internal interface IObjective
-	{
-		Unit unit { get; set; }
+    internal interface IObjective
+    {
+        Unit unit { get; set; }
 
-		public void ObjectiveStart();
-		public void ObjectiveStop();
-		
-		public void PerformTurn();
+        public void ObjectiveStart();
+        public void ObjectiveStop();
 
-	}
+        public void PerformTurn();
+
+    }
 }

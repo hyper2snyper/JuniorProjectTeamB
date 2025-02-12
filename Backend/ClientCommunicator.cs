@@ -29,7 +29,7 @@ namespace JuniorProject.Backend
             public string name;
             public unsafe bool* done; //This will be done unless there is another thread CallActionWaitFor in a while loop waiting for this action to be completed.
             public object? arg = null;
-            public Delegate? @delegate;
+            public Delegate? postCall;
 
             public CallingBundle(string name)
             {
@@ -40,7 +40,7 @@ namespace JuniorProject.Backend
             {
                 this = new CallingBundle(name);
                 this.arg = arg;
-                this.@delegate = postCall;
+                this.postCall = postCall;
             }
 
         }
@@ -259,9 +259,9 @@ namespace JuniorProject.Backend
                             *c.done = true;
                         }
                     }
-                    if(c.@delegate != null)
+                    if (c.postCall != null)
                     {
-                        c.@delegate.DynamicInvoke();
+                        c.postCall.DynamicInvoke();
                     }
                 }
             }
