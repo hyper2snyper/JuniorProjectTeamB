@@ -130,11 +130,26 @@ namespace JuniorProject
 
             if ((Math.Abs(offsetX) < 1 && Math.Abs(offsetY) < 1))
             {
-                Controls.Image img;
                 int addX = -(int)_clickAbsoluteX;
                 int addY = -(int)_clickAbsoluteY;
                 //Debug.Print(String.Format("COMBINED: Clicked mouse at: {0:N}, {1:N}", addX + (int)currentPosition.X, addY + (int)currentPosition.Y));
-                drawer.checkMouseClick(addX + (int)currentPosition.X, addY + (int)currentPosition.Y);
+                Debug.Print(String.Format("SCALE TRANSFORM: {0:N}, {1:N}", _scaleTransform.ScaleX, _scaleTransform.ScaleY));
+                Debug.Print(String.Format("TRANSLATE SCALE: {0:N}, {1:N}", _translateTransform.X, _translateTransform.Y));
+
+                if (_scaleTransform.ScaleX != 0 || _translateTransform.X != 0)
+                {
+                    int transformedScaleX = (int)(currentPosition.X / _scaleTransform.ScaleX);
+                    int transformedScaleY = (int)(currentPosition.Y / _scaleTransform.ScaleY);
+                    int transformedTranslateX = (int)(Math.Abs(_translateTransform.X) / _scaleTransform.ScaleX);
+                    int transformedTranslateY = (int)(Math.Abs(_translateTransform.Y) / _scaleTransform.ScaleY);
+                    Debug.Print(String.Format("COMBINED: Clicked mouse at: {0:N}, {1:N}", transformedScaleX + transformedTranslateX, transformedScaleY + transformedTranslateY));
+                    drawer.checkMouseClick(transformedScaleX + transformedTranslateX, transformedScaleY + transformedTranslateY);
+                }
+                else 
+                {
+                    Debug.Print(String.Format("COMBINED: Clicked mouse at: {0:N}, {1:N}", addX + (int)currentPosition.X, addY + (int)currentPosition.Y));
+                    drawer.checkMouseClick(addX + (int)currentPosition.X, addY + (int)currentPosition.Y);
+                }
             }
 
             mapCanvas.ReleaseMouseCapture();
