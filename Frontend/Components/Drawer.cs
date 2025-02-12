@@ -30,21 +30,29 @@ namespace JuniorProject.Frontend.Components
         Canvas Canvas;
 
         private Dictionary<string, Drawable> drawables;
-        private Dictionary<VectorPoint, string> drawableGridLocations;
+        private Dictionary<(int, int), string> drawableGridLocations;
 
         public Drawer(ref Canvas mapCanvas)
         {
             Canvas = mapCanvas;
             drawables = new Dictionary<string, Drawable>();
-            drawableGridLocations = new Dictionary<VectorPoint, string>();
+            drawableGridLocations = new Dictionary<(int, int), string>();
         }
 
-        public Controls.Image checkMouseClick(int x, int y)
+        public void checkMouseClick(int x, int y)
         { 
-            Controls.Image image = new Controls.Image();
             VectorPoint p = ConvertPixelsToGridPosition(x, y);
             Debug.Print(String.Format("GRID POS: [ {0:N}, {1:N}  ]", p.x, p.y));
-            return image;
+            //foreach ((int, int) b in drawableGridLocations.Keys)
+            //{
+            //    System.Console.WriteLine(b.Item1);
+            //    System.Console.WriteLine(b.Item2);
+
+            //}
+            if (drawableGridLocations.ContainsKey((p.x, p.y)))
+            {
+                Debug.Print("Image exists here :)");   
+            }
         }
 
         public void Initialize()
@@ -117,7 +125,7 @@ namespace JuniorProject.Frontend.Components
                 Debug.Print(String.Format("!!!ERROR: Cannot add {0:S} to drawables", name));
             }
 
-            if (!drawableGridLocations.TryAdd(p, name))
+            if (!drawableGridLocations.TryAdd((x, y), name))
             {
                 Debug.Print(String.Format("!!!ERROR: Cannot add {0:S} to drawableGridLocations", name));
             }
