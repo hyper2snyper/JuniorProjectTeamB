@@ -145,7 +145,7 @@ namespace JuniorProject
         {
             SimulationSettings simSettings = new SimulationSettings();
             simSettings.Show();
-            Console.WriteLine("SimSettings Windows");
+            Debug.Print("SimSettings Windows");
         }
     }
 }
