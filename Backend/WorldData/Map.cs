@@ -39,7 +39,7 @@ namespace JuniorProject.Backend.WorldData
 
         BiomeData?[,] biomeMap;
         public BiomeData?[,] BiomeMap { get { return biomeMap; } }
-		float[,] heightMap;
+        float[,] heightMap;
 
         public Map(Vector2Int mapPixelSize, string seed, float freq, float amp, int octaves, float seaLevel, float treeLine)
         {
@@ -54,13 +54,13 @@ namespace JuniorProject.Backend.WorldData
             Debug.Print("Loading Biome Data...");
             LoadTerrain();
             biomeMap = new BiomeData[mapPixelSize.X, mapPixelSize.Y];
-            heightMap = new float[mapPixelSize.X, mapPixelSize.Y];    
+            heightMap = new float[mapPixelSize.X, mapPixelSize.Y];
         }
 
 
         public void SaveMap(Serializer serializable)
         {
-            
+
         }
 
         void LoadTerrain()
@@ -107,17 +107,17 @@ namespace JuniorProject.Backend.WorldData
             ClientCommunicator.UpdateData<string>("LoadingMessage", "Generating Heightmap...", true);
             GenerateHeightMap();
             Debug.Print("Generating Image...");
-			ClientCommunicator.UpdateData<string>("LoadingMessage", "Generating Image...", true);
-			GenerateImage();
+            ClientCommunicator.UpdateData<string>("LoadingMessage", "Generating Image...", true);
+            GenerateImage();
         }
 
         public void GenerateHeightMap()
         {
             int seedInt = (int)DateTime.Now.Ticks;
-            if(seed != null)
+            if (seed != null)
             {
                 seedInt = 0;
-                foreach(char c in seed)
+                foreach (char c in seed)
                 {
                     seedInt += c;
                 }
@@ -131,9 +131,9 @@ namespace JuniorProject.Backend.WorldData
             {
                 biomePainting.Add(biome,
                     Perlin.GenerateNoise(
-                        new Vector2Int(mapPixelSize.X, mapPixelSize.Y), 
-                        seedInt, 
-                        biome.amp, 
+                        new Vector2Int(mapPixelSize.X, mapPixelSize.Y),
+                        seedInt,
+                        biome.amp,
                         biome.freq,
                         biome.octaves));
             }
@@ -207,7 +207,7 @@ namespace JuniorProject.Backend.WorldData
             worldImage.Save($"{Properties.Resources.ProjectDir}\\LocalData\\Map.png", System.Drawing.Imaging.ImageFormat.Png);
         }
 
-        
+
     }
 
 }

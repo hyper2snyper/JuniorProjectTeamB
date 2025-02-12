@@ -125,7 +125,7 @@ namespace JuniorProject.Backend
         public void SerializeObject(Serializable obj)
         {
             if (!OrderCheck()) return;
-            SerializeField(obj.GetType().ToString());  
+            SerializeField(obj.GetType().ToString());
             fields.AddRange(obj.Serialize());
         }
 
@@ -276,8 +276,8 @@ namespace JuniorProject.Backend
                 Debug.Print("Save was called without any objects to be saved.");
                 return;
             }
-			bufferWriter.Write(objectList.Count); //Save type count.
-			foreach (Type t in objectList.Keys)
+            bufferWriter.Write(objectList.Count); //Save type count.
+            foreach (Type t in objectList.Keys)
             {
                 bufferWriter.Write(t.ToString());
                 bufferWriter.Write(objectList[t].Count);
@@ -358,7 +358,7 @@ namespace JuniorProject.Backend
                 }
                 objectList.Add(type, new List<Serializable>());
                 objectCounts.Add(type, reader.ReadInt32()); //Load the object count.
-                
+
             }
 
             foreach (Type type in objectList.Keys)

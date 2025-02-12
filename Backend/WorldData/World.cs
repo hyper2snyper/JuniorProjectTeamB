@@ -14,11 +14,11 @@ namespace JuniorProject.Backend.WorldData
         {
 
         }
-        
+
         public void GenerateWorld(int tileSize, Vector2Int mapPixelSize, string seed, float amp, float freq, int octaves, float seaLevel, float treeLine)
         {
             map = new TileMap(tileSize, mapPixelSize, seed, amp, freq, octaves, seaLevel, treeLine);
-		}
+        }
 
         public void FreeWorld()
         {
@@ -35,7 +35,7 @@ namespace JuniorProject.Backend.WorldData
 
         public void SaveWorld()
         {
-           
+
         }
 
     }

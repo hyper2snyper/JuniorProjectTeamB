@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,19 +15,19 @@ namespace JuniorProject.Backend.States
         string seed;
         float amp, freq, seaLevel, treeLine;
         int octaves;
-        
+
 
         public Loading(string seed, float amp, float freq, int octaves, float seaLevel, float treeLine)
         {
             this.seed = seed;
-            this.amp = amp; 
+            this.amp = amp;
             this.freq = freq;
             this.octaves = octaves;
             this.seaLevel = seaLevel;
             this.treeLine = treeLine;
         }
 
-        public IState Loop() 
+        public IState Loop()
         {
             if (loadingDone)
                 return simulation;
@@ -40,9 +40,9 @@ namespace JuniorProject.Backend.States
             Task.Run(() =>
             {
                 simulation.CreateWorld(seed, amp, freq, octaves, seaLevel, treeLine);
-				loadingDone = true;
-				ClientCommunicator.UpdateData<bool>("LoadingDone", loadingDone);
-			});
+                loadingDone = true;
+                ClientCommunicator.UpdateData<bool>("LoadingDone", loadingDone);
+            });
         }
         public void ExitState()
         {

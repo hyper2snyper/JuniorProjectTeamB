@@ -1,4 +1,4 @@
-using JuniorProject.Frontend.Pages;
+﻿using JuniorProject.Frontend.Pages;
 using System.Data.Common;
 using System.Text;
 using System.Windows;

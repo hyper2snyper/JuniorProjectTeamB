@@ -1,4 +1,4 @@
-using JuniorProject.Backend.Helpers;
+﻿using JuniorProject.Backend.Helpers;
 using JuniorProject.Backend.WorldData;
 
 
@@ -18,8 +18,8 @@ namespace JuniorProject.Backend.States
         {
             world = new World();
             ClientCommunicator.UpdateData<string>("LoadingMessage", "Generating World");
-            world.GenerateWorld(20, new Vector2Int(1000,1000), seed, freq, amp, octaves, seaLevel, treeLine);
-		}
+            world.GenerateWorld(20, new Vector2Int(1000, 1000), seed, freq, amp, octaves, seaLevel, treeLine);
+        }
 
         public IState Loop()
         {
@@ -39,8 +39,8 @@ namespace JuniorProject.Backend.States
             lastTick = (uint)DateTime.Now.Ticks;
             ClientCommunicator.RegisterAction("TogglePause", () => { paused = !paused; });
         }
-         
-        public void ExitState() 
+
+        public void ExitState()
         {
             world.FreeWorld();
             ClientCommunicator.UnregisterAction("TogglePause");

@@ -108,11 +108,14 @@ namespace JuniorProject.Frontend.Pages
             NavigationService.Navigate(new Loading());
         }
 
+<<<<<<< HEAD
         private void SimSettings_Click(object sender, RoutedEventArgs e)
         {
             SimulationSettings simSettings = new SimulationSettings();
             simSettings.Show();
             Console.WriteLine("SimSettings Windows");
         }
+=======
+>>>>>>> main
     }
 }

@@ -40,7 +40,7 @@ namespace JuniorProject.Frontend.Components
             }
         }
 
-		public void ClearCanvas()
+        public void ClearCanvas()
         {
             Canvas.Children.Clear();
         }

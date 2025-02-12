@@ -50,14 +50,14 @@ namespace JuniorProject
             transformGroup.Children.Add(_scaleTransform);
             transformGroup.Children.Add(_translateTransform);
             mapCanvas.RenderTransform = transformGroup;
-			drawer.Initialize();
-			drawer.Draw();
+            drawer.Initialize();
+            drawer.Draw();
 
-		}
+        }
 
         private void RefreshClicked(object sender, RoutedEventArgs e)
         {
-            
+
         }
 
         public void SetGridlines(object sender, RoutedEventArgs e)

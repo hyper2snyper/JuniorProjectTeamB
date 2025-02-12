@@ -1,4 +1,4 @@
-using JuniorProject.Backend;
+﻿using JuniorProject.Backend;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,12 +24,12 @@ namespace JuniorProject.Frontend.Pages
         bool loadingDone = false;
 
 
-		public Loading()
-		{
-			InitializeComponent();
-			Debug.Print("Entering Loading Screen.");
-			CompositionTarget.Rendering += Loop;
-		}
+        public Loading()
+        {
+            InitializeComponent();
+            Debug.Print("Entering Loading Screen.");
+            CompositionTarget.Rendering += Loop;
+        }
 
         public void Loop(object? sender, EventArgs e)
         {

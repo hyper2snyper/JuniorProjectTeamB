@@ -16,28 +16,28 @@ namespace JuniorProject.Backend.Agents
         UnitTemplate unitType;
         public int health;
 
-		public class Test : Serializable
-		{
+        public class Test : Serializable
+        {
             public string name;
             public int test;
             public float test2;
-			public override void DeserializeFields()
-			{
+            public override void DeserializeFields()
+            {
                 name = DeserializeField<string>();
                 test = DeserializeField<int>();
                 test2 = DeserializeField<float>();
-			}
+            }
 
-			public override void SerializeFields()
-			{
-				SerializeField(name);
+            public override void SerializeFields()
+            {
+                SerializeField(name);
                 SerializeField(test);
                 SerializeField(test2);
-			}
-		}
+            }
+        }
         public Test t1;
 
-		IObjective? objective;
+        IObjective? objective;
 
         TileMap.Tile pos;
         Vector2Int posV;
@@ -66,12 +66,12 @@ namespace JuniorProject.Backend.Agents
 
         public override void SerializeFields()
         {
-           
+
         }
 
         public override void DeserializeFields()
         {
-           
+
         }
     }
 }
