@@ -51,7 +51,17 @@ namespace JuniorProject.Frontend.Components
             //}
             if (drawableGridLocations.ContainsKey((p.x, p.y)))
             {
-                Debug.Print("Image exists here :)");   
+                Debug.Print("Image exists here :)");
+
+                Drawable temp;
+                if (drawables.TryGetValue(drawableGridLocations[(p.x, p.y)], out temp))
+                {
+                    InfoModal im = new InfoModal(temp.image, temp.title, temp.getInformation());
+                    im.Show();
+                }
+                else {
+                    Debug.Print("Could not find image in drawables");
+                }
             }
         }
 
@@ -101,7 +111,7 @@ namespace JuniorProject.Frontend.Components
                 Height = worldBitmap.Height,
                 Source = TransferToWriteableBitmap(worldBitmap)
             };
-            if (!drawables.TryAdd(name, new Drawable(img, true)))
+            if (!drawables.TryAdd(name, new Drawable(img, true, name)))
             {
                 Debug.Print(String.Format("!!!ERROR: Cannot add {0:S} to drawables", name));
             }
@@ -120,7 +130,7 @@ namespace JuniorProject.Frontend.Components
             };
             VectorPoint p = ConvertGridPositionToPixels(x, y);
 
-            if (!drawables.TryAdd(name, new Drawable(img, true, p.x, p.y)))
+            if (!drawables.TryAdd(name, new Drawable(img, true, name, source, p.x, p.y, x, y)))
             {
                 Debug.Print(String.Format("!!!ERROR: Cannot add {0:S} to drawables", name));
             }
