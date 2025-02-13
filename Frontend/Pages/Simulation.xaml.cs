@@ -132,15 +132,8 @@ namespace JuniorProject
 
             if ((Math.Abs(offsetX) < 1 && Math.Abs(offsetY) < 1))
             {
-                int addX = -(int)_clickAbsoluteX;
-                int addY = -(int)_clickAbsoluteY;
-                //Debug.Print(String.Format("COMBINED: Clicked mouse at: {0:N}, {1:N}", addX + (int)currentPosition.X, addY + (int)currentPosition.Y));
-                Debug.Print(String.Format("SCALE TRANSFORM: {0:N}, {1:N}", _scaleTransform.ScaleX, _scaleTransform.ScaleY));
-                Debug.Print(String.Format("TRANSLATE SCALE: {0:N}, {1:N}", _translateTransform.X, _translateTransform.Y));
-
-
-                Debug.Print(String.Format("COMBINED: Clicked mouse at: {0:N}, {1:N}", addX + (int)currentPosition.X, addY + (int)currentPosition.Y));
-                drawer.checkMouseClick((int)(currentPosition.X - _clickAbsoluteX), (int)(currentPosition.Y - _clickAbsoluteY ));
+                Debug.Print(String.Format("COMBINED: Clicked mouse at: {0:N}, {1:N}", (int)(currentPosition.X - _clickAbsoluteX), (int)(currentPosition.Y - _clickAbsoluteY)));
+                drawer.checkMouseClick((int)(currentPosition.X - _clickAbsoluteX), (int)(currentPosition.Y - _clickAbsoluteY));
             }
 
             mapCanvas.ReleaseMouseCapture();
@@ -156,7 +149,6 @@ namespace JuniorProject
 
                 if (Math.Abs(offsetX) > 1 || Math.Abs(offsetY) > 1)
                 {
-                    //Debug.Print(String.Format("OFFSET: {0:N}, {1:N}", _lastOffSetX, _lastOffSetY));
                     var currentMargin = mapCanvas.Margin;
                     _clickAbsoluteX = currentMargin.Left + offsetX;
                     _clickAbsoluteY = currentMargin.Top + offsetY;

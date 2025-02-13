@@ -13,7 +13,7 @@ using System.Windows.Media;
 namespace JuniorProject.Frontend.Components
 {
     public class VectorPoint
-    { 
+    {
         public int x, y;
         public VectorPoint(int x, int y)
         {
@@ -39,32 +39,6 @@ namespace JuniorProject.Frontend.Components
             drawableGridLocations = new Dictionary<(int, int), string>();
         }
 
-        public void checkMouseClick(int x, int y)
-        { 
-            VectorPoint p = ConvertPixelsToGridPosition(x, y);
-            Debug.Print(String.Format("GRID POS: [ {0:N}, {1:N}  ]", p.x, p.y));
-            //foreach ((int, int) b in drawableGridLocations.Keys)
-            //{
-            //    System.Console.WriteLine(b.Item1);
-            //    System.Console.WriteLine(b.Item2);
-
-            //}
-            if (drawableGridLocations.ContainsKey((p.x, p.y)))
-            {
-                Debug.Print("Image exists here :)");
-
-                Drawable temp;
-                if (drawables.TryGetValue(drawableGridLocations[(p.x, p.y)], out temp))
-                {
-                    InfoModal im = new InfoModal(temp.image, temp.title, temp.getInformation());
-                    im.Show();
-                }
-                else {
-                    Debug.Print("Could not find image in drawables");
-                }
-            }
-        }
-
         public void Initialize()
         {
             tileSize = ClientCommunicator.GetData<int>("tileSize");
@@ -74,6 +48,25 @@ namespace JuniorProject.Frontend.Components
             if (tileSize != default(int) && mapPixelSize.X != default(int) && mapPixelSize.Y != default(int) && worldBitmap != default(Bitmap))
             {
                 Debug.Print("Successfully loaded map values onto frontend. . .");
+            }
+        }
+
+        public void checkMouseClick(int x, int y)
+        {
+            VectorPoint p = ConvertPixelsToGridPosition(x, y);
+
+            if (drawableGridLocations.ContainsKey((p.x, p.y)))
+            {
+                Drawable temp;
+                if (drawables.TryGetValue(drawableGridLocations[(p.x, p.y)], out temp))
+                {
+                    InfoModal im = new InfoModal(temp.image, temp.title, temp.getInformation());
+                    im.Show();
+                }
+                else
+                {
+                    Debug.Print("Could not find image in drawables");
+                }
             }
         }
 
@@ -88,7 +81,8 @@ namespace JuniorProject.Frontend.Components
             {
                 if (d != null && d.shouldDraw)
                 {
-                    if (!d.isMapOrGridlines) {
+                    if (!d.isMapOrGridlines)
+                    {
                         Canvas.SetLeft(d.image, d.x);
                         Canvas.SetTop(d.image, d.y);
                     }
@@ -101,6 +95,21 @@ namespace JuniorProject.Frontend.Components
         {
             drawables["Grid"].shouldDraw = !drawables["Grid"].shouldDraw;
             Draw();
+        }
+
+        public void Draw()
+        {
+            ClearCanvas();
+            if (drawables.Count == 0)
+            {
+                AddBitmapToCanvas("MainMap", worldBitmap);
+                AddBitmapToCanvas("Grid", GetGridlines());
+                AddImageToCanvas("TestSpriteRed_1", $"{Properties.Resources.ProjectDir}\\Frontend\\Images\\Sprites\\TestSpriteRed.png", 3, 2);
+                AddImageToCanvas("TestSpriteYellow_1", $"{Properties.Resources.ProjectDir}\\Frontend\\Images\\Sprites\\TestSpriteYellow.png", 10, 15);
+                drawables["Grid"].shouldDraw = false;
+                drawables["Grid"].image.Opacity = 0.2;
+            }
+            PopulateCanvas();
         }
 
         public void AddBitmapToCanvas(string name, Bitmap worldBitmap, int x = 0, int y = 0)
@@ -124,6 +133,8 @@ namespace JuniorProject.Frontend.Components
 
         public void AddImageToCanvas(string name, string source, int x = 0, int y = 0)
         {
+            // Used to add individual sprite images. Give relative path for source.
+
             Controls.Image img = new Controls.Image
             {
                 Source = new BitmapImage(new Uri(source, UriKind.Absolute))
@@ -154,21 +165,6 @@ namespace JuniorProject.Frontend.Components
             int xGrid = x / tileSize;
             int yGrid = y / tileSize;
             return new VectorPoint(xGrid, yGrid);
-        }
-
-        public void Draw()
-        {
-            ClearCanvas();
-            if (drawables.Count == 0)
-            {
-                AddBitmapToCanvas("MainMap", worldBitmap);
-                AddBitmapToCanvas("Grid", GetGridlines());
-                AddImageToCanvas("TestSpriteRed_1", $"{Properties.Resources.ProjectDir}\\Frontend\\Images\\Sprites\\TestSpriteRed.png", 3, 2);
-                AddImageToCanvas("TestSpriteYellow_1", $"{Properties.Resources.ProjectDir}\\Frontend\\Images\\Sprites\\TestSpriteYellow.png", 10, 15);
-                drawables["Grid"].shouldDraw = false;
-                drawables["Grid"].image.Opacity = 0.2;
-            }
-            PopulateCanvas();
         }
         public WriteableBitmap TransferToWriteableBitmap(Bitmap worldBitmap)
         {

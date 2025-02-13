@@ -41,7 +41,7 @@ namespace JuniorProject.Frontend.Components
         public string getInformation()
         {
             String relativePath = path.Replace($"{Properties.Resources.ProjectDir}\\", "");
-            return String.Format($"Grid Position -> [{xGrid}, {yGrid}]\nImage Path -> {relativePath}");
+            return String.Format($"Grid Position -> [{xGrid}, {yGrid}]\nImage Path -> {relativePath}\nisMapOrGridlines -> {isMapOrGridlines.ToString()}\nshouldDraw -> {shouldDraw.ToString()}");
         }
     }
 }
