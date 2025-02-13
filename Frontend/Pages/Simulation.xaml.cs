@@ -43,7 +43,7 @@ namespace JuniorProject
             mapCanvas = this.Canvas;
             drawer = new Drawer(ref mapCanvas);
 
-            mapCanvas.PreviewMouseWheel += CanvasMouseWheel;
+            //mapCanvas.PreviewMouseWheel += CanvasMouseWheel; disabled for now
             mapCanvas.MouseLeftButtonDown += CanvasMouseLeftDown;
             mapCanvas.MouseLeftButtonUp += CanvasMouseLeftUp;
             mapCanvas.MouseMove += CanvasMouseMove;
@@ -94,22 +94,24 @@ namespace JuniorProject
 
         private void CanvasMouseWheel(object sender, MouseWheelEventArgs e)
         {
-            System.Windows.Point mousePosition = e.GetPosition(mapCanvas);
-            double zoomFactor = e.Delta > 0 ? 1.1 : 0.9;
+            // Disabled for now
 
-            _scaleTransform.ScaleX *= zoomFactor;
-            _scaleTransform.ScaleY *= zoomFactor;
-            //Debug.Print(String.Format("Mouse Pos: {0:N}, {1:N}", mousePosition.X, mousePosition.Y));
-            //Debug.Print(String.Format("Zoom Factor: {0:N}, {1:N}", _scaleTransform.ScaleX, _scaleTransform.ScaleY));
+            //System.Windows.Point mousePosition = e.GetPosition(mapCanvas);
+            //double zoomFactor = e.Delta > 0 ? 1.1 : 0.9;
 
-            var newScaleX = _scaleTransform.ScaleX;
-            var newScaleY = _scaleTransform.ScaleY;
+            //_scaleTransform.ScaleX *= zoomFactor;
+            //_scaleTransform.ScaleY *= zoomFactor;
+            ////Debug.Print(String.Format("Mouse Pos: {0:N}, {1:N}", mousePosition.X, mousePosition.Y));
+            ////Debug.Print(String.Format("Zoom Factor: {0:N}, {1:N}", _scaleTransform.ScaleX, _scaleTransform.ScaleY));
 
-            double offsetX = mousePosition.X * (1 - zoomFactor);
-            double offsetY = mousePosition.Y * (1 - zoomFactor);
+            //var newScaleX = _scaleTransform.ScaleX;
+            //var newScaleY = _scaleTransform.ScaleY;
 
-            _translateTransform.X += offsetX;
-            _translateTransform.Y += offsetY;
+            //double offsetX = mousePosition.X * (1 - zoomFactor);
+            //double offsetY = mousePosition.Y * (1 - zoomFactor);
+
+            //_translateTransform.X += offsetX;
+            //_translateTransform.Y += offsetY;
         }
 
         private void CanvasMouseLeftDown(object sender, MouseEventArgs e)
@@ -136,20 +138,9 @@ namespace JuniorProject
                 Debug.Print(String.Format("SCALE TRANSFORM: {0:N}, {1:N}", _scaleTransform.ScaleX, _scaleTransform.ScaleY));
                 Debug.Print(String.Format("TRANSLATE SCALE: {0:N}, {1:N}", _translateTransform.X, _translateTransform.Y));
 
-                if (_scaleTransform.ScaleX != 0 || _translateTransform.X != 0)
-                {
-                    int transformedScaleX = (int)(currentPosition.X / _scaleTransform.ScaleX);
-                    int transformedScaleY = (int)(currentPosition.Y / _scaleTransform.ScaleY);
-                    int transformedTranslateX = (int)(Math.Abs(_translateTransform.X) / _scaleTransform.ScaleX);
-                    int transformedTranslateY = (int)(Math.Abs(_translateTransform.Y) / _scaleTransform.ScaleY);
-                    Debug.Print(String.Format("COMBINED: Clicked mouse at: {0:N}, {1:N}", transformedScaleX + transformedTranslateX, transformedScaleY + transformedTranslateY));
-                    drawer.checkMouseClick(transformedScaleX + transformedTranslateX, transformedScaleY + transformedTranslateY);
-                }
-                else 
-                {
-                    Debug.Print(String.Format("COMBINED: Clicked mouse at: {0:N}, {1:N}", addX + (int)currentPosition.X, addY + (int)currentPosition.Y));
-                    drawer.checkMouseClick(addX + (int)currentPosition.X, addY + (int)currentPosition.Y);
-                }
+
+                Debug.Print(String.Format("COMBINED: Clicked mouse at: {0:N}, {1:N}", addX + (int)currentPosition.X, addY + (int)currentPosition.Y));
+                drawer.checkMouseClick((int)(currentPosition.X - _clickAbsoluteX), (int)(currentPosition.Y - _clickAbsoluteY ));
             }
 
             mapCanvas.ReleaseMouseCapture();
