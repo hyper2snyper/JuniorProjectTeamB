@@ -31,6 +31,9 @@ namespace JuniorProject.Backend.WorldData
             public int octaves;
             public bool ignoreNoise = false;
             public BiomeData? requiredBiome = null;
+            //Resource Data
+            public List<string> resources = new List<string>();
+            public List<int> collectRate = new List<int>();
         }
         Dictionary<string, BiomeData> biomeList = new Dictionary<string, BiomeData>(); //Loaded terrains from the DB
         BiomeData defaultBiome;
@@ -91,6 +94,16 @@ namespace JuniorProject.Backend.WorldData
                 if (!results.IsDBNull(10))
                 {
                     biomeLinking.Add(terrain, results.GetString(10));
+                }
+                //Get Resource Data for Biome
+                SQLiteDataReader resourceResults = DatabaseManager.ReadDB("SELECT * FROM BiomeResource;");
+                while (resourceResults.Read())
+                {
+                    if (resourceResults.GetString(0) == terrain.name)
+                    {
+                        terrain.resources.Add(resourceResults.GetString(1));
+                        terrain.collectRate.Add(resourceResults.GetInt32(2));
+                    }
                 }
                 biomeList.Add(terrain.name, terrain);
                 defaultBiome ??= terrain;
