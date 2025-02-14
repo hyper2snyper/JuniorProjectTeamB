@@ -23,9 +23,14 @@ namespace JuniorProject.Frontend.Windows
             InitializeComponent();
         }
 
-        private void ScrollBar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        private void SavedClicked(object sender, RoutedEventArgs e)
         {
+            Debug.Print("Saved!!!!!!");
+        }
 
+        private void CancelClicked(object sender, RoutedEventArgs e)
+        {
+            this.Hide();
         }
     }
 }
