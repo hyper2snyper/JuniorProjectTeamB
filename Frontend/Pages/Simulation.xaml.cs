@@ -14,6 +14,7 @@ using JuniorProject.Backend;
 using Drawing = System.Drawing;
 using JuniorProject.Frontend.Components;
 using System.Drawing;
+using JuniorProject.Frontend.Windows;
 
 namespace JuniorProject
 {
@@ -156,6 +157,13 @@ namespace JuniorProject
                     _startPanning = currentPosition;
                 }
             }
+        }
+
+        private void SettingsClicked(object sender, RoutedEventArgs e)
+        {
+            SimulationSettings simSettings = new SimulationSettings();
+            simSettings.Show();
+            Debug.Print("SimSettings Windows");
         }
     }
 }

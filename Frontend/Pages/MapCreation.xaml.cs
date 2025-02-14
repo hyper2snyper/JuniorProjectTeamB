@@ -1,4 +1,5 @@
 ﻿using JuniorProject.Backend;
+using JuniorProject.Backend.WorldData;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,10 +12,11 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-
+using JuniorProject.Frontend.Windows;
 namespace JuniorProject.Frontend.Pages
 {
     /// <summary>
@@ -106,5 +108,11 @@ namespace JuniorProject.Frontend.Pages
             NavigationService.Navigate(new Loading());
         }
 
+        private void SimSettings_Click(object sender, RoutedEventArgs e)
+        {
+            SimulationSettings simSettings = new SimulationSettings();
+            simSettings.Show();
+            Console.WriteLine("SimSettings Windows");
+        }
     }
 }

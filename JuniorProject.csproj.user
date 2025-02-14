@@ -13,6 +13,14 @@
     <Compile Update="Frontend\Pages\MapCreation.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Frontend\Windows\SimulationSettings.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Frontend\Components\InfoModal.xaml">
@@ -34,6 +42,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Frontend\MainWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Frontend\Windows\SimulationSettings.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
