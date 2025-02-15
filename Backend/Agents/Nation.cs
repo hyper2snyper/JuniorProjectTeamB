@@ -1,7 +1,8 @@
-﻿using JuniorProject.Backend.Agents.Objectives;
+using JuniorProject.Backend.Agents.Objectives;
 using JuniorProject.Backend.Helpers;
 using JuniorProject.Backend.WorldData;
 using JuniorProject.Frontend.Components;
+﻿using JuniorProject.Backend.WorldData;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,8 +16,11 @@ namespace JuniorProject.Backend.Agents
         public string name = "";
         public string color = "";
 
+
         World world;
         public World World { set { world = value; } }
+        EconomyManager economy;
+
 
         public List<Unit> units = new List<Unit>();
 
