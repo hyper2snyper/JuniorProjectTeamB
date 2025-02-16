@@ -129,10 +129,10 @@
                 <TextBlock HorizontalAlignment="Left" Margin="520,563,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="88" Foreground="White"><Run FontWeight="Bold" Text="Building Cost"/></TextBlock>
                 <Label Content="Building Options" HorizontalAlignment="Left" Margin="312,408,0,0" VerticalAlignment="Top" Width="137" Foreground="White" FontWeight="Bold"/>
                 <Label Content="Unit Options" HorizontalAlignment="Left" Margin="324,50,0,0" VerticalAlignment="Top" Width="137" Foreground="White" FontWeight="Bold"/>
-                <Border x:Name="Border7_Copy" BorderBrush="White" BorderThickness="1" Margin="154,852,413,825"/>
-                <Border x:Name="Border5_Copy7" BorderBrush="White" BorderThickness="1" Margin="383,852,177,796"/>
-                <Border x:Name="Border2_Copy1" BorderBrush="White" BorderThickness="1" Margin="385,668,177,966"/>
-                <Border x:Name="Border_Copy1" BorderBrush="White" BorderThickness="1" Margin="154,668,413,966" RenderTransformOrigin="0.5,0.5">
+                <Border x:Name="Border7_Copy" BorderBrush="White" BorderThickness="1" Margin="154,879,413,742"/>
+                <Border x:Name="Border5_Copy7" BorderBrush="White" BorderThickness="1" Margin="383,879,177,742"/>
+                <Border x:Name="Border2_Copy1" BorderBrush="White" BorderThickness="1" Margin="385,668,177,939"/>
+                <Border x:Name="Border_Copy1" BorderBrush="White" BorderThickness="1" Margin="154,668,413,939" RenderTransformOrigin="0.5,0.5">
                     <Border.RenderTransform>
                         <TransformGroup>
                             <ScaleTransform/>
@@ -142,46 +142,54 @@
                         </TransformGroup>
                     </Border.RenderTransform>
                 </Border>
-                <TextBlock HorizontalAlignment="Left" Margin="409,856,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="22" Width="155" Foreground="White"><Run FontWeight="Bold" Text="Highlands Forest Options"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="409,887,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="22" Width="155" Foreground="White"><Run FontWeight="Bold" Text="Highlands Forest Options"/></TextBlock>
                 <TextBlock HorizontalAlignment="Left" Margin="432,677,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="27" Width="112" Foreground="White"><Run FontWeight="Bold" Text="Highlands Options"/></TextBlock>
                 <TextBox HorizontalAlignment="Left" Margin="268,713,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="55"/>
                 <TextBox HorizontalAlignment="Left" Margin="268,740,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="55"/>
                 <TextBlock HorizontalAlignment="Left" Margin="206,679,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="27" Width="112" Foreground="#FFF9F4F4"><Run FontWeight="Bold" Text="Grassland Options"/></TextBlock>
                 <TextBox HorizontalAlignment="Left" Margin="268,767,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="55"/>
-                <TextBox HorizontalAlignment="Left" Margin="271,0,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Center" Width="55"/>
-                <TextBox HorizontalAlignment="Left" Margin="271,916,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="55"/>
-                <TextBox HorizontalAlignment="Left" Margin="271,940,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="55"/>
+                <TextBox HorizontalAlignment="Left" Margin="271,45,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Center" Width="55"/>
+                <TextBox HorizontalAlignment="Left" Margin="271,970,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="55"/>
+                <TextBox HorizontalAlignment="Left" Margin="271,1021,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="55"/>
                 <TextBox HorizontalAlignment="Left" Margin="514,715,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="53"/>
                 <TextBox HorizontalAlignment="Left" Margin="514,741,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="53"/>
                 <TextBox HorizontalAlignment="Left" Margin="514,767,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="53"/>
-                <TextBox HorizontalAlignment="Left" Margin="508,908,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="53"/>
-                <TextBox HorizontalAlignment="Left" Margin="508,930,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="53"/>
-                <TextBox HorizontalAlignment="Left" Margin="508,887,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="53"/>
-                <TextBlock HorizontalAlignment="Left" Margin="211,860,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="27" Width="106" Foreground="White"><Run FontWeight="Bold" Text="Forest Options"/></TextBlock>
-                <TextBlock HorizontalAlignment="Left" Margin="180,940,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="18" Width="80" Foreground="White"><Run FontWeight="Bold" Text="Food"/></TextBlock>
-                <TextBlock HorizontalAlignment="Left" Margin="180,916,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="21" Width="80" Foreground="White"><Run FontWeight="Bold" Text="Stone"/></TextBlock>
-                <TextBlock HorizontalAlignment="Left" Margin="179,0,0,0" TextWrapping="Wrap" VerticalAlignment="Center" Height="18" Width="89" Foreground="White"><Run FontWeight="Bold" Text="Wood"/></TextBlock>
-                <TextBlock HorizontalAlignment="Left" Margin="405,889,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="88" Foreground="White" Text="Wood" FontWeight="Bold"/>
-                <TextBlock HorizontalAlignment="Left" Margin="405,909,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="18" Width="80" Foreground="White"><Run FontWeight="Bold" Text="Iron"/></TextBlock>
-                <TextBlock HorizontalAlignment="Left" Margin="406,931,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="80" Foreground="White"><Run FontWeight="Bold" Text="Stone"/></TextBlock>
+                <TextBox HorizontalAlignment="Left" Margin="508,943,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="53"/>
+                <TextBox HorizontalAlignment="Left" Margin="508,970,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="53"/>
+                <TextBox HorizontalAlignment="Left" Margin="508,916,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="53"/>
+                <TextBlock HorizontalAlignment="Left" Margin="211,887,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="27" Width="106" Foreground="White"><Run FontWeight="Bold" Text="Forest Options"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="180,1021,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="18" Width="80" Foreground="White"><Run FontWeight="Bold" Text="Gold"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="180,970,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="21" Width="80" Foreground="White"><Run FontWeight="Bold" Text="Stone"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="179,45,0,0" TextWrapping="Wrap" VerticalAlignment="Center" Height="18" Width="89" Foreground="White"><Run FontWeight="Bold" Text="Wood"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="405,916,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="88" Foreground="White" Text="Wood" FontWeight="Bold"/>
+                <TextBlock HorizontalAlignment="Left" Margin="405,943,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="18" Width="80" Foreground="White"><Run FontWeight="Bold" Text="Iron"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="406,970,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="80" Foreground="White"><Run FontWeight="Bold" Text="Stone"/></TextBlock>
                 <TextBox HorizontalAlignment="Left" Margin="268,713,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="55"/>
                 <TextBox HorizontalAlignment="Left" Margin="268,740,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="55"/>
                 <TextBox HorizontalAlignment="Left" Margin="268,767,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="55"/>
                 <Label Content="Binome Options" HorizontalAlignment="Left" Margin="323,631,0,0" VerticalAlignment="Top" Width="105" Foreground="White" FontWeight="Bold"/>
-                <TextBlock HorizontalAlignment="Left" Margin="406,953,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="80" Foreground="White"><Run FontWeight="Bold" Text="Food"/></TextBlock>
-                <TextBox HorizontalAlignment="Left" Margin="508,952,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="53"/>
-                <TextBlock HorizontalAlignment="Left" Margin="406,974,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="80" Foreground="White"><Run FontWeight="Bold" Text="Gold"/></TextBlock>
-                <TextBox HorizontalAlignment="Left" Margin="508,973,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="53"/>
-                <TextBox HorizontalAlignment="Left" Margin="514,792,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="53"/>
+                <TextBlock HorizontalAlignment="Left" Margin="406,997,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="80" Foreground="White"><Run FontWeight="Bold" Text="Food"/></TextBlock>
+                <TextBox HorizontalAlignment="Left" Margin="508,997,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="53"/>
+                <TextBlock HorizontalAlignment="Left" Margin="406,1021,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="80" Foreground="White"><Run FontWeight="Bold" Text="Gold"/></TextBlock>
+                <TextBox HorizontalAlignment="Left" Margin="508,1021,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="53"/>
+                <TextBox HorizontalAlignment="Left" Margin="514,821,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="53"/>
                 <TextBlock HorizontalAlignment="Left" Margin="412,715,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="88" Foreground="White" Text="Wood" FontWeight="Bold"/>
                 <TextBlock HorizontalAlignment="Left" Margin="412,742,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="18" Width="80" Foreground="White"><Run FontWeight="Bold" Text="Iron"/></TextBlock>
                 <TextBlock HorizontalAlignment="Left" Margin="411,768,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="80" Foreground="White"><Run FontWeight="Bold" Text="Stone"/></TextBlock>
-                <TextBlock HorizontalAlignment="Left" Margin="412,794,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="80" Foreground="White"><Run FontWeight="Bold" Text="Gold"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="412,821,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="80" Foreground="White"><Run FontWeight="Bold" Text="Gold"/></TextBlock>
                 <TextBlock HorizontalAlignment="Left" Margin="175,715,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="75" Foreground="White" Text="Wood" FontWeight="Bold"/>
                 <TextBlock HorizontalAlignment="Left" Margin="176,742,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="18" Width="80" Foreground="White"><Run FontWeight="Bold" Text="Iron"/></TextBlock>
                 <TextBlock HorizontalAlignment="Left" Margin="174,768,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="80" Foreground="White"><Run FontWeight="Bold" Text="Stone"/></TextBlock>
                 <TextBlock HorizontalAlignment="Left" Margin="174,794,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="80" Foreground="White"><Run FontWeight="Bold" Text="Food"/></TextBlock>
                 <TextBox HorizontalAlignment="Left" Margin="268,794,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="55"/>
+                <TextBlock HorizontalAlignment="Left" Margin="180,943,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="21" Width="80" Foreground="White"><Run FontWeight="Bold" Text="Iron"/></TextBlock>
+                <TextBox HorizontalAlignment="Left" Margin="271,943,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="55"/>
+                <TextBox HorizontalAlignment="Left" Margin="271,997,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="55"/>
+                <TextBlock HorizontalAlignment="Left" Margin="180,997,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="21" Width="80" Foreground="White"><Run FontWeight="Bold" Text="Food"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="174,821,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="80" Foreground="White"><Run FontWeight="Bold" Text="Gold"/></TextBlock>
+                <TextBox HorizontalAlignment="Left" Margin="268,821,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="55"/>
+                <TextBox HorizontalAlignment="Left" Margin="514,794,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="55"/>
+                <TextBlock HorizontalAlignment="Left" Margin="411,794,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="80" Foreground="White"><Run FontWeight="Bold" Text="Food"/></TextBlock>
             </Grid>
         </ScrollViewer>
         <Button Content="Save" HorizontalAlignment="Left" Margin="696,302,0,0" VerticalAlignment="Top" Width="62" Grid.RowSpan="2" Click="SavedClicked"/>
