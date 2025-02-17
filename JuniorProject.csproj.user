@@ -23,6 +23,9 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Page Update="Frontend\Components\InfoModal.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Frontend\Pages\Loading.xaml">
       <SubType>Designer</SubType>
     </Page>
