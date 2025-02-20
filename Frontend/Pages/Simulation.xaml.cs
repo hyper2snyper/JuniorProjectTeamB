@@ -28,9 +28,12 @@ namespace JuniorProject
         Drawer drawer;
         int imageCounter = 0;
 
-        private System.Windows.Point _start;
+        private System.Windows.Point _startPanning;
+        private System.Windows.Point _startClicking;
         private double _zoomFactor = 1.1;
         private bool _isDragging = false;
+        private double _clickAbsoluteX = 0;
+        private double _clickAbsoluteY = 0;
         private ScaleTransform _scaleTransform = new ScaleTransform(1, 1);
         private TranslateTransform _translateTransform = new TranslateTransform();
 
@@ -41,7 +44,7 @@ namespace JuniorProject
             mapCanvas = this.Canvas;
             drawer = new Drawer(ref mapCanvas);
 
-            mapCanvas.PreviewMouseWheel += CanvasMouseWheel;
+            //mapCanvas.PreviewMouseWheel += CanvasMouseWheel; disabled for now
             mapCanvas.MouseLeftButtonDown += CanvasMouseLeftDown;
             mapCanvas.MouseLeftButtonUp += CanvasMouseLeftUp;
             mapCanvas.MouseMove += CanvasMouseMove;
@@ -92,34 +95,48 @@ namespace JuniorProject
 
         private void CanvasMouseWheel(object sender, MouseWheelEventArgs e)
         {
-            System.Windows.Point mousePosition = e.GetPosition(mapCanvas);
-            double zoomFactor = e.Delta > 0 ? 1.1 : 0.9;
+            // Disabled for now
 
-            _scaleTransform.ScaleX *= zoomFactor;
-            _scaleTransform.ScaleY *= zoomFactor;
-            //Debug.Print(String.Format("Mouse Pos: {0:N}, {1:N}", mousePosition.X, mousePosition.Y));
-            //Debug.Print(String.Format("Zoom Factor: {0:N}, {1:N}", _scaleTransform.ScaleX, _scaleTransform.ScaleY));
+            //System.Windows.Point mousePosition = e.GetPosition(mapCanvas);
+            //double zoomFactor = e.Delta > 0 ? 1.1 : 0.9;
 
-            var newScaleX = _scaleTransform.ScaleX;
-            var newScaleY = _scaleTransform.ScaleY;
+            //_scaleTransform.ScaleX *= zoomFactor;
+            //_scaleTransform.ScaleY *= zoomFactor;
+            ////Debug.Print(String.Format("Mouse Pos: {0:N}, {1:N}", mousePosition.X, mousePosition.Y));
+            ////Debug.Print(String.Format("Zoom Factor: {0:N}, {1:N}", _scaleTransform.ScaleX, _scaleTransform.ScaleY));
 
-            double offsetX = mousePosition.X * (1 - zoomFactor);
-            double offsetY = mousePosition.Y * (1 - zoomFactor);
+            //var newScaleX = _scaleTransform.ScaleX;
+            //var newScaleY = _scaleTransform.ScaleY;
 
-            _translateTransform.X += offsetX;
-            _translateTransform.Y += offsetY;
+            //double offsetX = mousePosition.X * (1 - zoomFactor);
+            //double offsetY = mousePosition.Y * (1 - zoomFactor);
+
+            //_translateTransform.X += offsetX;
+            //_translateTransform.Y += offsetY;
         }
 
         private void CanvasMouseLeftDown(object sender, MouseEventArgs e)
         {
             _isDragging = true;
-            _start = e.GetPosition(ScrollViewer);
+            _startPanning = e.GetPosition(ScrollViewer);
+            _startClicking = e.GetPosition(ScrollViewer);
             mapCanvas.CaptureMouse();
         }
 
         private void CanvasMouseLeftUp(object sender, MouseEventArgs e)
         {
             _isDragging = false;
+
+            System.Windows.Point currentPosition = e.GetPosition(ScrollViewer);
+            double offsetX = currentPosition.X - _startClicking.X;
+            double offsetY = currentPosition.Y - _startClicking.Y;
+
+            if ((Math.Abs(offsetX) < 1 && Math.Abs(offsetY) < 1))
+            {
+                Debug.Print(String.Format("COMBINED: Clicked mouse at: {0:N}, {1:N}", (int)(currentPosition.X - _clickAbsoluteX), (int)(currentPosition.Y - _clickAbsoluteY)));
+                drawer.checkMouseClick((int)(currentPosition.X - _clickAbsoluteX), (int)(currentPosition.Y - _clickAbsoluteY));
+            }
+
             mapCanvas.ReleaseMouseCapture();
         }
 
@@ -127,16 +144,17 @@ namespace JuniorProject
         {
             if (_isDragging)
             {
-                //Debug.Print("Attempting panning");
                 System.Windows.Point currentPosition = e.GetPosition(ScrollViewer);
-                double offsetX = currentPosition.X - _start.X;
-                double offsetY = currentPosition.Y - _start.Y;
+                double offsetX = currentPosition.X - _startPanning.X;
+                double offsetY = currentPosition.Y - _startPanning.Y;
 
                 if (Math.Abs(offsetX) > 1 || Math.Abs(offsetY) > 1)
                 {
                     var currentMargin = mapCanvas.Margin;
+                    _clickAbsoluteX = currentMargin.Left + offsetX;
+                    _clickAbsoluteY = currentMargin.Top + offsetY;
                     mapCanvas.Margin = new Thickness(currentMargin.Left + offsetX, currentMargin.Top + offsetY, 0, 0);
-                    _start = currentPosition;
+                    _startPanning = currentPosition;
                 }
             }
         }
