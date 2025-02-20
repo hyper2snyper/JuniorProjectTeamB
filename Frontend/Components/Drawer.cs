@@ -19,15 +19,6 @@ namespace JuniorProject.Frontend.Components
         public int x1, y1, width, height;
     }
 
-    public class VectorPoint
-    {
-        public int x, y;
-        public VectorPoint(int x, int y)
-        {
-            this.x = x;
-            this.y = y;
-        }
-    }
     public class Drawer
     {
         int tileSize;
@@ -68,12 +59,12 @@ namespace JuniorProject.Frontend.Components
 
         public void checkMouseClick(int x, int y)
         {
-            VectorPoint p = ConvertPixelsToGridPosition(x, y);
+            Vector2Int p = ConvertPixelsToGridPosition(x, y);
 
-            if (drawableGridLocations.ContainsKey((p.x, p.y)))
+            if (drawableGridLocations.ContainsKey((p.X, p.Y)))
             {
                 Drawable temp;
-                if (drawables.TryGetValue(drawableGridLocations[(p.x, p.y)], out temp))
+                if (drawables.TryGetValue(drawableGridLocations[(p.X, p.Y)], out temp))
                 {
                     InfoModal im = new InfoModal(temp.image, temp.title, temp.getInformation());
                     im.Show();
@@ -113,8 +104,8 @@ namespace JuniorProject.Frontend.Components
                 {
                     if (!d.isMapOrGridlines)
                     {
-                        Canvas.SetLeft(d.image, d.x);
-                        Canvas.SetTop(d.image, d.y);
+                        Canvas.SetLeft(d.image, d.pixelPosition.X);
+                        Canvas.SetTop(d.image, d.pixelPosition.Y);
                     }
                     Canvas.Children.Add(d.image);
                 }
@@ -221,8 +212,8 @@ namespace JuniorProject.Frontend.Components
                 Height = bitmap.Height,
                 Source = TransferToWriteableBitmap(bitmap)
             };
-            VectorPoint p = ConvertGridPositionToPixels(x, y);
-            if (!drawables.TryAdd(name, new Drawable(img, true, name, imageSource, p.x, p.y, x, y)))
+            Vector2Int pixelPosition = ConvertGridPositionToPixels(x, y);
+            if (!drawables.TryAdd(name, new Drawable(img, true, name, imageSource, pixelPosition, new Vector2Int(x, y))))
             {
                 Debug.Print(String.Format("!!!ERROR: Cannot add {0:S} to drawables", name));
             }
@@ -245,9 +236,9 @@ namespace JuniorProject.Frontend.Components
             {
                 Source = new BitmapImage(new Uri(source, UriKind.Absolute))
             };
-            VectorPoint p = ConvertGridPositionToPixels(x, y);
+            Vector2Int pixelPosition = ConvertGridPositionToPixels(x, y);
 
-            if (!drawables.TryAdd(name, new Drawable(img, true, name, source, p.x, p.y, x, y)))
+            if (!drawables.TryAdd(name, new Drawable(img, true, name, source, pixelPosition, new Vector2Int(x, y))))
             {
                 Debug.Print(String.Format("!!!ERROR: Cannot add {0:S} to drawables", name));
             }
@@ -258,19 +249,19 @@ namespace JuniorProject.Frontend.Components
             }
         }
 
-        public VectorPoint ConvertGridPositionToPixels(int x, int y)
+        public Vector2Int ConvertGridPositionToPixels(int x, int y)
         {
             // based on current Sprite being 20x20 sprites
             int xPixelWidth = x * tileSize;
             int yPixelWidth = y * tileSize;
-            return new VectorPoint(xPixelWidth, yPixelWidth);
+            return new Vector2Int(xPixelWidth, yPixelWidth);
         }
 
-        public VectorPoint ConvertPixelsToGridPosition(int x, int y)
+        public Vector2Int ConvertPixelsToGridPosition(int x, int y)
         {
             int xGrid = x / tileSize;
             int yGrid = y / tileSize;
-            return new VectorPoint(xGrid, yGrid);
+            return new Vector2Int(xGrid, yGrid);
         }
         public WriteableBitmap TransferToWriteableBitmap(Bitmap worldBitmap)
         {

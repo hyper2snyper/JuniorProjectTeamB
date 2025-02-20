@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JuniorProject.Backend.Helpers;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -14,8 +15,8 @@ namespace JuniorProject.Frontend.Components
         public Image image;
         public Boolean shouldDraw;
         public Boolean isMapOrGridlines;
-        public int x, y;
-        public int xGrid, yGrid;
+        public Vector2Int pixelPosition;
+        public Vector2Int gridPosition;
         public string path;
         public Drawable(Image image, Boolean shouldDraw, string title)
         {
@@ -25,15 +26,13 @@ namespace JuniorProject.Frontend.Components
             this.title = title;
         }
 
-        public Drawable(Image image, Boolean shouldDraw, string title, string path, int x, int y, int xGrid, int yGrid)
+        public Drawable(Image image, Boolean shouldDraw, string title, string path, Vector2Int pixelPosition, Vector2Int gridPosition)
         {
             this.image = image;
             this.shouldDraw = shouldDraw;
             this.isMapOrGridlines = false;
-            this.x = x;
-            this.y = y;
-            this.xGrid = xGrid;
-            this.yGrid = yGrid;
+            this.pixelPosition = pixelPosition;
+            this.gridPosition = gridPosition;
             this.title = title;
             this.path = path;
         }
@@ -41,7 +40,7 @@ namespace JuniorProject.Frontend.Components
         public string getInformation()
         {
             String relativePath = path.Replace($"{Properties.Resources.ProjectDir}\\", "");
-            return String.Format($"Grid Position -> [{xGrid}, {yGrid}]\nImage Path -> {relativePath}\nisMapOrGridlines -> {isMapOrGridlines.ToString()}\nshouldDraw -> {shouldDraw.ToString()}");
+            return String.Format($"Grid Position -> [{gridPosition.X}, {gridPosition.Y}]\nImage Path -> {relativePath}\nisMapOrGridlines -> {isMapOrGridlines.ToString()}\nshouldDraw -> {shouldDraw.ToString()}");
         }
     }
 }
