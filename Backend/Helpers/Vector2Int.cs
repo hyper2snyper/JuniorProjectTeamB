@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace JuniorProject.Backend.Helpers
 {
-    public class Vector2Int
+	[DebuggerDisplay("({X}, {Y})")]
+	public class Vector2Int
     {
         public static readonly Vector2Int Zero = new Vector2Int(0, 0);
         public static readonly Vector2Int Right = new Vector2Int(1, 0);

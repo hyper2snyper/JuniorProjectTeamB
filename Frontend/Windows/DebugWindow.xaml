@@ -1,0 +1,14 @@
+﻿<Window x:Class="JuniorProject.Frontend.Windows.DebugWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:JuniorProject.Frontend.Windows"
+        mc:Ignorable="d"
+        Title="DebugWindow" Height="479" Width="871" Background="Gray">
+    <Grid>
+        <TextBlock x:Name="Console" Text="TextBlock" Foreground="White" Background="Black" IsHitTestVisible="False" Height="400" VerticalAlignment="Top"/>
+        <TextBox x:Name="Input" Margin="0,400,0,0" TextWrapping="Wrap" Background="Black" Foreground="White" Cursor="IBeam" Height="30" VerticalAlignment="Top"/>
+
+    </Grid>
+</Window>
