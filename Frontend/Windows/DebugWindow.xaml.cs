@@ -47,7 +47,7 @@ namespace JuniorProject.Frontend.Windows
             Instance.KeyDown += Instance.KeyPressed;
         }
 
-        public static readonly Regex spawnUnitRegex = new Regex("^spawnUnit\\ *\\([a-zA-z]+,\\ *[0-9]+,\\ *[0-9]+\\,\\ *[a-zA-z]+\\)\\ *$");
+        public static readonly Regex spawnUnitRegex = new Regex("^spawnUnit\\ *\\([a-zA-z]+,\\ *[a-zA-z]+,\\ *[0-9]+,\\ *[0-9]+\\,\\ *[a-zA-z]+\\)\\ *$");
 
         public static readonly Regex stringParam = new Regex("\\([a-zA-z]+|,\\ *[a-zA-z]+");
         public static readonly Regex stringInstance = new Regex("[a-zA-z]+");
@@ -64,14 +64,15 @@ namespace JuniorProject.Frontend.Windows
             {
                 List<Match> matches = stringParam.Matches(Input.Text).ToList();
                 string unitType = stringInstance.Match(matches[0].Value).Value;
-                string unitName = stringInstance.Match(matches[1].Value).Value;
+                string unitTeam = stringInstance.Match(matches[1].Value).Value;
+                string unitName = stringInstance.Match(matches[2].Value).Value;
 
                 matches = intParam.Matches(Input.Text).ToList();
                 int x = int.Parse(intInstance.Match(matches[0].Value).Value);
                 int y = int.Parse(intInstance.Match(matches[1].Value).Value);
-
-                unitsCreated.TryAdd(unitName, new Unit(unitType, ClientCommunicator.GetData<World>("World"), new Vector2Int(x, y)));
-                ClientCommunicator.GetData<DrawableManager>("DrawableManager").AddUnit(unitName, new Unit(unitType, ClientCommunicator.GetData<World>("World"), new Vector2Int(x, y)));
+                Debug.Print(String.Format("{0:S} | {1:S} | {2:S}", unitType, unitTeam, unitName));
+                //unitsCreated.TryAdd(unitName, new Unit(unitType, ClientCommunicator.GetData<World>("World"), new Vector2Int(x, y)));
+                ClientCommunicator.GetData<DrawableManager>("DrawableManager").AddUnit(unitName, new Unit(unitType, unitTeam, ClientCommunicator.GetData<World>("World"), new Vector2Int(x, y)));
                 Console.Text += $"Unit spawned at {x},{y} of type [{unitType}] with name [{unitName}]\n";
                 return;
             }

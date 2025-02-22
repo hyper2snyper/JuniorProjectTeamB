@@ -38,10 +38,10 @@ namespace JuniorProject.Backend.Agents
         public static void LoadUnitTemplates()
         {
             unitTemplates = new Dictionary<string, UnitTemplate>();
-            UnitTemplate template = new UnitTemplate();
             SQLiteDataReader results = DatabaseManager.ReadDB("SELECT * FROM Units;");
             while (results.Read())
             {
+                UnitTemplate template = new UnitTemplate();
                 template.name = results.GetString(0);
                 template.description = results.GetString(1);
                 template.attackDamage = results.GetInt32(2);
@@ -56,6 +56,7 @@ namespace JuniorProject.Backend.Agents
 
         public UnitTemplate unitType;
         public int health;
+        public string team;
 
         IObjective? objective;
 
@@ -63,10 +64,11 @@ namespace JuniorProject.Backend.Agents
         TileMap.Tile pos;
         Vector2Int posV;
 
-        public Unit(string type, World world, Vector2Int posV)
+        public Unit(string type, string team, World world, Vector2Int posV)
         {
             this.posV = posV;
             tileMap = world.map;
+            this.team = team;
             pos = tileMap.getTile(posV);
             if (!unitTemplates.Keys.Contains(type))
             {
@@ -74,6 +76,16 @@ namespace JuniorProject.Backend.Agents
                 return;
             }
             SetType(unitTemplates[type]);
+        }
+
+        public string getSpriteName()
+        {
+            return String.Format("{0:S}{1:S}", team, unitType.name);
+        }
+
+        public Vector2Int getPosition()
+        {
+            return posV;
         }
 
         void SetType(UnitTemplate template)

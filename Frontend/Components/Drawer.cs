@@ -106,6 +106,7 @@ namespace JuniorProject.Frontend.Components
         public void ClearCanvas()
         {
             drawables.Clear();
+            drawableGridLocations.Clear();
             Canvas.Children.Clear();
         }
 
@@ -138,7 +139,8 @@ namespace JuniorProject.Frontend.Components
             AddBitmapToCanvas("Grid", GetGridlines());
 
             foreach (var u in drawableManager.units) {
-                Debug.Print(String.Format("{0:S}", u.Key));
+                //Debug.Print(String.Format("{0:S}", u.Key));
+                AddBitmapToCanvas(u.Key, extractFromSprite(u.Value.getSpriteName()), u.Value.getPosition());
             }
 
 
@@ -230,6 +232,26 @@ namespace JuniorProject.Frontend.Components
                 Debug.Print(String.Format("!!!ERROR: Cannot add {0:S} to drawables", name));
             }
             if (!drawableGridLocations.TryAdd((x, y), name))
+            {
+                Debug.Print(String.Format("!!!ERROR: Cannot add {0:S} to drawableGridLocations", name));
+            }
+        }
+
+        public void AddBitmapToCanvas(string name, Bitmap bitmap, Vector2Int gridPos)
+        {
+            string imageSource = "SpriteSheet";
+            Controls.Image img = new Controls.Image
+            {
+                Width = bitmap.Width,
+                Height = bitmap.Height,
+                Source = TransferToWriteableBitmap(bitmap)
+            };
+            Vector2Int pixelPosition = ConvertGridPositionToPixels(gridPos.X, gridPos.Y);
+            if (!drawables.TryAdd(name, new Drawable(img, true, name, imageSource, pixelPosition, gridPos)))
+            {
+                Debug.Print(String.Format("!!!ERROR: Cannot add {0:S} to drawables", name));
+            }
+            if (!drawableGridLocations.TryAdd((gridPos.X, gridPos.Y), name))
             {
                 Debug.Print(String.Format("!!!ERROR: Cannot add {0:S} to drawableGridLocations", name));
             }
