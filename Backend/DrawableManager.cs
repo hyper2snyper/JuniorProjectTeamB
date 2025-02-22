@@ -12,14 +12,14 @@ namespace JuniorProject.Backend
         public Dictionary<string, Unit> units = new Dictionary<string, Unit>();
         public event Action DictionaryChanged;
 
-        public UnitManager() {
+        public UnitManager()
+        {
             ClientCommunicator.RegisterData<UnitManager>("UnitManager", this);
         }
 
         public void AddUnit(string name, Unit unit)
-        { 
+        {
             units.TryAdd(name, unit);
-            Debug.Print("Added Unit");
             DictionaryChanged?.Invoke();
         }
 
@@ -27,7 +27,6 @@ namespace JuniorProject.Backend
         {
             if (units.Remove(name))
                 DictionaryChanged?.Invoke();
-            Debug.Print("Removed Unit");
         }
     }
 }

@@ -138,12 +138,16 @@ namespace JuniorProject.Frontend.Components
             AddBitmapToCanvas("MainMap", worldBitmap);
             AddBitmapToCanvas("Grid", GetGridlines());
 
-            foreach (var u in unitManager.units) {
-                //Debug.Print(String.Format("{0:S}", u.Key));
+            foreach (var u in unitManager.units)
+            {
                 AddBitmapToCanvas(u.Key, extractFromSprite(u.Value.getSpriteName()), u.Value.getPosition());
             }
+            //DebugImages();
+            PopulateCanvas();
+        }
 
-
+        public void DebugImages()
+        {
             /*  vvvv FOR DEBUGGING/TESTING IMAGE SOURCES BELOW vvvv   */
             //AddImageToCanvas("TestSpriteRed_1", $"{Properties.Resources.ProjectDir}\\Frontend\\Images\\Sprites\\IndividualImages\\TestSpriteRed.png", 3, 2);
             //AddImageToCanvas("TestSpriteYellow_1", $"{Properties.Resources.ProjectDir}\\Frontend\\Images\\Sprites\\IndividualImages\\TestSpriteYellow.png", 10, 15);
@@ -200,7 +204,6 @@ namespace JuniorProject.Frontend.Components
 
             //AddBitmapToCanvas("WheatFarm", extractFromSprite("WheatFarm"), 7, 3);
             //AddBitmapToCanvas("Mine", extractFromSprite("Mine"), 7, 4);
-            PopulateCanvas();
         }
 
         public void AddBitmapToCanvas(string name, Bitmap bitmap)

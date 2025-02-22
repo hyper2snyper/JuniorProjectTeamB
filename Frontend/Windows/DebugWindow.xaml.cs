@@ -48,7 +48,7 @@ namespace JuniorProject.Frontend.Windows
         }
 
         public static readonly Regex clearRegex = new Regex("^clear\\ *$");
-        
+
         public static readonly Regex spawnUnitRegex = new Regex("^spawnUnit\\ *\\([a-zA-z]+,\\ *[a-zA-z]+,\\ *[0-9]+,\\ *[0-9]+\\,\\ *[a-zA-z]+\\)\\ *$");
         public static readonly Regex deleteUnitRegex = new Regex("^deleteUnit\\ *\\([a-zA-z]+\\)\\ *$");
         public static readonly Regex printUnitsRegex = new Regex("^printUnits\\(\\)\\ *$");

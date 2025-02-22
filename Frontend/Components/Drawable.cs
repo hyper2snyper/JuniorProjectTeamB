@@ -25,7 +25,8 @@ namespace JuniorProject.Frontend.Components
             this.isMapOrGridlines = true;
             this.title = title;
 
-            if (title == "Grid") { 
+            if (title == "Grid")
+            {
                 shouldDraw = false;
                 image.Opacity = 0.2;
             }
