@@ -13,7 +13,7 @@ namespace JuniorProject.Backend.Agents
 
         List<Unit> units = new List<Unit>();
         List<Building> buildings = new List<Building>();
-        EconomyManager economy;
+        NationResources resources;
 
         public Nation()
         {
