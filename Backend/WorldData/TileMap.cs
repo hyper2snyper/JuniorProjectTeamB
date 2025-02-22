@@ -1,6 +1,7 @@
 ﻿using JuniorProject.Backend.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -10,17 +11,43 @@ namespace JuniorProject.Backend.WorldData
 {
     class TileMap
     {
+        [DebuggerDisplay("({pos.X}, {pos.Y})")]
         public class Tile
         {
+            public Vector2Int pos = new Vector2Int();
+
             public Dictionary<string, float> terrainPercentages = new Dictionary<string, float>();
             public int movementCost;
             public float elevationAvg;
+
+            public bool impassible = false;
+
         }
 
         Tile[,] tiles;
-        public Tile getTile(int x, int y)
+        public Tile? getTile(int x, int y)
         {
+            if (x < 0 || y < 0) return null;
+            if (x >= mapSize.X || y >= mapSize.Y) return null;
             return tiles[x, y];
+        }
+        public Tile? getTile(Vector2Int v)
+        {
+            return getTile(v.X, v.Y);
+        }
+
+        public Tile?[,] getTileNeighbors(Tile tile)
+        {
+            Tile?[,] neighbors = new Tile?[3, 3];
+            for (int x = -1; x <= 1; x++)
+            {
+                for (int y = -1; y <= 1; y++)
+                {
+                    if (x == 0 && y == 0) continue;
+                    neighbors[x + 1, y + 1] = getTile(tile.pos.X + x, tile.pos.Y + y);
+                }
+            }
+            return neighbors;
         }
 
         int tileSize;
@@ -57,6 +84,7 @@ namespace JuniorProject.Backend.WorldData
                 for (int tileY = 0; tileY < mapSize.Y; tileY++)
                 {
                     Tile tile = new Tile();
+                    tile.pos = new Vector2Int(tileX, tileY);
                     Dictionary<string, int> landTypes = new Dictionary<string, int>();
                     int movementCostTotal = 0;
 
@@ -68,7 +96,11 @@ namespace JuniorProject.Backend.WorldData
                             int pixelPosY = (tileY * tileSize) + y;
                             if (pixelPosX >= mapPixelSize.X) continue;
                             if (pixelPosY >= mapPixelSize.Y) continue;
-                            if (map.BiomeMap[pixelPosX, pixelPosY] == null) continue;
+                            if (map.BiomeMap[pixelPosX, pixelPosY] == null)
+                            {
+                                movementCostTotal += 5; //Mountain move modifier.
+                                continue;
+                            }
 
                             string landType = map.BiomeMap[pixelPosX, pixelPosY].name;
                             if (landTypes.ContainsKey(landType))
@@ -82,7 +114,7 @@ namespace JuniorProject.Backend.WorldData
                             movementCostTotal += map.BiomeMap[pixelPosX, pixelPosY].movementCost;
                         }
                     }
-
+                    if (landTypes.Keys.Count == 0) tile.impassible = true;
                     foreach (string landType in landTypes.Keys)
                     {
                         float relativePercentage = landTypes[landType] / (tileSize * tileSize);

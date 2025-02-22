@@ -1,4 +1,5 @@
-﻿using System.Data.Common;
+﻿using JuniorProject.Frontend.Windows;
+using System.Data.Common;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -22,6 +23,7 @@ namespace JuniorProject
             InitializeComponent();
             MainFrame.Navigate(new MainMenu());
         }
+
 
         public MediaElement GetMusicPlayer() { return MusicPlayer; }
     }

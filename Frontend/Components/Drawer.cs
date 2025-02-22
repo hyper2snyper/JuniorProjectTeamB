@@ -21,7 +21,7 @@ namespace JuniorProject.Frontend.Components
 
     public class Drawer
     {
-        int tileSize;
+        public int tileSize;
         Vector2Int mapPixelSize;
 
         Bitmap worldBitmap;
