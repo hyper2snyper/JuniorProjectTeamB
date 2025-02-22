@@ -226,5 +226,33 @@ namespace JuniorProject.Backend.WorldData
             ClientCommunicator.RegisterData<int>("tileSize", tileSize);
             ClientCommunicator.RegisterData<TileMap>("TileMap", this);
         }
+
+        List<string> GetTileResource(int xPos, int yPos)
+        {
+            string primaryBiome = "";
+            foreach (var item1 in tiles[xPos, yPos].terrainPercentages)
+            {
+                foreach (var item2 in tiles[xPos, yPos].terrainPercentages)
+                {
+                    if (item1.Value > item2.Value) primaryBiome = item1.Key;
+                    else if (item2.Value > item1.Value) primaryBiome = item2.Key;
+                }
+            }
+            return (map.GetBiomeResources(primaryBiome));
+        }
+
+        List<int> GetTileRate(int xPos, int yPos)
+        {
+            string primaryBiome = "";
+            foreach (var item1 in tiles[xPos, yPos].terrainPercentages)
+            {
+                foreach (var item2 in tiles[xPos, yPos].terrainPercentages)
+                {
+                    if (item1.Value > item2.Value) primaryBiome = item1.Key;
+                    else if (item2.Value > item1.Value) primaryBiome = item2.Key;
+                }
+            }
+            return (map.GetBiomeRate(primaryBiome));
+        }
     }
 }

@@ -240,6 +240,20 @@ namespace JuniorProject.Backend.WorldData
             }
 
         }
-    }
 
+        public void SaveImage()
+        {
+            worldImage.Save($"{Properties.Resources.ProjectDir}\\LocalData\\Map.png", System.Drawing.Imaging.ImageFormat.Png);
+        }
+
+        public List<string> GetBiomeResources(string biomeName)
+        {
+            return biomeList[biomeName].resources;
+        }
+
+        public List<int> GetBiomeRate(string biomeName)
+        {
+            return biomeList[biomeName].collectRate;
+        }
+    }
 }
