@@ -9,8 +9,8 @@ namespace JuniorProject.Backend
 {
     public class DrawableManager
     {
-        //Dictionary<string, Unit> units = new Dictionary<string, Unit>();
-        public List<string> units = new List<string>();
+        public Dictionary<string, Unit> units = new Dictionary<string, Unit>();
+        //public List<string> units = new List<string>();
         public event Action DictionaryChanged;
 
         public DrawableManager() {
@@ -19,10 +19,10 @@ namespace JuniorProject.Backend
             //ClientCommunicator.RegisterAction("RemoveUnit", this.RemoveUnit);
         }
 
-        public void AddUnit(string name)
+        public void AddUnit(string name, Unit unit)
         { 
-            //units.TryAdd(name, unit);
-            units.Add(name);
+            units.TryAdd(name, unit);
+            //units.Add(name);
             Debug.Print("Added Unit");
             DictionaryChanged?.Invoke();
         }

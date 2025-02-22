@@ -5,7 +5,7 @@ using JuniorProject.Frontend.Components;
 
 namespace JuniorProject.Backend.WorldData
 {
-    class World
+    public class World
     {
         public TileMap map;
         public List<Unit> units = new List<Unit>();

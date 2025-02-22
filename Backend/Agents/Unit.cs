@@ -7,7 +7,7 @@ using System.Xml.Linq;
 
 namespace JuniorProject.Backend.Agents
 {
-    class Unit : Serializable
+    public class Unit : Serializable
     {
         public class UnitTemplate //The template of the unit, the type if you will.
         {
