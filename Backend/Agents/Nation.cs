@@ -16,11 +16,10 @@ namespace JuniorProject.Backend.Agents
         public string name = "";
         public string color = "";
 
-
         World world;
         public World World { set { world = value; } }
         EconomyManager economy;
-
+        NationResources resources;
 
         public List<Unit> units = new List<Unit>();
 
