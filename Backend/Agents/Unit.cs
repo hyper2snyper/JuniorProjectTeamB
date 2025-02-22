@@ -37,21 +37,21 @@ namespace JuniorProject.Backend.Agents
         static Dictionary<string, UnitTemplate> unitTemplates;
         public static void LoadUnitTemplates()
         {
-			unitTemplates = new Dictionary<string, UnitTemplate>();
-			UnitTemplate template = new UnitTemplate();
-			SQLiteDataReader results = DatabaseManager.ReadDB("SELECT * FROM Units;");
-			while (results.Read())
-			{
-				template.name = results.GetString(0);
-				template.description = results.GetString(1);
-				template.attackDamage = results.GetInt32(2);
-				template.attackRange = results.GetInt32(3);
-				template.maxHealth = results.GetInt32(4);
-				template.sprite = results.GetString(5);
-				template.flags = results.GetInt32(6); //PLACEHOLDER
-				unitTemplates.Add(template.name, template);
-			}
-		}
+            unitTemplates = new Dictionary<string, UnitTemplate>();
+            UnitTemplate template = new UnitTemplate();
+            SQLiteDataReader results = DatabaseManager.ReadDB("SELECT * FROM Units;");
+            while (results.Read())
+            {
+                template.name = results.GetString(0);
+                template.description = results.GetString(1);
+                template.attackDamage = results.GetInt32(2);
+                template.attackRange = results.GetInt32(3);
+                template.maxHealth = results.GetInt32(4);
+                template.sprite = results.GetString(5);
+                template.flags = results.GetInt32(6); //PLACEHOLDER
+                unitTemplates.Add(template.name, template);
+            }
+        }
 
 
         public UnitTemplate unitType;
@@ -68,7 +68,7 @@ namespace JuniorProject.Backend.Agents
             this.posV = posV;
             tileMap = world.map;
             pos = tileMap.getTile(posV);
-            if(!unitTemplates.Keys.Contains(type))
+            if (!unitTemplates.Keys.Contains(type))
             {
                 Debug.Print($"Unit was attempted to be created with type {type}, but that type does not exist.");
                 return;
@@ -99,9 +99,9 @@ namespace JuniorProject.Backend.Agents
 
         public void MoveTo(TileMap.Tile toPos)
         {
-			List<TileMap.Tile> pathway = Astar.FindPath(tileMap, pos, toPos, (TileMap.Tile tile, TileMap.Tile target) =>
+            List<TileMap.Tile> pathway = Astar.FindPath(tileMap, pos, toPos, (TileMap.Tile tile, TileMap.Tile target) =>
             {
-                return (target.pos-tile.pos).Magnitude;
+                return (target.pos - tile.pos).Magnitude;
             });
 
         }

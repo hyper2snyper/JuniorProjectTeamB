@@ -63,15 +63,15 @@ namespace JuniorProject
 #endif
         }
 
-		private void OnKeyDown(object sender, KeyEventArgs e)
-		{
-			if (e.Key == Key.OemTilde)
-			{
-				DebugWindow.ShowWindow(this);
-			}
-		}
+        private void OnKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.OemTilde)
+            {
+                DebugWindow.ShowWindow(this);
+            }
+        }
 
-		private void RefreshClicked(object sender, RoutedEventArgs e)
+        private void RefreshClicked(object sender, RoutedEventArgs e)
         {
 
         }
@@ -155,8 +155,8 @@ namespace JuniorProject
 
         private void CanvasMouseMove(object sender, MouseEventArgs e)
         {
-			System.Windows.Point currentPosition = e.GetPosition(ScrollViewer);
-			if (_isDragging)
+            System.Windows.Point currentPosition = e.GetPosition(ScrollViewer);
+            if (_isDragging)
             {
                 double offsetX = currentPosition.X - _startPanning.X;
                 double offsetY = currentPosition.Y - _startPanning.Y;
@@ -170,8 +170,8 @@ namespace JuniorProject
                     _startPanning = currentPosition;
                 }
             }
-            
-            Coords.Content = $"({(int)e.GetPosition(Canvas).X/ drawer.tileSize},{(int)e.GetPosition(Canvas).Y / drawer.tileSize})";
+
+            Coords.Content = $"({(int)e.GetPosition(Canvas).X / drawer.tileSize},{(int)e.GetPosition(Canvas).Y / drawer.tileSize})";
         }
 
         private void SettingsClicked(object sender, RoutedEventArgs e)

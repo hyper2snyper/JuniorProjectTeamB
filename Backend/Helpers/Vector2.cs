@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace JuniorProject.Backend.Helpers
 {
     [DebuggerDisplay("({X}, {Y})")]
-	class Vector2
+    class Vector2
     {
         public static readonly Vector2 Zero = new Vector2(0, 0);
         public static readonly Vector2 Right = new Vector2(1, 0);
@@ -16,7 +16,7 @@ namespace JuniorProject.Backend.Helpers
         public static readonly Vector2 Up = new Vector2(0, 1);
         public static readonly Vector2 Down = new Vector2(0, -1);
 
-        
+
         private float x, y;
         public float X { get { return x; } }
         public float Y { get { return y; } }
