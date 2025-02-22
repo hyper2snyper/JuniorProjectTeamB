@@ -37,7 +37,7 @@ namespace JuniorProject.Frontend.Components
         public Dictionary<string, SpriteInfo> sprites { get; set; }
         Bitmap spriteSheet;
 
-        private DrawableManager drawableManager;
+        private UnitManager unitManager;
 
         public Drawer(ref Canvas mapCanvas)
         {
@@ -54,8 +54,8 @@ namespace JuniorProject.Frontend.Components
             tileSize = ClientCommunicator.GetData<int>("tileSize");
             mapPixelSize = ClientCommunicator.GetData<Vector2Int>("mapPixelSize");
             worldBitmap = ClientCommunicator.GetData<Drawing.Bitmap>("WorldImage");
-            drawableManager = ClientCommunicator.GetData<DrawableManager>("DrawableManager");
-            drawableManager.DictionaryChanged += OnDrawableManagerChange;
+            unitManager = ClientCommunicator.GetData<UnitManager>("UnitManager");
+            unitManager.DictionaryChanged += OnUnitManagerChange;
 
             Debug.Print(String.Format("{0:N}", tileSize));
             if (tileSize != default(int) && mapPixelSize.X != default(int) && mapPixelSize.Y != default(int) && worldBitmap != default(Bitmap))
@@ -64,7 +64,7 @@ namespace JuniorProject.Frontend.Components
             }
         }
 
-        private void OnDrawableManagerChange()
+        private void OnUnitManagerChange()
         {
             Application.Current.Dispatcher.Invoke(Draw);
         }
@@ -138,7 +138,7 @@ namespace JuniorProject.Frontend.Components
             AddBitmapToCanvas("MainMap", worldBitmap);
             AddBitmapToCanvas("Grid", GetGridlines());
 
-            foreach (var u in drawableManager.units) {
+            foreach (var u in unitManager.units) {
                 //Debug.Print(String.Format("{0:S}", u.Key));
                 AddBitmapToCanvas(u.Key, extractFromSprite(u.Value.getSpriteName()), u.Value.getPosition());
             }

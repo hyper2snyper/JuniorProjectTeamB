@@ -9,13 +9,13 @@ namespace JuniorProject.Backend.WorldData
     {
         public TileMap map;
         public List<Unit> units = new List<Unit>();
-        DrawableManager drawableManager = new DrawableManager();
+        UnitManager unitManager = new UnitManager();
 
         public World()
         {
             ClientCommunicator.RegisterData<World>("World", this);
             Unit.LoadUnitTemplates();
-            drawableManager = new DrawableManager();
+            unitManager = new UnitManager();
         }
 
         public void GenerateWorld(int tileSize, Vector2Int mapPixelSize, string seed, float amp, float freq, int octaves, float seaLevel, float treeLine)
@@ -28,7 +28,7 @@ namespace JuniorProject.Backend.WorldData
             ClientCommunicator.UnregisterData("mapPixelSize");
             ClientCommunicator.UnregisterData("tileSize");
             ClientCommunicator.UnregisterData("World");
-            ClientCommunicator.UnregisterData("DrawableManager");
+            ClientCommunicator.UnregisterData("UnitManager");
         }
 
 
