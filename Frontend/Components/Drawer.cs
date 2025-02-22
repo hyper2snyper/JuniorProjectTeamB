@@ -11,6 +11,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using Newtonsoft.Json;
 using System.IO;
+using System.Collections.Specialized;
 
 namespace JuniorProject.Frontend.Components
 {
@@ -35,6 +36,8 @@ namespace JuniorProject.Frontend.Components
         public Dictionary<string, SpriteInfo> sprites { get; set; }
         Bitmap spriteSheet;
 
+        private DrawableManager drawableManager;
+
         public Drawer(ref Canvas mapCanvas)
         {
             Canvas = mapCanvas;
@@ -50,11 +53,24 @@ namespace JuniorProject.Frontend.Components
             tileSize = ClientCommunicator.GetData<int>("tileSize");
             mapPixelSize = ClientCommunicator.GetData<Vector2Int>("mapPixelSize");
             worldBitmap = ClientCommunicator.GetData<Drawing.Bitmap>("WorldImage");
+            drawableManager = ClientCommunicator.GetData<DrawableManager>("DrawableManager");
+            drawableManager.DictionaryChanged += OnDrawableManagerChange;
+
             Debug.Print(String.Format("{0:N}", tileSize));
             if (tileSize != default(int) && mapPixelSize.X != default(int) && mapPixelSize.Y != default(int) && worldBitmap != default(Bitmap))
             {
                 Debug.Print("Successfully loaded map values onto frontend. . .");
             }
+        }
+
+        private void OnDrawableManagerChange()
+        {
+            Application.Current.Dispatcher.Invoke(Test);
+        }
+
+        public void Test()
+        {
+            Debug.Print("Printing from here wow");
         }
 
         public void checkMouseClick(int x, int y)

@@ -71,6 +71,7 @@ namespace JuniorProject.Frontend.Windows
                 int y = int.Parse(intInstance.Match(matches[1].Value).Value);
 
                 unitsCreated.TryAdd(unitName, new Unit(unitType, ClientCommunicator.GetData<World>("World"), new Vector2Int(x, y)));
+                ClientCommunicator.GetData<DrawableManager>("DrawableManager").AddUnit("Test");
                 Console.Text += $"Unit spawned at {x},{y} of type [{unitType}] with name [{unitName}]\n";
                 return;
             }
