@@ -28,7 +28,15 @@ namespace JuniorProject.Frontend.Windows
         {
             InitializeComponent();
         }
-
+        //Preview Text Input
+        private void NumberOnlyInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
+        {
+            e.Handled = !intOnly.IsMatch(e.Text);
+        }
+        private void FloatOnlyInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
+        {
+            e.Handled = !correctFloat.IsMatch(e.Text);
+        }
         private void SavedClicked(object sender, RoutedEventArgs e)
         {
             Debug.Print("Saved!!!!!!");
@@ -39,7 +47,6 @@ namespace JuniorProject.Frontend.Windows
         {
             this.Hide();
         }
-        //Preview Text Input
 
         //Archer
         private void ArcherDamage_TextChanged(object sender, TextChangedEventArgs e)
