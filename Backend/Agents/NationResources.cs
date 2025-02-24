@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.SQLite;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,44 +9,27 @@ namespace JuniorProject.Backend.Agents
 {
     class NationResources
     {
-        int currentGold;
-        int currentWood;
-        int currentIron;
-        int currentStone;
-        int currentFood;
 
-        int woodDemand;
-        int ironDemand;
-        int stoneDemand;
-        public int foodDemand;
+        Dictionary<string, int> ownedResources = new Dictionary<string, int>();
+        Dictionary<string, int> resourceDemands = new Dictionary<string, int>();
 
-        void SetWoodDemand()
+        public NationResources()
         {
-            if (currentWood <= 100 && woodDemand < 10)
-                woodDemand++;
-            else if (currentWood >= 500 && woodDemand > 0)
-                woodDemand--;
+            SQLiteDataReader results = DatabaseManager.ReadDB("SELECT * FROM Resources;");
+            while (results.Read())
+            {
+                ownedResources[results.GetString(1)] = 0;
+                resourceDemands[results.GetString(1)] = 5;
+            }
         }
-        void SetIronDemand()
+
+        void SetResourceDemand(string resourceType)
         {
-            if (currentIron <= 100 && ironDemand < 10)
-                ironDemand++;
-            else if (currentIron >= 500 && ironDemand > 0)
-                ironDemand--;
+            if (ownedResources[resourceType] <= 100 && resourceDemands[resourceType] < 10)
+                resourceDemands[resourceType]++;
+            else if (ownedResources[resourceType] >= 500 && resourceDemands[resourceType] > 0)
+                resourceDemands[resourceType]--;
         }
-        void SetStoneDemand()
-        {
-            if (currentStone <= 100 && stoneDemand < 10)
-                stoneDemand++;
-            else if (currentStone >= 500 && stoneDemand > 0)
-                stoneDemand--;
-        }
-        void SetFoodDemand()
-        {
-            if (currentFood <= 100 && foodDemand < 10)
-                foodDemand++;
-            else if (currentFood >= 500 && foodDemand > 0)
-                foodDemand--;
-        }
+
     }
 }

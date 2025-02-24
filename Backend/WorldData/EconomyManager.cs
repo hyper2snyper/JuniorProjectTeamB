@@ -1,5 +1,6 @@
 ﻿using JuniorProject.Backend.Agents;
 using System;
+using System.Data.SQLite;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,37 +10,21 @@ namespace JuniorProject.Backend.WorldData
 {
     class EconomyManager
     {
-        int woodValue;
-        int ironValue;
-        int stoneValue;
-        int foodValue;
+
+        Dictionary<string, int> resourceValues = new Dictionary<string, int>();
 
         public EconomyManager()
         {
-            woodValue = 100;
-            ironValue = 100;
-            stoneValue = 100;
-            foodValue = 100;
+            SQLiteDataReader results = DatabaseManager.ReadDB("SELECT * FROM Resources;");
+            while (results.Read())
+            {
+                resourceValues[results.GetString(1)] = 100;
+            }
         }
 
-        void CalcWoodPrice(int woodDemand)
+        void CalcResourcePrice(string resourceType, int resourceDemand)
         {
-            woodValue *= ((woodDemand - 5) / 20) + 1;
-        }
-
-        void CalcIronPrice(int ironDemand)
-        {
-            ironValue *= ((ironDemand - 5) / 20) + 1;
-        }
-
-        void CalcStonePrice(int stoneDemand)
-        {
-            stoneValue *= ((stoneDemand - 5) / 20) + 1;
-        }
-
-        void CalcFoodPrice(NationResources buyer)
-        {
-            foodValue *= ((buyer.foodDemand - 5) / 20) + 1;
+            resourceValues[resourceType] *= ((resourceDemand - 5) / 20) + 1;
         }
     }
 }
