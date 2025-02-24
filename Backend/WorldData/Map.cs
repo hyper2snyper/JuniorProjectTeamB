@@ -32,8 +32,7 @@ namespace JuniorProject.Backend.WorldData
             public bool ignoreNoise = false;
             public BiomeData? requiredBiome = null;
             //Resource Data
-            public List<string> resources = new List<string>();
-            public List<int> collectRate = new List<int>();
+            public Dictionary<string, int> resourceData = new Dictionary<string, int>();
         }
         Dictionary<string, BiomeData> biomeList = new Dictionary<string, BiomeData>(); //Loaded terrains from the DB
         BiomeData defaultBiome;
@@ -101,8 +100,8 @@ namespace JuniorProject.Backend.WorldData
                 {
                     if (resourceResults.GetString(0) == terrain.name)
                     {
-                        terrain.resources.Add(resourceResults.GetString(1));
-                        terrain.collectRate.Add(resourceResults.GetInt32(2));
+                        string dbResource = resourceResults.GetString(1);
+                        terrain.resourceData[dbResource] = resourceResults.GetInt32(2);
                     }
                 }
                 biomeList.Add(terrain.name, terrain);
@@ -220,14 +219,9 @@ namespace JuniorProject.Backend.WorldData
             worldImage.Save($"{Properties.Resources.ProjectDir}\\LocalData\\Map.png", System.Drawing.Imaging.ImageFormat.Png);
         }
 
-        public List<string> GetBiomeResources(string biomeName)
+        public int GetBiomeResources(string biomeName, string resourceName)
         {
-            return biomeList[biomeName].resources;
-        }
-
-        public List<int> GetBiomeRate(string biomeName)
-        {
-            return biomeList[biomeName].collectRate;
+            return biomeList[biomeName].resourceData[resourceName];
         }
 
     }
