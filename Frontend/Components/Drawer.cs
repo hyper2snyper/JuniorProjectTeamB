@@ -13,6 +13,7 @@ using Newtonsoft.Json;
 using System.IO;
 using System.Collections.Specialized;
 using JuniorProject.Backend.Agents;
+using JuniorProject.Backend.WorldData;
 
 namespace JuniorProject.Frontend.Components
 {

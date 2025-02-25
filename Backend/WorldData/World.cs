@@ -8,7 +8,6 @@ namespace JuniorProject.Backend.WorldData
     public class World
     {
         public TileMap map;
-        public List<Unit> units = new List<Unit>();
         UnitManager unitManager = new UnitManager();
 
         public World()
