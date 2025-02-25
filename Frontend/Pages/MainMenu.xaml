@@ -5,7 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:JuniorProject"
         mc:Ignorable="d"
-        Height="600" Width="800" Background="#FF424242">
+        MinWidth="1100"
+        MinHeight="800"
+        VerticalAlignment="Stretch"
+        HorizontalAlignment="Stretch" Background="#FF424242">
     <Page.Resources>
         <SolidColorBrush x:Key="Button.MouseOver.Background" Color="#FFBEE6FD"/>
         <SolidColorBrush x:Key="Button.MouseOver.Border" Color="#FF3C7FB1"/>
