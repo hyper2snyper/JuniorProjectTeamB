@@ -8,9 +8,6 @@ using JuniorProject.Backend.WorldData;
 
 namespace JuniorProject.Frontend.Windows
 {
-	/// <summary>
-	/// Interaction logic for DebugWindow.xaml
-	/// </summary>
 	public partial class DebugWindow : Window
 	{
 		private static DebugWindow? _instance;
@@ -96,6 +93,8 @@ namespace JuniorProject.Frontend.Windows
 						}
 				}
 			}
+
+
 		}
 
 	}

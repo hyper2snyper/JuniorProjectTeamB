@@ -13,6 +13,7 @@ namespace JuniorProject.Backend.WorldData
         public World()
         {
             ClientCommunicator.RegisterData<World>("World", this);
+            ClientCommunicator.RegisterAction("SaveWorld", SaveWorld);
             Unit.LoadUnitTemplates();
         }
 

@@ -94,11 +94,9 @@ namespace JuniorProject
 
         private async void SaveClicked(object sender, RoutedEventArgs e)
         {
-            //We can save the .png in a background thread
-            await Task.Run(() =>
-            {
-                ClientCommunicator.CallAction("SaveWorld");
-            });
+            
+            ClientCommunicator.CallAction("SaveWorld");
+            
         }
 
         public void BackToMainMenu(object sender, RoutedEventArgs e)
