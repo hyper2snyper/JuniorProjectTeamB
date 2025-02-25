@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace JuniorProject.Backend.WorldData
 {
-    class TileMap
+    public class TileMap
     {
         [DebuggerDisplay("({pos.X}, {pos.Y})")]
         public class Tile

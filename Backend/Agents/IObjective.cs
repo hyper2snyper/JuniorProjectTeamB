@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace JuniorProject.Backend.Agents
 {
-    internal interface IObjective
+    public interface IObjective
     {
         Unit unit { get; set; }
 
