@@ -94,9 +94,15 @@ namespace JuniorProject
 
         private async void SaveClicked(object sender, RoutedEventArgs e)
         {
-            
-            ClientCommunicator.CallAction("SaveWorld");
-            
+            var fileDialouge = new Microsoft.Win32.SaveFileDialog();
+            fileDialouge.DefaultDirectory = "Save";
+            fileDialouge.DefaultExt = ".chs";
+			fileDialouge.Filter = "Cry Havoc Save (.chs)|*.chs";
+            if(fileDialouge.ShowDialog() != true)
+            {
+                return;
+            }
+			ClientCommunicator.CallAction("SaveWorld", fileDialouge.FileName);
         }
 
         public void BackToMainMenu(object sender, RoutedEventArgs e)

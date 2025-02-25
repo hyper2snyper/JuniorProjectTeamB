@@ -64,6 +64,7 @@ namespace JuniorProject.Backend.Agents
         TileMap.Tile pos;
         Vector2Int posV;
 
+        public Unit() { }
         public Unit(string type, string team, World world, Vector2Int posV)
         {
             this.posV = posV;
@@ -88,7 +89,18 @@ namespace JuniorProject.Backend.Agents
             return posV;
         }
 
-        void SetType(UnitTemplate template)
+        public void setPosition(Vector2Int newPos)
+        {
+            posV = newPos;
+        }
+
+		public void setPosition(TileMap.Tile newPos)
+		{
+            pos = newPos;
+            setPosition(newPos.pos);
+		}
+
+		void SetType(UnitTemplate template)
         {
             unitType = template;
             health = template.maxHealth;
@@ -126,12 +138,22 @@ namespace JuniorProject.Backend.Agents
 
         public override void SerializeFields()
         {
+            SerializeField(unitType.name); //Save the type.
+            SerializeField(health);
+            SerializeField(team);
+            SerializeField(posV); 
 
-        }
+            //Eventually we need to save objective states.
+		}
 
         public override void DeserializeFields()
         {
+            unitType = unitTemplates[DeserializeField<string>()]; //The templates need to be loaded first.
+            health = DeserializeField<int>();
+            team = DeserializeField<string>();
+            posV = DeserializeField<Vector2Int>();
 
+            //pos will be set in a linking step after load.
         }
     }
 }

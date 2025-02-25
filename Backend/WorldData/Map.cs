@@ -3,10 +3,11 @@ using System.Data.SQLite;
 using System.Diagnostics;
 using System.Drawing;
 using JuniorProject.Backend.Helpers;
+using System.IO;
 
 namespace JuniorProject.Backend.WorldData
 {
-    class Map
+    public class Map
     {
         Vector2Int mapPixelSize;
         public Bitmap worldImage;
@@ -44,6 +45,12 @@ namespace JuniorProject.Backend.WorldData
         public BiomeData?[,] BiomeMap { get { return biomeMap; } }
         float[,] heightMap;
 
+        public Map() 
+        {
+			Debug.Print("Loading Biome Data...");
+			LoadTerrain();
+		}
+
         public Map(Vector2Int mapPixelSize, string seed, float freq, float amp, int octaves, float seaLevel, float treeLine)
         {
             this.mapPixelSize = mapPixelSize;
@@ -61,10 +68,19 @@ namespace JuniorProject.Backend.WorldData
         }
 
 
-        public void SaveMap(Serializer serializable)
+        public void SaveMap(Serializer serializer)
         {
-
+            serializer.arbitraryPostWrite += (ref FileStream s) =>
+            {
+                worldImage.Save(s, System.Drawing.Imaging.ImageFormat.Png);
+            };
         }
+
+        public void LoadMap(Bitmap bitmap)
+        {
+            worldImage = bitmap;
+			ClientCommunicator.RegisterData<Bitmap>("WorldImage", worldImage);
+		}
 
         void LoadTerrain()
         {
@@ -214,13 +230,6 @@ namespace JuniorProject.Backend.WorldData
             }
 
         }
-
-        public void SaveImage()
-        {
-            worldImage.Save($"{Properties.Resources.ProjectDir}\\LocalData\\Map.png", System.Drawing.Imaging.ImageFormat.Png);
-        }
-
-
     }
 
 }

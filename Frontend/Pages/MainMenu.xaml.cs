@@ -1,4 +1,6 @@
-﻿using JuniorProject.Frontend.Pages;
+﻿using JuniorProject.Backend;
+using JuniorProject.Backend.States;
+using JuniorProject.Frontend.Pages;
 using System.Data.Common;
 using System.Text;
 using System.Windows;
@@ -43,5 +45,24 @@ namespace JuniorProject
         {
             NavigationService.Navigate(new ApplicationSettings());
         }
-    }
+
+		private void LoadSimulation(object sender, RoutedEventArgs e)
+		{
+            var fileSelect = new Microsoft.Win32.OpenFileDialog();
+            fileSelect.DefaultExt = ".chs";
+            fileSelect.Filter = "Cry Havoc Save (.chs)|*.chs";
+            fileSelect.DefaultExt = "\\LocalData\\";
+            if (fileSelect.ShowDialog() != true) return;
+
+            ClientCommunicator.CallAction<IState>("SetState", new Backend.States.Loading(
+                (Backend.States.Simulation simulation, ref bool loadingDone) =>
+                {
+                    simulation.LoadFromFile(fileSelect.FileName);
+                    loadingDone = true;
+					ClientCommunicator.UpdateData<bool>("LoadingDone", loadingDone);
+				}));
+			NavigationService.Navigate(new Frontend.Pages.Loading());
+
+		}
+	}
 }

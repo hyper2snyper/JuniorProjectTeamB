@@ -40,6 +40,10 @@ namespace JuniorProject.Frontend.Windows
             Instance.Show();
             Instance.simulationPage = simulation;
             Instance.KeyDown += Instance.KeyPressed;
+            simulation.Unloaded += (object sender, RoutedEventArgs e) => 
+            {
+                Instance.Close();
+            };
         }
 
         public static readonly Regex clearRegex = new Regex("^clear\\ *$");

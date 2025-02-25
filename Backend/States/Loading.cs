@@ -9,22 +9,13 @@ namespace JuniorProject.Backend.States
     internal class Loading : IState
     {
         Simulation simulation = new Simulation();
-
+        public delegate void loadingTask(Simulation simulation, ref bool loadingDone);
+        loadingTask task;
         bool loadingDone = false;
 
-        string seed;
-        float amp, freq, seaLevel, treeLine;
-        int octaves;
-
-
-        public Loading(string seed, float amp, float freq, int octaves, float seaLevel, float treeLine)
+        public Loading(loadingTask task)
         {
-            this.seed = seed;
-            this.amp = amp;
-            this.freq = freq;
-            this.octaves = octaves;
-            this.seaLevel = seaLevel;
-            this.treeLine = treeLine;
+            this.task = task;
         }
 
         public IState Loop()
@@ -37,15 +28,13 @@ namespace JuniorProject.Backend.States
         {
             ClientCommunicator.RegisterData<bool>("LoadingDone", false);
             ClientCommunicator.RegisterData<string>("LoadingMessage", "Loading");
-            Task.Run(() =>
-            {
-                simulation.CreateWorld(seed, amp, freq, octaves, seaLevel, treeLine);
-                loadingDone = true;
-                ClientCommunicator.UpdateData<bool>("LoadingDone", loadingDone);
+            Task.Run(() => {
+                task(simulation, ref loadingDone);
             });
         }
         public void ExitState()
         {
+
         }
     }
 }

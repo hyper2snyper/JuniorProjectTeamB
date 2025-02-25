@@ -1,5 +1,8 @@
-﻿using JuniorProject.Backend.Helpers;
+﻿using JuniorProject.Backend.Agents;
+using JuniorProject.Backend.Helpers;
 using JuniorProject.Backend.WorldData;
+using System.Drawing;
+using System.IO;
 
 
 namespace JuniorProject.Backend.States
@@ -18,6 +21,26 @@ namespace JuniorProject.Backend.States
             world = new World();
             ClientCommunicator.UpdateData<string>("LoadingMessage", "Generating World");
             world.GenerateWorld(32, new Vector2Int(1000, 1000), seed, freq, amp, octaves, seaLevel, treeLine);
+        }
+
+        public void LoadFromFile(string filename)
+        {
+            Map map = new Map(); //This loads biomes
+            Serializer serializer = new Serializer(filename);
+            serializer.arbitraryPostRead += (ref FileStream f) =>
+            {
+                Stream stream = new MemoryStream();
+                f.CopyTo(stream);
+                stream.Seek(0, SeekOrigin.Begin);
+				ClientCommunicator.UpdateData<string>("LoadingMessage", "Loading Image From File");
+				map.LoadMap((Bitmap)Bitmap.FromStream(stream));
+				
+			};
+            ClientCommunicator.UpdateData<string>("LoadingMessage", "Loading From File");
+            Unit.LoadUnitTemplates();
+            Dictionary<Type, List<Serializable>> loadedObjects = serializer.Load();
+            world = (World)loadedObjects[typeof(World)][0];
+            world.LoadWorld(map);
         }
 
         public IState Loop()
