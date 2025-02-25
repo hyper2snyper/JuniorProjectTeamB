@@ -9,10 +9,10 @@ using System.Threading.Tasks;
 
 namespace JuniorProject.Backend.WorldData
 {
-    class TileMap
+    public class TileMap
     {
-		[DebuggerDisplay("({pos.X}, {pos.Y})")]
-		public class Tile
+        [DebuggerDisplay("({pos.X}, {pos.Y})")]
+        public class Tile
         {
             public Vector2Int pos = new Vector2Int();
 
@@ -28,7 +28,7 @@ namespace JuniorProject.Backend.WorldData
         public Tile? getTile(int x, int y)
         {
             if (x < 0 || y < 0) return null;
-            if(x >= mapSize.X || y >= mapSize.Y) return null;
+            if (x >= mapSize.X || y >= mapSize.Y) return null;
             return tiles[x, y];
         }
         public Tile? getTile(Vector2Int v)
@@ -38,13 +38,13 @@ namespace JuniorProject.Backend.WorldData
 
         public Tile?[,] getTileNeighbors(Tile tile)
         {
-            Tile?[,] neighbors = new Tile?[3,3]; 
-            for(int x = -1; x <= 1; x++)
+            Tile?[,] neighbors = new Tile?[3, 3];
+            for (int x = -1; x <= 1; x++)
             {
-                for(int y = -1; y <= 1; y++)
+                for (int y = -1; y <= 1; y++)
                 {
                     if (x == 0 && y == 0) continue;
-                    neighbors[x+1,y+1] = getTile(tile.pos.X+x, tile.pos.Y+y);
+                    neighbors[x + 1, y + 1] = getTile(tile.pos.X + x, tile.pos.Y + y);
                 }
             }
             return neighbors;

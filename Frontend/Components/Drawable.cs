@@ -24,6 +24,12 @@ namespace JuniorProject.Frontend.Components
             this.shouldDraw = shouldDraw;
             this.isMapOrGridlines = true;
             this.title = title;
+
+            if (title == "Grid")
+            {
+                shouldDraw = false;
+                image.Opacity = 0.2;
+            }
         }
 
         public Drawable(Image image, Boolean shouldDraw, string title, string path, Vector2Int pixelPosition, Vector2Int gridPosition)

@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="DebugWindow" Height="479" Width="871" Background="Gray">
     <Grid>
-        <TextBlock x:Name="Console" Text="TextBlock" Foreground="White" Background="Black" IsHitTestVisible="False" Height="400" VerticalAlignment="Top"/>
+        <TextBlock x:Name="Console" Foreground="White" Background="Black" IsHitTestVisible="False" Height="400" VerticalAlignment="Top"/>
         <TextBox x:Name="Input" Margin="0,400,0,0" TextWrapping="Wrap" Background="Black" Foreground="White" Cursor="IBeam" Height="30" VerticalAlignment="Top"/>
 
     </Grid>

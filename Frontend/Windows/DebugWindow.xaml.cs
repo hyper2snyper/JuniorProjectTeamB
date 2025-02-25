@@ -19,61 +19,90 @@ namespace JuniorProject.Frontend.Windows
 					_instance.Closing += _instance_Closing;
 				}
 				return _instance;
-			}}
+			}
+        }
 
-		Simulation simulationPage;
-		Dictionary<string, Unit> unitsCreated = new Dictionary<string, Unit>();
+        Simulation simulationPage;
+        Dictionary<string, Unit> unitsCreated = new Dictionary<string, Unit>();
 
-		private static void _instance_Closing(object? sender, System.ComponentModel.CancelEventArgs e)
-		{
-			_instance = null;
-		}
+        private static void _instance_Closing(object? sender, System.ComponentModel.CancelEventArgs e)
+        {
+            _instance = null;
+        }
 
-		public DebugWindow()
-		{
-			InitializeComponent();
-		}
+        public DebugWindow()
+        {
+            InitializeComponent();
+        }
 
-		public static void ShowWindow(Simulation simulation)
-		{
-			Instance.Show();
-			Instance.simulationPage = simulation;
-			Instance.KeyDown += Instance.KeyPressed;
-		}
+        public static void ShowWindow(Simulation simulation)
+        {
+            Instance.Show();
+            Instance.simulationPage = simulation;
+            Instance.KeyDown += Instance.KeyPressed;
+        }
 
-		public static readonly Regex spawnUnitRegex = new Regex("^spawnUnit\\ *\\([a-zA-z]+,\\ *[0-9]+,\\ *[0-9]+\\,\\ *[a-zA-z]+\\)\\ *$");
-		
-		public static readonly Regex stringParam = new Regex("\\([a-zA-z]+|,\\ *[a-zA-z]+");
-		public static readonly Regex stringInstance = new Regex("[a-zA-z]+");
-		public static readonly Regex intParam = new Regex("\\([0-9]+|,\\ *[0-9]+");
-		public static readonly Regex intInstance = new Regex("[0-9]+");
+        public static readonly Regex clearRegex = new Regex("^clear\\ *$");
 
-		public static readonly Regex identifier = new Regex("^[a-zA-z]+.");
-		public static readonly Regex function = new Regex("\\.[a-zA-Z]+\\(");
-		void KeyPressed(object sender, KeyEventArgs e)
-		{
-			if (e.Key != Key.Enter) return;
+        public static readonly Regex spawnUnitRegex = new Regex("^spawnUnit\\ *\\([a-zA-z]+,\\ *[a-zA-z]+,\\ *[0-9]+,\\ *[0-9]+\\,\\ *[a-zA-z]+\\)\\ *$");
+        public static readonly Regex deleteUnitRegex = new Regex("^deleteUnit\\ *\\([a-zA-z]+\\)\\ *$");
+        public static readonly Regex printUnitsRegex = new Regex("^printUnits\\(\\)\\ *$");
 
-			if (spawnUnitRegex.IsMatch(Input.Text))
-			{
-				List<Match> matches = stringParam.Matches(Input.Text).ToList();
-				string unitType = stringInstance.Match(matches[0].Value).Value;
-				string unitName = stringInstance.Match(matches[1].Value).Value;
+        public static readonly Regex stringParam = new Regex("\\([a-zA-z]+|,\\ *[a-zA-z]+");
+        public static readonly Regex stringInstance = new Regex("[a-zA-z]+");
+        public static readonly Regex intParam = new Regex("\\([0-9]+|,\\ *[0-9]+");
+        public static readonly Regex intInstance = new Regex("[0-9]+");
 
+        public static readonly Regex identifier = new Regex("^[a-zA-z]+.");
+        public static readonly Regex function = new Regex("\\.[a-zA-Z]+\\(");
+        void KeyPressed(object sender, KeyEventArgs e)
+        {
+            if (e.Key != Key.Enter) return;
+
+            if (spawnUnitRegex.IsMatch(Input.Text))
+            {
+                List<Match> matches = stringParam.Matches(Input.Text).ToList();
+                string unitType = stringInstance.Match(matches[0].Value).Value;
+                string unitTeam = stringInstance.Match(matches[1].Value).Value;
+                string unitName = stringInstance.Match(matches[2].Value).Value;
 				matches = intParam.Matches(Input.Text).ToList();
 				int x = int.Parse(intInstance.Match(matches[0].Value).Value);
 				int y = int.Parse(intInstance.Match(matches[1].Value).Value);
-
-				unitsCreated.TryAdd(unitName, new Unit(unitType, ClientCommunicator.GetData<World>("World"), new Vector2Int(x, y)));
+				ClientCommunicator.GetData<UnitManager>("UnitManager").AddUnit(unitName, new Unit(unitType, unitTeam, ClientCommunicator.GetData<World>("World"), new Vector2Int(x, y)));
 				Console.Text += $"Unit spawned at {x},{y} of type [{unitType}] with name [{unitName}]\n";
 				return;
 			}
 
-			if(identifier.IsMatch(Input.Text))
+            if (deleteUnitRegex.IsMatch(Input.Text))
+            {
+                List<Match> matches = stringParam.Matches(Input.Text).ToList();
+                string unitName = stringInstance.Match(matches[0].Value).Value;
+                ClientCommunicator.GetData<UnitManager>("UnitManager").RemoveUnit(unitName);
+                Console.Text += $"Attempted to remove unit with name {unitName}\n";
+                return;
+            }
+
+            if (clearRegex.IsMatch(Input.Text))
+            {
+                Console.Text = "";
+                return;
+            }
+
+            if (printUnitsRegex.IsMatch(Input.Text))
+            {
+                Console.Text += "\nName\t\tType\t\tTeam\t\tGridPosition:\n";
+                foreach (var u in ClientCommunicator.GetData<UnitManager>("UnitManager").units)
+                {
+                    Console.Text += $"{u.Key}\t\t{u.Value.unitType.name}\t\t{u.Value.team}\t\t[{u.Value.getPosition().X}, {u.Value.getPosition().Y}]\n";
+                }
+                return;
+            }
+
+			if (identifier.IsMatch(Input.Text))
 			{
 				string unit = identifier.Match(Input.Text).Value;
 				unit = unit.TrimEnd('.');
-				if(!unitsCreated.ContainsKey(unit))
+				if (!unitsCreated.ContainsKey(unit))
 				{
 					Console.Text += $"No unit created with name {unit}\n";
 					return;
@@ -81,7 +110,7 @@ namespace JuniorProject.Frontend.Windows
 				string command = function.Match(Input.Text).Value;
 				command = command.TrimStart('.');
 				command = command.TrimEnd('(');
-				switch(command)
+				switch (command)
 				{
 					case "MoveTo":
 						{
@@ -93,9 +122,7 @@ namespace JuniorProject.Frontend.Windows
 						}
 				}
 			}
-
-
 		}
 
-	}
+    }
 }
