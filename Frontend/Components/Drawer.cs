@@ -130,6 +130,11 @@ namespace JuniorProject.Frontend.Components
                     Source = TransferToWriteableBitmap(tileBitmap),
                 };
                 InfoModal im = new InfoModal(tileImage, "Tile", tile.getInformation());
+
+                if (tileManager.tiles.ContainsKey((tile.pos.X, tile.pos.Y))) { 
+                    im.setTeam(tileManager.tiles[(tile.pos.X, tile.pos.Y)]);
+                }
+
                 im.Show();
             }
         }
@@ -192,7 +197,7 @@ namespace JuniorProject.Frontend.Components
 
             foreach (var u in tileManager.tiles)
             {
-                AddTileImagesToCanvas($"{u.Key.X}{u.Key.Y}", extractFromSprite($"{u.Value}TileCover"), u.Key);
+                AddTileImagesToCanvas($"{u.Key.Item1}{u.Key.Item2}", extractFromSprite($"{u.Value}TileCover"), new Vector2Int(u.Key.Item1, u.Key.Item2));
             }
 
             foreach (var u in unitManager.units)

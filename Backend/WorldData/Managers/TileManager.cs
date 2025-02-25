@@ -9,7 +9,7 @@ namespace JuniorProject.Backend.WorldData.Managers
 {
     public class TileManager
     {
-        public Dictionary<Vector2Int, string> tiles = new Dictionary<Vector2Int, string> ();
+        public Dictionary<(int, int), string> tiles = new Dictionary<(int, int), string> ();
         public event Action DictionaryChanged;
 
         public TileManager()
@@ -19,19 +19,19 @@ namespace JuniorProject.Backend.WorldData.Managers
 
         public void AddTile(Vector2Int position, string team)
         {
-            tiles.TryAdd(position, team);
+            tiles.TryAdd((position.X, position.Y), team);
             DictionaryChanged?.Invoke();
         }
 
         public void UpdateTile(Vector2Int position, string team)
         {
-            tiles[position] = team;
+            tiles[(position.X, position.Y)] = team;
             DictionaryChanged?.Invoke();
         }
 
         public void RemoveTile(Vector2Int position)
         {
-            if (tiles.Remove(position))
+            if (tiles.Remove((position.X, position.Y)))
                 DictionaryChanged?.Invoke();
         }
     }

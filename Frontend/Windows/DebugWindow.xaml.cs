@@ -92,6 +92,7 @@ namespace JuniorProject.Frontend.Windows
                 int y = int.Parse(intInstance.Match(matches[1].Value).Value);
 
                 ClientCommunicator.GetData<TileManager>("TileManager").AddTile(new Vector2Int(x, y), team);
+                return;
             }
 
             if (deleteUnitRegex.IsMatch(Input.Text))

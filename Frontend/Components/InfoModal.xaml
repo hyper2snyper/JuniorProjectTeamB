@@ -13,7 +13,7 @@
         <Border BorderBrush="Black" BorderThickness="2" Margin="23,74,23,242">
             <TextBlock  x:Name="Information" Foreground="White" Margin="8,0,8,0" Focusable="True" TextAlignment="Center"><Run Text="Field 1"/><LineBreak/><Run Text="Field 2"/><LineBreak/><Run Text="Field 3"/><LineBreak/><Run Text="Field 4"/></TextBlock>
         </Border>
-        <Border BorderBrush="Black" BorderThickness="2" Margin="121,217,121,47" Height="150" Width="150">
+        <Border x:Name="ImageBorder" BorderBrush="Black" BorderThickness="2" Margin="121,217,121,47" Height="150" Width="150">
             <Image x:Name="Image" Width="75" Height="75" />
         </Border>
 
