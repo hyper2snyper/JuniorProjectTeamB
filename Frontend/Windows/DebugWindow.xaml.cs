@@ -190,6 +190,31 @@ namespace JuniorProject.Frontend.Windows
                 return;
             }
 
+            if (deleteUnitRegex.IsMatch(Input.Text))
+            {
+                List<Match> matches = stringParam.Matches(Input.Text).ToList();
+                string unitName = stringInstance.Match(matches[0].Value).Value;
+                ClientCommunicator.GetData<UnitManager>("UnitManager").RemoveUnit(unitName);
+                Console.Text += $"Attempted to remove unit with name {unitName}\n";
+                return;
+            }
+
+            if (clearRegex.IsMatch(Input.Text))
+            {
+                Console.Text = "";
+                return;
+            }
+
+            if (printUnitsRegex.IsMatch(Input.Text))
+            {
+                Console.Text += "\nName\t\tType\t\tTeam\t\tGridPosition:\n";
+                foreach (var u in ClientCommunicator.GetData<UnitManager>("UnitManager").units)
+                {
+                    Console.Text += $"{u.Key}\t\t{u.Value.unitType.name}\t\t{u.Value.team}\t\t[{u.Value.getPosition().X}, {u.Value.getPosition().Y}]\n";
+                }
+                return;
+            }
+
             if (identifier.IsMatch(Input.Text))
             {
                 Console.Text += $"---> {Input.Text}\n";

@@ -11,8 +11,6 @@ namespace JuniorProject.Backend.WorldData
         public TileMap map;
         UnitManager unitManager;
         TileManager tileManager;
-
-
         public World()
         {
             ClientCommunicator.RegisterData<World>("World", this);
