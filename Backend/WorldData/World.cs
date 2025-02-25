@@ -32,6 +32,8 @@ namespace JuniorProject.Backend.WorldData
             ClientCommunicator.UnregisterData("tileSize");
             ClientCommunicator.UnregisterData("World");
             ClientCommunicator.UnregisterData("UnitManager");
+            ClientCommunicator.UnregisterData("TileManager");
+            ClientCommunicator.UnregisterData("Tiles");
         }
 
 

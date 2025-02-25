@@ -22,7 +22,8 @@ namespace JuniorProject.Backend.WorldData
 
             public bool impassible = false;
 
-            public string getInformation() {
+            public string getInformation()
+            {
                 return $"Grid Position -> [{pos.X}, {pos.Y}]\nMovement Cost -> {movementCost}\nElevation Average -> {elevationAvg}\nImpassible? -> {impassible.ToString()}";
             }
 

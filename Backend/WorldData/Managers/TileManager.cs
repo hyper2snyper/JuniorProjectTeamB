@@ -9,7 +9,7 @@ namespace JuniorProject.Backend.WorldData.Managers
 {
     public class TileManager
     {
-        public Dictionary<(int, int), string> tiles = new Dictionary<(int, int), string> ();
+        public Dictionary<(int, int), string> tiles = new Dictionary<(int, int), string>();
         public event Action DictionaryChanged;
 
         public TileManager()

@@ -63,7 +63,7 @@ namespace JuniorProject.Frontend.Components
             tileSize = ClientCommunicator.GetData<int>("tileSize");
             mapPixelSize = ClientCommunicator.GetData<Vector2Int>("mapPixelSize");
             worldBitmap = ClientCommunicator.GetData<Drawing.Bitmap>("WorldImage");
-            
+
             unitManager = ClientCommunicator.GetData<UnitManager>("UnitManager");
             unitManager.DictionaryChanged += OnUnitManagerChange;
 
@@ -99,7 +99,7 @@ namespace JuniorProject.Frontend.Components
         }
 
         private void OnTileManagerChange()
-        { 
+        {
             Application.Current?.Dispatcher.Invoke(Draw);
         }
 
@@ -120,7 +120,8 @@ namespace JuniorProject.Frontend.Components
                     Debug.Print("Could not find image in drawables");
                 }
             }
-            else {
+            else
+            {
                 TileMap.Tile tile = ClientCommunicator.GetData<TileMap.Tile[,]>("Tiles")[p.X, p.Y];
                 Bitmap tileBitmap = extractTileFromMap(p.X * tileSize, p.Y * tileSize, 32, 32);
                 Controls.Image tileImage = new Controls.Image
@@ -131,7 +132,8 @@ namespace JuniorProject.Frontend.Components
                 };
                 InfoModal im = new InfoModal(tileImage, "Tile", tile.getInformation());
 
-                if (tileManager.tiles.ContainsKey((tile.pos.X, tile.pos.Y))) { 
+                if (tileManager.tiles.ContainsKey((tile.pos.X, tile.pos.Y)))
+                {
                     im.setTeam(tileManager.tiles[(tile.pos.X, tile.pos.Y)]);
                 }
 
@@ -155,7 +157,7 @@ namespace JuniorProject.Frontend.Components
         }
 
         public Bitmap extractTileFromMap(int x1, int y1, int width, int height)
-        { 
+        {
             Rectangle section = new Rectangle(x1, y1, width, height);
             return worldBitmap.Clone(section, spriteSheet.PixelFormat);
         }
@@ -241,31 +243,31 @@ namespace JuniorProject.Frontend.Components
             //AddImageToCanvas("ArcherUnit", $"{Properties.Resources.ProjectDir}\\Frontend\\Images\\Sprites\\IndividualImages\\ArcherUnitResource.png", 7, 9);
 
             /*  vvvv FOR DEBUGGING/TESTING IMAGE SPRITES BELOW vvvv   */
-            AddBitmapToCanvas("YellowCastle", extractFromSprite("YellowCastle"), 3, 3);
-            AddBitmapToCanvas("YellowSoldier", extractFromSprite("YellowSoldier"), 3, 4);
-            AddBitmapToCanvas("YellowArcher", extractFromSprite("YellowArcher"), 3, 5);
-            AddBitmapToCanvas("YellowHouse", extractFromSprite("YellowHouse"), 3, 6);
+            //AddBitmapToCanvas("YellowCastle", extractFromSprite("YellowCastle"), 3, 3);
+            //AddBitmapToCanvas("YellowSoldier", extractFromSprite("YellowSoldier"), 3, 4);
+            //AddBitmapToCanvas("YellowArcher", extractFromSprite("YellowArcher"), 3, 5);
+            //AddBitmapToCanvas("YellowHouse", extractFromSprite("YellowHouse"), 3, 6);
 
-            AddBitmapToCanvas("RedCastle", extractFromSprite("RedCastle"), 4, 3);
-            AddBitmapToCanvas("RedSoldier", extractFromSprite("RedSoldier"), 4, 4);
-            AddBitmapToCanvas("RedArcher", extractFromSprite("RedArcher"), 4, 5);
-            AddBitmapToCanvas("RedHouse", extractFromSprite("RedHouse"), 4, 6);
+            //AddBitmapToCanvas("RedCastle", extractFromSprite("RedCastle"), 4, 3);
+            //AddBitmapToCanvas("RedSoldier", extractFromSprite("RedSoldier"), 4, 4);
+            //AddBitmapToCanvas("RedArcher", extractFromSprite("RedArcher"), 4, 5);
+            //AddBitmapToCanvas("RedHouse", extractFromSprite("RedHouse"), 4, 6);
 
-            AddBitmapToCanvas("GreenCastle", extractFromSprite("GreenCastle"), 5, 3);
-            AddBitmapToCanvas("GreenSoldier", extractFromSprite("GreenSoldier"), 5, 4);
-            AddBitmapToCanvas("GreenArcher", extractFromSprite("GreenArcher"), 5, 5);
-            AddBitmapToCanvas("GreenHouse", extractFromSprite("GreenHouse"), 5, 6);
+            //AddBitmapToCanvas("GreenCastle", extractFromSprite("GreenCastle"), 5, 3);
+            //AddBitmapToCanvas("GreenSoldier", extractFromSprite("GreenSoldier"), 5, 4);
+            //AddBitmapToCanvas("GreenArcher", extractFromSprite("GreenArcher"), 5, 5);
+            //AddBitmapToCanvas("GreenHouse", extractFromSprite("GreenHouse"), 5, 6);
 
-            AddBitmapToCanvas("FoodResource", extractFromSprite("FoodResource"), 6, 3);
-            AddBitmapToCanvas("Gold", extractFromSprite("GoldResource"), 6, 4);
-            AddBitmapToCanvas("Wood", extractFromSprite("WoodResource"), 6, 5);
-            AddBitmapToCanvas("Stone", extractFromSprite("StoneResource"), 6, 6);
-            AddBitmapToCanvas("Iron", extractFromSprite("IronResource"), 6, 7);
-            AddBitmapToCanvas("Soldier", extractFromSprite("SoldierResource"), 6, 8);
-            AddBitmapToCanvas("Archer", extractFromSprite("ArcherResource"), 6, 9);
+            //AddBitmapToCanvas("FoodResource", extractFromSprite("FoodResource"), 6, 3);
+            //AddBitmapToCanvas("Gold", extractFromSprite("GoldResource"), 6, 4);
+            //AddBitmapToCanvas("Wood", extractFromSprite("WoodResource"), 6, 5);
+            //AddBitmapToCanvas("Stone", extractFromSprite("StoneResource"), 6, 6);
+            //AddBitmapToCanvas("Iron", extractFromSprite("IronResource"), 6, 7);
+            //AddBitmapToCanvas("Soldier", extractFromSprite("SoldierResource"), 6, 8);
+            //AddBitmapToCanvas("Archer", extractFromSprite("ArcherResource"), 6, 9);
 
-            AddBitmapToCanvas("WheatFarm", extractFromSprite("WheatFarm"), 7, 3);
-            AddBitmapToCanvas("Mine", extractFromSprite("Mine"), 7, 4);
+            //AddBitmapToCanvas("WheatFarm", extractFromSprite("WheatFarm"), 7, 3);
+            //AddBitmapToCanvas("Mine", extractFromSprite("Mine"), 7, 4);
         }
 
         public void AddBitmapToCanvas(string name, Bitmap bitmap)
@@ -278,7 +280,8 @@ namespace JuniorProject.Frontend.Components
             };
             drawables.Enqueue(new Drawable(img, true, name));
 
-            if (name == "Grid") {
+            if (name == "Grid")
+            {
                 drawables.Last<Drawable>().shouldDraw = drawGridLines;
             }
         }

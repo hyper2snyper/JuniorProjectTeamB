@@ -23,8 +23,10 @@ namespace JuniorProject.Frontend.Components
             this.Information.Text = information;
         }
 
-        public void setTeam(string team) {
-            switch (team) {
+        public void setTeam(string team)
+        {
+            switch (team)
+            {
                 case "Yellow":
                     this.Title.Foreground = Brushes.Yellow;
                     this.ImageBorder.BorderBrush = new SolidColorBrush(Colors.Yellow);

@@ -19,8 +19,8 @@ namespace JuniorProject.Backend.WorldData.Managers
 
         public void AddUnit(string name, Unit unit)
         {
-            units.TryAdd(name, unit);
-            DictionaryChanged?.Invoke();
+            if (units.TryAdd(name, unit))
+                DictionaryChanged?.Invoke();
         }
 
         public void RemoveUnit(string name)
