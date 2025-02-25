@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace JuniorProject.Backend.WorldData
+namespace JuniorProject.Backend.WorldData.Managers
 {
     public class UnitManager
     {

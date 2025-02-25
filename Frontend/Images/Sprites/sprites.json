@@ -124,5 +124,23 @@
     "y1": 128,
     "width": 31,
     "height": 31
+  },
+  "YellowTileCover": {
+    "x1": 0,
+    "y1": 224,
+    "width": 32,
+    "height": 32
+  },
+  "GreenTileCover": {
+    "x1": 33,
+    "y1": 224,
+    "width": 32,
+    "height": 32
+  },
+  "RedTileCover": {
+    "x1": 66,
+    "y1": 224,
+    "width": 32,
+    "height": 32
   }
 }

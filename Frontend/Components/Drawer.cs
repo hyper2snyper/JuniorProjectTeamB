@@ -13,6 +13,8 @@ using Newtonsoft.Json;
 using System.IO;
 using System.Collections.Specialized;
 using JuniorProject.Backend.Agents;
+using JuniorProject.Backend.WorldData.Managers;
+using System.Xml.Linq;
 using JuniorProject.Backend.WorldData;
 
 namespace JuniorProject.Frontend.Components
@@ -30,21 +32,27 @@ namespace JuniorProject.Frontend.Components
         Bitmap worldBitmap;
         Canvas Canvas;
 
-        private Dictionary<string, Drawable> drawables;
-        private Dictionary<(int, int), string> drawableGridLocations;
-
         string spriteSheetPath = $"{Properties.Resources.ProjectDir}\\Frontend\\Images\\Sprites\\SpriteSheet.png";
         string jsonPath = $"{Properties.Resources.ProjectDir}\\Frontend\\Images\\Sprites\\sprites.json";
         public Dictionary<string, SpriteInfo> sprites { get; set; }
         Bitmap spriteSheet;
 
         private UnitManager unitManager;
+        private TileManager tileManager;
+
+        public Queue<Drawable> drawables;
+        private Dictionary<(int, int), int> drawableGridLocations;
+
+        Drawable map;
+        Drawable grid;
+
+        Boolean drawGridLines = true;
 
         public Drawer(ref Canvas mapCanvas)
         {
             Canvas = mapCanvas;
-            drawables = new Dictionary<string, Drawable>();
-            drawableGridLocations = new Dictionary<(int, int), string>();
+            drawables = new Queue<Drawable>();
+            drawableGridLocations = new Dictionary<(int, int), int>();
             string jsonData = File.ReadAllText(jsonPath);
             sprites = JsonConvert.DeserializeObject<Dictionary<string, SpriteInfo>>(jsonData);
             spriteSheet = new Bitmap(spriteSheetPath);
@@ -55,19 +63,44 @@ namespace JuniorProject.Frontend.Components
             tileSize = ClientCommunicator.GetData<int>("tileSize");
             mapPixelSize = ClientCommunicator.GetData<Vector2Int>("mapPixelSize");
             worldBitmap = ClientCommunicator.GetData<Drawing.Bitmap>("WorldImage");
+            
             unitManager = ClientCommunicator.GetData<UnitManager>("UnitManager");
             unitManager.DictionaryChanged += OnUnitManagerChange;
+
+            tileManager = ClientCommunicator.GetData<TileManager>("TileManager");
+            tileManager.DictionaryChanged += OnTileManagerChange;
 
             Debug.Print(String.Format("{0:N}", tileSize));
             if (tileSize != default(int) && mapPixelSize.X != default(int) && mapPixelSize.Y != default(int) && worldBitmap != default(Bitmap))
             {
                 Debug.Print("Successfully loaded map values onto frontend. . .");
             }
+            // Initialize Map and Gridlines so they are not constantly redrawn
+            Controls.Image mapImage = new Controls.Image
+            {
+                Width = worldBitmap.Width,
+                Height = worldBitmap.Height,
+                Source = TransferToWriteableBitmap(worldBitmap),
+            };
+            map = new Drawable(mapImage, true, "WorldMap");
+
+            Controls.Image gridImage = new Controls.Image
+            {
+                Width = worldBitmap.Width,
+                Height = worldBitmap.Height,
+                Source = TransferToWriteableBitmap(GetGridlines())
+            };
+            grid = new Drawable(gridImage, true, "Grid");
         }
 
         private void OnUnitManagerChange()
         {
             Application.Current.Dispatcher.Invoke(Draw);
+        }
+
+        private void OnTileManagerChange()
+        { 
+            Application.Current?.Dispatcher.Invoke(Draw);
         }
 
         public void checkMouseClick(int x, int y)
@@ -76,8 +109,8 @@ namespace JuniorProject.Frontend.Components
 
             if (drawableGridLocations.ContainsKey((p.X, p.Y)))
             {
-                Drawable temp;
-                if (drawables.TryGetValue(drawableGridLocations[(p.X, p.Y)], out temp))
+                Drawable temp = drawables.ElementAt(drawableGridLocations[(p.X, p.Y)] - 1);
+                if (temp != null)
                 {
                     InfoModal im = new InfoModal(temp.image, temp.title, temp.getInformation());
                     im.Show();
@@ -86,6 +119,18 @@ namespace JuniorProject.Frontend.Components
                 {
                     Debug.Print("Could not find image in drawables");
                 }
+            }
+            else {
+                TileMap.Tile tile = ClientCommunicator.GetData<TileMap.Tile[,]>("Tiles")[p.X, p.Y];
+                Bitmap tileBitmap = extractTileFromMap(p.X * tileSize, p.Y * tileSize, 32, 32);
+                Controls.Image tileImage = new Controls.Image
+                {
+                    Width = tileBitmap.Width,
+                    Height = tileBitmap.Height,
+                    Source = TransferToWriteableBitmap(tileBitmap),
+                };
+                InfoModal im = new InfoModal(tileImage, "Tile", tile.getInformation());
+                im.Show();
             }
         }
 
@@ -104,6 +149,12 @@ namespace JuniorProject.Frontend.Components
             return null;
         }
 
+        public Bitmap extractTileFromMap(int x1, int y1, int width, int height)
+        { 
+            Rectangle section = new Rectangle(x1, y1, width, height);
+            return worldBitmap.Clone(section, spriteSheet.PixelFormat);
+        }
+
         public void ClearCanvas()
         {
             drawables.Clear();
@@ -113,7 +164,7 @@ namespace JuniorProject.Frontend.Components
 
         public void PopulateCanvas()
         {
-            foreach (Drawable d in drawables.Values)
+            foreach (Drawable d in drawables)
             {
                 if (d != null && d.shouldDraw)
                 {
@@ -129,15 +180,20 @@ namespace JuniorProject.Frontend.Components
 
         public void SetGridlines()
         {
-            drawables["Grid"].shouldDraw = !drawables["Grid"].shouldDraw;
+            grid.shouldDraw = !grid.shouldDraw;
             Draw();
         }
 
         public void Draw()
         {
             ClearCanvas();
-            AddBitmapToCanvas("MainMap", worldBitmap);
-            AddBitmapToCanvas("Grid", GetGridlines());
+            drawables.Enqueue(map);
+            drawables.Enqueue(grid);
+
+            foreach (var u in tileManager.tiles)
+            {
+                AddTileImagesToCanvas($"{u.Key.X}{u.Key.Y}", extractFromSprite($"{u.Value}TileCover"), u.Key);
+            }
 
             foreach (var u in unitManager.units)
             {
@@ -180,31 +236,31 @@ namespace JuniorProject.Frontend.Components
             //AddImageToCanvas("ArcherUnit", $"{Properties.Resources.ProjectDir}\\Frontend\\Images\\Sprites\\IndividualImages\\ArcherUnitResource.png", 7, 9);
 
             /*  vvvv FOR DEBUGGING/TESTING IMAGE SPRITES BELOW vvvv   */
-            //AddBitmapToCanvas("YellowCastle", extractFromSprite("YellowCastle"), 3, 3);
-            //AddBitmapToCanvas("YellowSoldier", extractFromSprite("YellowSoldier"), 3, 4);
-            //AddBitmapToCanvas("YellowArcher", extractFromSprite("YellowArcher"), 3, 5);
-            //AddBitmapToCanvas("YellowHouse", extractFromSprite("YellowHouse"), 3, 6);
+            AddBitmapToCanvas("YellowCastle", extractFromSprite("YellowCastle"), 3, 3);
+            AddBitmapToCanvas("YellowSoldier", extractFromSprite("YellowSoldier"), 3, 4);
+            AddBitmapToCanvas("YellowArcher", extractFromSprite("YellowArcher"), 3, 5);
+            AddBitmapToCanvas("YellowHouse", extractFromSprite("YellowHouse"), 3, 6);
 
-            //AddBitmapToCanvas("RedCastle", extractFromSprite("RedCastle"), 4, 3);
-            //AddBitmapToCanvas("RedSoldier", extractFromSprite("RedSoldier"), 4, 4);
-            //AddBitmapToCanvas("RedArcher", extractFromSprite("RedArcher"), 4, 5);
-            //AddBitmapToCanvas("RedHouse", extractFromSprite("RedHouse"), 4, 6);
+            AddBitmapToCanvas("RedCastle", extractFromSprite("RedCastle"), 4, 3);
+            AddBitmapToCanvas("RedSoldier", extractFromSprite("RedSoldier"), 4, 4);
+            AddBitmapToCanvas("RedArcher", extractFromSprite("RedArcher"), 4, 5);
+            AddBitmapToCanvas("RedHouse", extractFromSprite("RedHouse"), 4, 6);
 
-            //AddBitmapToCanvas("GreenCastle", extractFromSprite("GreenCastle"), 5, 3);
-            //AddBitmapToCanvas("GreenSoldier", extractFromSprite("GreenSoldier"), 5, 4);
-            //AddBitmapToCanvas("GreenArcher", extractFromSprite("GreenArcher"), 5, 5);
-            //AddBitmapToCanvas("GreenHouse", extractFromSprite("GreenHouse"), 5, 6);
+            AddBitmapToCanvas("GreenCastle", extractFromSprite("GreenCastle"), 5, 3);
+            AddBitmapToCanvas("GreenSoldier", extractFromSprite("GreenSoldier"), 5, 4);
+            AddBitmapToCanvas("GreenArcher", extractFromSprite("GreenArcher"), 5, 5);
+            AddBitmapToCanvas("GreenHouse", extractFromSprite("GreenHouse"), 5, 6);
 
-            //AddBitmapToCanvas("FoodResource", extractFromSprite("FoodResource"), 6, 3);
-            //AddBitmapToCanvas("Gold", extractFromSprite("GoldResource"), 6, 4);
-            //AddBitmapToCanvas("Wood", extractFromSprite("WoodResource"), 6, 5);
-            //AddBitmapToCanvas("Stone", extractFromSprite("StoneResource"), 6, 6);
-            //AddBitmapToCanvas("Iron", extractFromSprite("IronResource"), 6, 7);
-            //AddBitmapToCanvas("Soldier", extractFromSprite("SoldierResource"), 6, 8);
-            //AddBitmapToCanvas("Archer", extractFromSprite("ArcherResource"), 6, 9);
+            AddBitmapToCanvas("FoodResource", extractFromSprite("FoodResource"), 6, 3);
+            AddBitmapToCanvas("Gold", extractFromSprite("GoldResource"), 6, 4);
+            AddBitmapToCanvas("Wood", extractFromSprite("WoodResource"), 6, 5);
+            AddBitmapToCanvas("Stone", extractFromSprite("StoneResource"), 6, 6);
+            AddBitmapToCanvas("Iron", extractFromSprite("IronResource"), 6, 7);
+            AddBitmapToCanvas("Soldier", extractFromSprite("SoldierResource"), 6, 8);
+            AddBitmapToCanvas("Archer", extractFromSprite("ArcherResource"), 6, 9);
 
-            //AddBitmapToCanvas("WheatFarm", extractFromSprite("WheatFarm"), 7, 3);
-            //AddBitmapToCanvas("Mine", extractFromSprite("Mine"), 7, 4);
+            AddBitmapToCanvas("WheatFarm", extractFromSprite("WheatFarm"), 7, 3);
+            AddBitmapToCanvas("Mine", extractFromSprite("Mine"), 7, 4);
         }
 
         public void AddBitmapToCanvas(string name, Bitmap bitmap)
@@ -215,9 +271,10 @@ namespace JuniorProject.Frontend.Components
                 Height = bitmap.Height,
                 Source = TransferToWriteableBitmap(bitmap)
             };
-            if (!drawables.TryAdd(name, new Drawable(img, true, name)))
-            {
-                Debug.Print(String.Format("!!!ERROR: Cannot add {0:S} to drawables", name));
+            drawables.Enqueue(new Drawable(img, true, name));
+
+            if (name == "Grid") {
+                drawables.Last<Drawable>().shouldDraw = drawGridLines;
             }
         }
 
@@ -231,11 +288,8 @@ namespace JuniorProject.Frontend.Components
                 Source = TransferToWriteableBitmap(bitmap)
             };
             Vector2Int pixelPosition = ConvertGridPositionToPixels(x, y);
-            if (!drawables.TryAdd(name, new Drawable(img, true, name, imageSource, pixelPosition, new Vector2Int(x, y))))
-            {
-                Debug.Print(String.Format("!!!ERROR: Cannot add {0:S} to drawables", name));
-            }
-            if (!drawableGridLocations.TryAdd((x, y), name))
+            drawables.Enqueue(new Drawable(img, true, name, imageSource, pixelPosition, new Vector2Int(x, y)));
+            if (!drawableGridLocations.TryAdd((x, y), drawables.Count))
             {
                 Debug.Print(String.Format("!!!ERROR: Cannot add {0:S} to drawableGridLocations", name));
             }
@@ -251,11 +305,8 @@ namespace JuniorProject.Frontend.Components
                 Source = TransferToWriteableBitmap(bitmap)
             };
             Vector2Int pixelPosition = ConvertGridPositionToPixels(gridPos.X, gridPos.Y);
-            if (!drawables.TryAdd(name, new Drawable(img, true, name, imageSource, pixelPosition, gridPos)))
-            {
-                Debug.Print(String.Format("!!!ERROR: Cannot add {0:S} to drawables", name));
-            }
-            if (!drawableGridLocations.TryAdd((gridPos.X, gridPos.Y), name))
+            drawables.Enqueue(new Drawable(img, true, name, imageSource, pixelPosition, gridPos));
+            if (!drawableGridLocations.TryAdd((gridPos.X, gridPos.Y), drawables.Count))
             {
                 Debug.Print(String.Format("!!!ERROR: Cannot add {0:S} to drawableGridLocations", name));
             }
@@ -264,6 +315,19 @@ namespace JuniorProject.Frontend.Components
         public void AddImageToCanvas(string name, Controls.Image img)
         {
 
+        }
+
+        public void AddTileImagesToCanvas(string name, Bitmap bitmap, Vector2Int gridPos)
+        {
+            string imageSource = "SpriteSheet";
+            Controls.Image img = new Controls.Image
+            {
+                Width = bitmap.Width,
+                Height = bitmap.Height,
+                Source = TransferToWriteableBitmap(bitmap)
+            };
+            Vector2Int pixelPosition = ConvertGridPositionToPixels(gridPos.X, gridPos.Y);
+            drawables.Enqueue(new Drawable(img, true, name, imageSource, pixelPosition, gridPos));
         }
 
         public void AddImageToCanvas(string name, string source, int x = 0, int y = 0)
@@ -275,16 +339,8 @@ namespace JuniorProject.Frontend.Components
                 Source = new BitmapImage(new Uri(source, UriKind.Absolute))
             };
             Vector2Int pixelPosition = ConvertGridPositionToPixels(x, y);
-
-            if (!drawables.TryAdd(name, new Drawable(img, true, name, source, pixelPosition, new Vector2Int(x, y))))
-            {
-                Debug.Print(String.Format("!!!ERROR: Cannot add {0:S} to drawables", name));
-            }
-
-            if (!drawableGridLocations.TryAdd((x, y), name))
-            {
-                Debug.Print(String.Format("!!!ERROR: Cannot add {0:S} to drawableGridLocations", name));
-            }
+            drawables.Enqueue(new Drawable(img, true, name, source, pixelPosition, new Vector2Int(x, y)));
+            drawableGridLocations.TryAdd((x, y), drawables.Count);
         }
 
         public Vector2Int ConvertGridPositionToPixels(int x, int y)

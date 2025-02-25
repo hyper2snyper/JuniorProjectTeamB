@@ -5,6 +5,7 @@ using System.Windows.Input;
 using JuniorProject.Backend;
 using JuniorProject.Backend.Helpers;
 using JuniorProject.Backend.WorldData;
+using JuniorProject.Backend.WorldData.Managers;
 
 namespace JuniorProject.Frontend.Windows
 {
@@ -53,6 +54,8 @@ namespace JuniorProject.Frontend.Windows
         public static readonly Regex deleteUnitRegex = new Regex("^deleteUnit\\ *\\([a-zA-z]+\\)\\ *$");
         public static readonly Regex printUnitsRegex = new Regex("^printUnits\\(\\)\\ *$");
 
+        public static readonly Regex spawnTileCover = new Regex("^spawnTileCover\\ *\\([a-zA-z]+,\\ *[0-9]+,\\ *[0-9]+\\)\\ *$");
+
         public static readonly Regex stringParam = new Regex("\\([a-zA-z]+|,\\ *[a-zA-z]+");
         public static readonly Regex stringInstance = new Regex("[a-zA-z]+");
         public static readonly Regex intParam = new Regex("\\([0-9]+|,\\ *[0-9]+");
@@ -77,6 +80,18 @@ namespace JuniorProject.Frontend.Windows
                 ClientCommunicator.GetData<UnitManager>("UnitManager").AddUnit(unitName, new Unit(unitType, unitTeam, ClientCommunicator.GetData<World>("World"), new Vector2Int(x, y)));
                 Console.Text += $"Unit spawned at {x},{y} of type [{unitType}] with name [{unitName}]\n";
                 return;
+            }
+
+            if (spawnTileCover.IsMatch(Input.Text))
+            {
+                List<Match> matches = stringParam.Matches(Input.Text).ToList();
+                string team = stringInstance.Match(matches[0].Value).Value;
+
+                matches = intParam.Matches(Input.Text).ToList();
+                int x = int.Parse(intInstance.Match(matches[0].Value).Value);
+                int y = int.Parse(intInstance.Match(matches[1].Value).Value);
+
+                ClientCommunicator.GetData<TileManager>("TileManager").AddTile(new Vector2Int(x, y), team);
             }
 
             if (deleteUnitRegex.IsMatch(Input.Text))
