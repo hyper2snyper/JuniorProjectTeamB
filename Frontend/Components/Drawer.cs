@@ -103,11 +103,6 @@ namespace JuniorProject.Frontend.Components
             Application.Current?.Dispatcher.Invoke(Draw);
         }
 
-        private void OnUnitManagerChange()
-        {
-            Application.Current.Dispatcher.Invoke(Draw);
-        }
-
         public void checkMouseClick(int x, int y)
         {
             Vector2Int p = ConvertPixelsToGridPosition(x, y);
@@ -321,26 +316,6 @@ namespace JuniorProject.Frontend.Components
             Vector2Int pixelPosition = ConvertGridPositionToPixels(gridPos.X, gridPos.Y);
             drawables.Enqueue(new Drawable(img, true, name, imageSource, pixelPosition, gridPos));
             if (!drawableGridLocations.TryAdd((gridPos.X, gridPos.Y), drawables.Count))
-            {
-                Debug.Print(String.Format("!!!ERROR: Cannot add {0:S} to drawableGridLocations", name));
-            }
-        }
-
-        public void AddBitmapToCanvas(string name, Bitmap bitmap, Vector2Int gridPos)
-        {
-            string imageSource = "SpriteSheet";
-            Controls.Image img = new Controls.Image
-            {
-                Width = bitmap.Width,
-                Height = bitmap.Height,
-                Source = TransferToWriteableBitmap(bitmap)
-            };
-            Vector2Int pixelPosition = ConvertGridPositionToPixels(gridPos.X, gridPos.Y);
-            if (!drawables.TryAdd(name, new Drawable(img, true, name, imageSource, pixelPosition, gridPos)))
-            {
-                Debug.Print(String.Format("!!!ERROR: Cannot add {0:S} to drawables", name));
-            }
-            if (!drawableGridLocations.TryAdd((gridPos.X, gridPos.Y), name))
             {
                 Debug.Print(String.Format("!!!ERROR: Cannot add {0:S} to drawableGridLocations", name));
             }
