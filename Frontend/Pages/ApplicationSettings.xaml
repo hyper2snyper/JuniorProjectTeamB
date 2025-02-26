@@ -6,10 +6,62 @@
         xmlns:local="clr-namespace:JuniorProject"
         mc:Ignorable="d"
         Background="#FF424242">
+    
+     <Page.Resources>
+     <SolidColorBrush x:Key="Button.MouseOver.Background" Color="#FFBEE6FD"/>
+     <SolidColorBrush x:Key="Button.MouseOver.Border" Color="#FF3C7FB1"/>
+     <SolidColorBrush x:Key="Button.Pressed.Background" Color="#FFC4E5F6"/>
+     <SolidColorBrush x:Key="Button.Pressed.Border" Color="#FF2C628B"/>
+     <SolidColorBrush x:Key="Button.Disabled.Background" Color="#FFF4F4F4"/>
+     <SolidColorBrush x:Key="Button.Disabled.Border" Color="#FFADB2B5"/>
+     <SolidColorBrush x:Key="Button.Disabled.Foreground" Color="#FF838383"/>
+     <ControlTemplate x:Key="BacktoMainTemplate" TargetType="{x:Type ButtonBase}">
+         <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" SnapsToDevicePixels="true">
+             <ContentPresenter x:Name="contentPresenter" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+         </Border>
+         <ControlTemplate.Triggers>
+             <Trigger Property="Button.IsDefaulted" Value="true">
+                 <Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+             </Trigger>
+             <Trigger Property="IsMouseOver" Value="true">
+                 <Setter TargetName="border" Property="Background">
+                     <Setter.Value>
+                         <ImageBrush ImageSource="/Frontend/gui/Images/BackButtonHover.png"/>
+                     </Setter.Value>
+                 </Setter>
+             </Trigger>
+         </ControlTemplate.Triggers>
+     </ControlTemplate>
+        <Style x:Key="FocusVisual">
+            <Setter Property="Control.Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Rectangle Margin="2" StrokeDashArray="1 2" Stroke="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" SnapsToDevicePixels="true" StrokeThickness="1"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Page.Resources>
+
     <Grid Height="462" Width="826">
-        <Border BorderBrush="Black" BorderThickness="2" Padding="5"  Width="270" Height="243" HorizontalAlignment="Center" VerticalAlignment="Center">
+        <Border BorderBrush="Black" BorderThickness="0" Padding="5"  Width="350" Height="243" HorizontalAlignment="Center" VerticalAlignment="Center">
             <StackPanel Orientation="Vertical" >
-                <Button Content="Back to Main Menu" Height="32" Margin="10, 10" Width="150" Click="BackToMainMenu"/>
+                <Button Template="{DynamicResource BacktoMainTemplate}" x:Name="BackButton" Height="32" Margin="10, 10" Width="150" BorderThickness="0" Click="BackToMainMenu">
+                    <Button.Style>
+                        <Style TargetType ="Button">
+                            <Setter Property="Background">
+                                <Setter.Value>
+                                    <ImageBrush x:Name="BackButtonBrush" ImageSource="/FrontEnd/gui/Images/BackButton.png"/>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Opacity" Value="0.8"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
                 <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Background="LightGray" Margin="0, 10">
                     <Label>Select Screen Size</Label>
                     <RadioButton GroupName="ScreenSizeRadioButtonGroup" Checked="ScreenSizeRadioButtonChecked" Tag="Fullscreen">Fullscreen</RadioButton>

@@ -28,7 +28,7 @@
                 <Trigger Property="IsMouseOver" Value="true">
                     <Setter TargetName="border" Property="Background">
                         <Setter.Value>
-                            <ImageBrush ImageSource="/Frontend/Images/gui/StartSimulationButtonHover.png"/>
+                            <ImageBrush ImageSource="/Frontend/gui/Images/StartSimulationButtonHover.png"/>
                         </Setter.Value>
                     </Setter>
                 </Trigger>
@@ -74,7 +74,7 @@
                             <Trigger Property="IsMouseOver" Value="true">
                                 <Setter TargetName="border" Property="Background">
                                     <Setter.Value>
-                                        <ImageBrush ImageSource="/Frontend/Images/gui/CatalogButtonHover.png"/>
+                                        <ImageBrush ImageSource="/Frontend/gui/Images/CatalogButtonHover.png"/>
                                     </Setter.Value>
                                 </Setter>
                             </Trigger>
@@ -123,7 +123,7 @@
                             <Trigger Property="IsMouseOver" Value="true">
                                 <Setter TargetName="border" Property="Background">
                                     <Setter.Value>
-                                        <ImageBrush ImageSource="/Frontend/Images/gui/SettingsButtonHover.png"/>
+                                        <ImageBrush ImageSource="/Frontend/gui/Images/SettingsButtonHover.png"/>
                                     </Setter.Value>
                                 </Setter>
                             </Trigger>
@@ -135,8 +135,19 @@
     </Page.Resources>
 
     <Grid>
+
         <Grid>
-            <TextBlock HorizontalAlignment="Center" Foreground="White" FontSize="50" Text="Cry Havoc" Margin="0,111,0,267" Width="230"/>
+            <Grid>
+                <TextBlock HorizontalAlignment="Center" 
+               Foreground="White" 
+               FontSize="50" 
+               FontWeight="Bold"
+               Text="Cry Havoc" 
+               Margin="0,111,0,267" 
+               Width="230" 
+               FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard"/>
+            </Grid>
+
         </Grid>
         <StackPanel HorizontalAlignment="Center" Margin="0,211,0,96">
             <Button Template="{DynamicResource StartSimulationTemplate}" x:Name="startSimButton" Height="54" Width="284" Click="StartSimulation" Margin="0, 5" BorderThickness="0">
@@ -144,7 +155,7 @@
                     <Style TargetType="Button">
                         <Setter Property="Background">
                             <Setter.Value>
-                                <ImageBrush x:Name="SimulationButtonImageBrush"  ImageSource="/Frontend/Images/gui/StartSimulationButton.png" />
+                                <ImageBrush x:Name="SimulationButtonImageBrush"  ImageSource="/Frontend/gui/Images/StartSimulationButton.png" />
                             </Setter.Value>
                         </Setter>
                         <Style.Triggers>
@@ -157,12 +168,12 @@
             </Button>
             <Button Style="{DynamicResource CatalogTemplate}" x:Name="catalogButton" Height="54" Width="284" Click="Catalog" Margin="0, 5" BorderThickness="0">
                 <Button.Background>
-                    <ImageBrush ImageSource="/Frontend/Images/gui/CatalogButton.png" />
+                    <ImageBrush ImageSource="/Frontend/gui/Images/CatalogButton.png" />
                 </Button.Background>
             </Button>
             <Button Style="{DynamicResource SettingsTemplate}" x:Name="settingsButton" Height="54" Width="284" Click="Settings" Margin="0, 5" BorderThickness="0">
                 <Button.Background>
-                    <ImageBrush ImageSource="/Frontend/Images/gui/SettingsButton.png" />
+                    <ImageBrush ImageSource="/Frontend/gui/Images/SettingsButton.png" />
                 </Button.Background>
             </Button>
         </StackPanel>
