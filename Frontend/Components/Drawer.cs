@@ -37,8 +37,8 @@ namespace JuniorProject.Frontend.Components
         public Dictionary<string, SpriteInfo> sprites { get; set; }
         Bitmap spriteSheet;
 
-        private UnitManager unitManager;
-        private TileManager tileManager;
+        private DrawableManager drawableManager;
+        private TileMap tileMap;
 
         public Queue<Drawable> drawables;
         private Dictionary<(int, int), int> drawableGridLocations;
@@ -64,11 +64,11 @@ namespace JuniorProject.Frontend.Components
             mapPixelSize = ClientCommunicator.GetData<Vector2Int>("mapPixelSize");
             worldBitmap = ClientCommunicator.GetData<Drawing.Bitmap>("WorldImage");
 
-            unitManager = ClientCommunicator.GetData<UnitManager>("UnitManager");
-            unitManager.DictionaryChanged += OnUnitManagerChange;
+            drawableManager = ClientCommunicator.GetData<DrawableManager>("DrawableManager");
+            drawableManager.DictionaryChanged += OnDrawableManagerChange;
 
-            tileManager = ClientCommunicator.GetData<TileManager>("TileManager");
-            tileManager.DictionaryChanged += OnTileManagerChange;
+            tileMap = ClientCommunicator.GetData<TileMap>("TileMap");
+            tileMap.TilesChanged += OnTilesChange;
 
             Debug.Print(String.Format("{0:N}", tileSize));
             if (tileSize != default(int) && mapPixelSize.X != default(int) && mapPixelSize.Y != default(int) && worldBitmap != default(Bitmap))
@@ -93,12 +93,12 @@ namespace JuniorProject.Frontend.Components
             grid = new Drawable(gridImage, true, "Grid");
         }
 
-        private void OnUnitManagerChange()
+        private void OnDrawableManagerChange()
         {
             Application.Current.Dispatcher.Invoke(Draw);
         }
 
-        private void OnTileManagerChange()
+        private void OnTilesChange()
         {
             Application.Current?.Dispatcher.Invoke(Draw);
         }
@@ -122,7 +122,7 @@ namespace JuniorProject.Frontend.Components
             }
             else
             {
-                TileMap.Tile tile = ClientCommunicator.GetData<TileMap.Tile[,]>("Tiles")[p.X, p.Y];
+                TileMap.Tile tile = tileMap.getTile(p.X, p.Y);
                 Bitmap tileBitmap = extractTileFromMap(p.X * tileSize, p.Y * tileSize, 32, 32);
                 Controls.Image tileImage = new Controls.Image
                 {
@@ -130,12 +130,9 @@ namespace JuniorProject.Frontend.Components
                     Height = tileBitmap.Height,
                     Source = TransferToWriteableBitmap(tileBitmap),
                 };
-                InfoModal im = new InfoModal(tileImage, "Tile", tile.getInformation());
+                InfoModal im = new InfoModal(tileImage, "Tile", String.Empty);
 
-                if (tileManager.tiles.ContainsKey((tile.pos.X, tile.pos.Y)))
-                {
-                    im.setTeam(tileManager.tiles[(tile.pos.X, tile.pos.Y)]);
-                }
+                im.setTeam(tile.team);
 
                 im.Show();
             }
@@ -197,14 +194,16 @@ namespace JuniorProject.Frontend.Components
             drawables.Enqueue(map);
             drawables.Enqueue(grid);
 
-            foreach (var u in tileManager.tiles)
+            foreach (var u in tileMap.tiles)
             {
-                AddTileImagesToCanvas($"{u.Key.Item1}{u.Key.Item2}", extractFromSprite($"{u.Value}TileCover"), new Vector2Int(u.Key.Item1, u.Key.Item2));
+                if (String.IsNullOrEmpty(u.team)) continue;
+
+                AddTileImagesToCanvas($"{u.pos.X}{u.pos.Y}", extractFromSprite($"{u.team}TileCover"), new Vector2Int(u.pos.X, u.pos.Y));
             }
 
-            foreach (var u in unitManager.units)
+            foreach (var u in drawableManager.drawables)
             {
-                AddBitmapToCanvas(u.Key, extractFromSprite(u.Value.getSpriteName()), u.Value.getPosition());
+                AddBitmapToCanvas($"{u.Value}_[{u.Key.Item1},{u.Key.Item2}]", extractFromSprite(u.Value), new Vector2Int(u.Key));
             }
 
             //DebugImages();

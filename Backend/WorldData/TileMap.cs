@@ -22,14 +22,11 @@ namespace JuniorProject.Backend.WorldData
 
             public bool impassible = false;
 
-            public string getInformation()
-            {
-                return $"Grid Position -> [{pos.X}, {pos.Y}]\nMovement Cost -> {movementCost}\nElevation Average -> {elevationAvg}\nImpassible? -> {impassible.ToString()}";
-            }
-
+            public string team = string.Empty;
         }
 
-        Tile[,] tiles;
+        public Tile[,] tiles;
+        public event Action TilesChanged;
         public Tile? getTile(int x, int y)
         {
             if (x < 0 || y < 0) return null;
@@ -39,6 +36,18 @@ namespace JuniorProject.Backend.WorldData
         public Tile? getTile(Vector2Int v)
         {
             return getTile(v.X, v.Y);
+        }
+
+        public void convertTile(Vector2Int gridPosition, string team)
+        {
+            if (team != "Yellow" && team != "Red" && team != "Green" && !String.IsNullOrEmpty(team))
+            {
+                Debug.Print("ERROR!!! Given team is not compatible with any team tiles");
+                return;
+            }
+
+            tiles[gridPosition.X, gridPosition.Y].team = team;
+            TilesChanged?.Invoke();
         }
 
         public Tile?[,] getTileNeighbors(Tile tile)
@@ -129,7 +138,7 @@ namespace JuniorProject.Backend.WorldData
                     tiles[tileX, tileY] = tile;
                 }
             }
-            ClientCommunicator.RegisterData<Tile[,]>("Tiles", tiles);
+            ClientCommunicator.RegisterData<TileMap>("TileMap", this);
         }
     }
 }

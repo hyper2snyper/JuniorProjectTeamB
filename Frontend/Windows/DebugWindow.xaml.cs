@@ -51,11 +51,11 @@ namespace JuniorProject.Frontend.Windows
         public static readonly Regex clearRegex = new Regex("^clear\\ *$");
         public static readonly Regex helpRegex = new Regex("^help\\ *$");
 
-        public static readonly Regex spawnUnitRegex = new Regex("^spawnUnit\\ *\\([a-zA-z]+,\\ *[a-zA-z]+,\\ *[0-9]+,\\ *[0-9]+\\,\\ *[a-zA-z]+\\)\\ *$");
-        public static readonly Regex deleteUnitRegex = new Regex("^deleteUnit\\ *\\([a-zA-z]+\\)\\ *$");
+        public static readonly Regex spawnUnitRegex = new Regex("^spawnUnit\\ *\\([a-zA-z]+,\\ *[0-9]+,\\ *[0-9]+\\)\\ *$");
+        public static readonly Regex deleteUnitRegex = new Regex("^deleteUnit\\ *\\(\\ *[0-9]+,\\ *[0-9]+\\)\\ *$");
         public static readonly Regex printUnitsRegex = new Regex("^printUnits\\(\\)\\ *$");
+        public static readonly Regex printPossibleSpritesRegex = new Regex("^printPossibleSprites\\(\\)\\ *$");
 
-        public static readonly Regex spawnTileCover = new Regex("^spawnTileCover\\ *\\([a-zA-z]+,\\ *[0-9]+,\\ *[0-9]+\\)\\ *$");
         public static readonly Regex deleteTileCover = new Regex("^deleteTileCover\\ *\\([0-9]+,\\ *[0-9]+\\)\\ *$");
         public static readonly Regex modifyTileCover = new Regex("^modifyTileCover\\ *\\([a-zA-z]+,\\ *[0-9]+,\\ *[0-9]+\\)\\ *$");
 
@@ -75,15 +75,28 @@ namespace JuniorProject.Frontend.Windows
                 Console.Text += $"---> {Input.Text}\n";
 
                 List<Match> matches = stringParam.Matches(Input.Text).ToList();
-                string unitType = stringInstance.Match(matches[0].Value).Value;
-                string unitTeam = stringInstance.Match(matches[1].Value).Value;
-                string unitName = stringInstance.Match(matches[2].Value).Value;
+                string sprite = stringInstance.Match(matches[0].Value).Value;
 
                 matches = intParam.Matches(Input.Text).ToList();
                 int x = int.Parse(intInstance.Match(matches[0].Value).Value);
                 int y = int.Parse(intInstance.Match(matches[1].Value).Value);
-                ClientCommunicator.GetData<UnitManager>("UnitManager").AddUnit(unitName, new Unit(unitType, unitTeam, ClientCommunicator.GetData<World>("World"), new Vector2Int(x, y)));
-                Console.Text += $"Unit spawned at {x},{y} of type [{unitType}] with name [{unitName}]\n";
+                ClientCommunicator.GetData<DrawableManager>("DrawableManager").AddUnit(new Vector2Int(x, y), sprite);
+                Console.Text += $"Unit spawned at {x},{y} with sprite [{sprite}]\n";
+
+                Input.Text = "";
+                return;
+            }
+
+            if (printPossibleSpritesRegex.IsMatch(Input.Text))
+            {
+                Console.Text += $"---> {Input.Text}\n";
+
+                Console.Text += "\nPossible sprites for units to spawn with: \n";
+                Console.Text += "Take the team name, and prepend it to the unit name\n";
+                Console.Text += "Ex: 'RedArcher'\n\n";
+                Console.Text += "Team Names: 'Yellow', 'Green', 'Red'\n";
+                Console.Text += "\n";
+                Console.Text += "Unit Types: 'Soldier', 'Archer'\n\n";
 
                 Input.Text = "";
                 return;
@@ -94,26 +107,11 @@ namespace JuniorProject.Frontend.Windows
                 Console.Text += $"---> {Input.Text}\n";
 
                 List<Match> matches = stringParam.Matches(Input.Text).ToList();
-                string unitName = stringInstance.Match(matches[0].Value).Value;
-                ClientCommunicator.GetData<UnitManager>("UnitManager").RemoveUnit(unitName);
-                Console.Text += $"Attempted to remove unit with name {unitName}\n";
-
-                Input.Text = "";
-                return;
-            }
-
-            if (spawnTileCover.IsMatch(Input.Text))
-            {
-                Console.Text += $"---> {Input.Text}\n";
-
-                List<Match> matches = stringParam.Matches(Input.Text).ToList();
-                string team = stringInstance.Match(matches[0].Value).Value;
-
                 matches = intParam.Matches(Input.Text).ToList();
                 int x = int.Parse(intInstance.Match(matches[0].Value).Value);
                 int y = int.Parse(intInstance.Match(matches[1].Value).Value);
-
-                ClientCommunicator.GetData<TileManager>("TileManager").AddTile(new Vector2Int(x, y), team);
+                ClientCommunicator.GetData<DrawableManager>("DrawableManager").RemoveUnit(new Vector2Int(x, y));
+                Console.Text += $"Attempted to remove unit with at {x}, {y}\n";
 
                 Input.Text = "";
                 return;
@@ -130,7 +128,7 @@ namespace JuniorProject.Frontend.Windows
                 int x = int.Parse(intInstance.Match(matches[0].Value).Value);
                 int y = int.Parse(intInstance.Match(matches[1].Value).Value);
 
-                ClientCommunicator.GetData<TileManager>("TileManager").UpdateTile(new Vector2Int(x, y), team);
+                ClientCommunicator.GetData<TileMap>("TileMap").convertTile(new Vector2Int(x, y), team);
 
                 Input.Text = "";
                 return;
@@ -145,7 +143,7 @@ namespace JuniorProject.Frontend.Windows
                 int x = int.Parse(intInstance.Match(matches[0].Value).Value);
                 int y = int.Parse(intInstance.Match(matches[1].Value).Value);
 
-                ClientCommunicator.GetData<TileManager>("TileManager").RemoveTile(new Vector2Int(x, y));
+                ClientCommunicator.GetData<TileMap>("TileMap").convertTile(new Vector2Int(x, y), String.Empty);
 
                 Input.Text = "";
                 return;
@@ -163,11 +161,12 @@ namespace JuniorProject.Frontend.Windows
                 Console.Text += $"---> {Input.Text}\n";
 
                 Console.Text += "\nPossible commands (be mindful of Regex possibly not detecting input): \n\n";
-                Console.Text += "spawnUnit(<Unit Type>, <Team>, <gridX>, <gridY>, <Name>) -> Spawns a unit\n";
-                Console.Text += "deleteUnit(<Unit Name>) -> Removes a unit\n";
+                Console.Text += "spawnUnit(<Sprite>, <gridX>, <gridY>) -> Spawns a unit\n";
+                Console.Text += "deleteUnit(<gridX>, <gridY>) -> Removes a unit\n";
                 Console.Text += "printUnits() -> Prints current units\n";
                 Console.Text += "\n";
-                Console.Text += "spawnTileCover(<Team>, <gridX>, <gridY>) -> Spawns tile cover\n";
+                Console.Text += "printPossibleSprites() -> Prints possible sprites\n";
+                Console.Text += "\n";
                 Console.Text += "modifyTileCover(<Team>, <gridX>, <gridY>) -> Update tile cover team\n";
                 Console.Text += "deleteTileCover(<gridX>, <gridY>) -> Removes tile cover\n";
                 Console.Text += "\n";
@@ -180,38 +179,19 @@ namespace JuniorProject.Frontend.Windows
             if (printUnitsRegex.IsMatch(Input.Text))
             {
                 Console.Text += $"---> {Input.Text}\n";
-                Console.Text += "\nName\t\tType\t\tTeam\t\tGridPosition:\n";
-                foreach (var u in ClientCommunicator.GetData<UnitManager>("UnitManager").units)
+                Console.Text += "\nGridPosition\tSprite:\n";
+                foreach (var u in ClientCommunicator.GetData<DrawableManager>("DrawableManager").drawables)
                 {
-                    Console.Text += $"{u.Key}\t\t{u.Value.unitType.name}\t\t{u.Value.team}\t\t[{u.Value.getPosition().X}, {u.Value.getPosition().Y}]\n";
+                    Console.Text += $"[{u.Key.Item1}, {u.Key.Item2}]\t{u.Value}\n";
                 }
 
                 Input.Text = "";
                 return;
             }
 
-            if (deleteUnitRegex.IsMatch(Input.Text))
-            {
-                List<Match> matches = stringParam.Matches(Input.Text).ToList();
-                string unitName = stringInstance.Match(matches[0].Value).Value;
-                ClientCommunicator.GetData<UnitManager>("UnitManager").RemoveUnit(unitName);
-                Console.Text += $"Attempted to remove unit with name {unitName}\n";
-                return;
-            }
-
             if (clearRegex.IsMatch(Input.Text))
             {
                 Console.Text = "";
-                return;
-            }
-
-            if (printUnitsRegex.IsMatch(Input.Text))
-            {
-                Console.Text += "\nName\t\tType\t\tTeam\t\tGridPosition:\n";
-                foreach (var u in ClientCommunicator.GetData<UnitManager>("UnitManager").units)
-                {
-                    Console.Text += $"{u.Key}\t\t{u.Value.unitType.name}\t\t{u.Value.team}\t\t[{u.Value.getPosition().X}, {u.Value.getPosition().Y}]\n";
-                }
                 return;
             }
 
