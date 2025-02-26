@@ -46,8 +46,8 @@ namespace JuniorProject
             NavigationService.Navigate(new ApplicationSettings());
         }
 
-		private void LoadSimulation(object sender, RoutedEventArgs e)
-		{
+        private void LoadSimulation(object sender, RoutedEventArgs e)
+        {
             var fileSelect = new Microsoft.Win32.OpenFileDialog();
             fileSelect.DefaultExt = ".chs";
             fileSelect.Filter = "Cry Havoc Save (.chs)|*.chs";
@@ -59,10 +59,10 @@ namespace JuniorProject
                 {
                     simulation.LoadFromFile(fileSelect.FileName);
                     loadingDone = true;
-					ClientCommunicator.UpdateData<bool>("LoadingDone", loadingDone);
-				}));
-			NavigationService.Navigate(new Frontend.Pages.Loading());
+                    ClientCommunicator.UpdateData<bool>("LoadingDone", loadingDone);
+                }));
+            NavigationService.Navigate(new Frontend.Pages.Loading());
 
-		}
-	}
+        }
+    }
 }

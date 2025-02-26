@@ -28,7 +28,8 @@ namespace JuniorProject.Backend.States
         {
             ClientCommunicator.RegisterData<bool>("LoadingDone", false);
             ClientCommunicator.RegisterData<string>("LoadingMessage", "Loading");
-            Task.Run(() => {
+            Task.Run(() =>
+            {
                 task(simulation, ref loadingDone);
             });
         }

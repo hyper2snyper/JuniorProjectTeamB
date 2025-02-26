@@ -32,10 +32,10 @@ namespace JuniorProject.Backend.States
                 Stream stream = new MemoryStream();
                 f.CopyTo(stream);
                 stream.Seek(0, SeekOrigin.Begin);
-				ClientCommunicator.UpdateData<string>("LoadingMessage", "Loading Image From File");
-				map.LoadMap((Bitmap)Bitmap.FromStream(stream));
-				
-			};
+                ClientCommunicator.UpdateData<string>("LoadingMessage", "Loading Image From File");
+                map.LoadMap((Bitmap)Bitmap.FromStream(stream));
+
+            };
             ClientCommunicator.UpdateData<string>("LoadingMessage", "Loading From File");
             Unit.LoadUnitTemplates();
             Dictionary<Type, List<Serializable>> loadedObjects = serializer.Load();

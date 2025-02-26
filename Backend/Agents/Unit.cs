@@ -94,13 +94,13 @@ namespace JuniorProject.Backend.Agents
             posV = newPos;
         }
 
-		public void setPosition(TileMap.Tile newPos)
-		{
+        public void setPosition(TileMap.Tile newPos)
+        {
             pos = newPos;
             setPosition(newPos.pos);
-		}
+        }
 
-		void SetType(UnitTemplate template)
+        void SetType(UnitTemplate template)
         {
             unitType = template;
             health = template.maxHealth;
@@ -141,10 +141,10 @@ namespace JuniorProject.Backend.Agents
             SerializeField(unitType.name); //Save the type.
             SerializeField(health);
             SerializeField(team);
-            SerializeField(posV); 
+            SerializeField(posV);
 
             //Eventually we need to save objective states.
-		}
+        }
 
         public override void DeserializeFields()
         {

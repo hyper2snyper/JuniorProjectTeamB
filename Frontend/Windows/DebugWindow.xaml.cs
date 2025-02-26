@@ -8,18 +8,20 @@ using JuniorProject.Backend.WorldData;
 
 namespace JuniorProject.Frontend.Windows
 {
-	public partial class DebugWindow : Window
-	{
-		private static DebugWindow? _instance;
-		static DebugWindow Instance { 
-			get {
-				if (_instance == null)
-				{
-					_instance = new DebugWindow();
-					_instance.Closing += _instance_Closing;
-				}
-				return _instance;
-			}
+    public partial class DebugWindow : Window
+    {
+        private static DebugWindow? _instance;
+        static DebugWindow Instance
+        {
+            get
+            {
+                if (_instance == null)
+                {
+                    _instance = new DebugWindow();
+                    _instance.Closing += _instance_Closing;
+                }
+                return _instance;
+            }
         }
 
         Simulation simulationPage;
@@ -40,7 +42,7 @@ namespace JuniorProject.Frontend.Windows
             Instance.Show();
             Instance.simulationPage = simulation;
             Instance.KeyDown += Instance.KeyPressed;
-            simulation.Unloaded += (object sender, RoutedEventArgs e) => 
+            simulation.Unloaded += (object sender, RoutedEventArgs e) =>
             {
                 Instance.Close();
             };
@@ -69,13 +71,13 @@ namespace JuniorProject.Frontend.Windows
                 string unitType = stringInstance.Match(matches[0].Value).Value;
                 string unitTeam = stringInstance.Match(matches[1].Value).Value;
                 string unitName = stringInstance.Match(matches[2].Value).Value;
-				matches = intParam.Matches(Input.Text).ToList();
-				int x = int.Parse(intInstance.Match(matches[0].Value).Value);
-				int y = int.Parse(intInstance.Match(matches[1].Value).Value);
-				ClientCommunicator.GetData<UnitManager>("UnitManager").AddUnit(unitName, new Unit(unitType, unitTeam, ClientCommunicator.GetData<World>("World"), new Vector2Int(x, y)));
-				Console.Text += $"Unit spawned at {x},{y} of type [{unitType}] with name [{unitName}]\n";
-				return;
-			}
+                matches = intParam.Matches(Input.Text).ToList();
+                int x = int.Parse(intInstance.Match(matches[0].Value).Value);
+                int y = int.Parse(intInstance.Match(matches[1].Value).Value);
+                ClientCommunicator.GetData<UnitManager>("UnitManager").AddUnit(unitName, new Unit(unitType, unitTeam, ClientCommunicator.GetData<World>("World"), new Vector2Int(x, y)));
+                Console.Text += $"Unit spawned at {x},{y} of type [{unitType}] with name [{unitName}]\n";
+                return;
+            }
 
             if (deleteUnitRegex.IsMatch(Input.Text))
             {
@@ -102,31 +104,31 @@ namespace JuniorProject.Frontend.Windows
                 return;
             }
 
-			if (identifier.IsMatch(Input.Text))
-			{
-				string unit = identifier.Match(Input.Text).Value;
-				unit = unit.TrimEnd('.');
-				if (!unitsCreated.ContainsKey(unit))
-				{
-					Console.Text += $"No unit created with name {unit}\n";
-					return;
-				}
-				string command = function.Match(Input.Text).Value;
-				command = command.TrimStart('.');
-				command = command.TrimEnd('(');
-				switch (command)
-				{
-					case "MoveTo":
-						{
-							List<Match> parameters = intParam.Matches(Input.Text).ToList();
-							int x = int.Parse(intInstance.Match(parameters[0].Value).Value);
-							int y = int.Parse(intInstance.Match(parameters[1].Value).Value);
-							unitsCreated[unit].MoveTo(new Vector2Int(x, y));
-							break;
-						}
-				}
-			}
-		}
+            if (identifier.IsMatch(Input.Text))
+            {
+                string unit = identifier.Match(Input.Text).Value;
+                unit = unit.TrimEnd('.');
+                if (!unitsCreated.ContainsKey(unit))
+                {
+                    Console.Text += $"No unit created with name {unit}\n";
+                    return;
+                }
+                string command = function.Match(Input.Text).Value;
+                command = command.TrimStart('.');
+                command = command.TrimEnd('(');
+                switch (command)
+                {
+                    case "MoveTo":
+                        {
+                            List<Match> parameters = intParam.Matches(Input.Text).ToList();
+                            int x = int.Parse(intInstance.Match(parameters[0].Value).Value);
+                            int y = int.Parse(intInstance.Match(parameters[1].Value).Value);
+                            unitsCreated[unit].MoveTo(new Vector2Int(x, y));
+                            break;
+                        }
+                }
+            }
+        }
 
     }
 }

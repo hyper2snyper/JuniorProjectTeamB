@@ -52,17 +52,17 @@ namespace JuniorProject.Backend.WorldData
             this.map.Map = map;
         }
 
-		public override void SerializeFields()
-		{
+        public override void SerializeFields()
+        {
             SerializeField(unitManager);
             SerializeField(map);
-		}
+        }
 
-		public override void DeserializeFields()
-		{
-			unitManager = (UnitManager)DeserializeObject();
+        public override void DeserializeFields()
+        {
+            unitManager = (UnitManager)DeserializeObject();
             map = (TileMap)DeserializeObject();
-		}
-	}
+        }
+    }
 
 }

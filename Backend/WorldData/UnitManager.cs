@@ -31,21 +31,21 @@ namespace JuniorProject.Backend.WorldData
 
         public void LinkUnits(TileMap map)
         {
-			ClientCommunicator.UpdateData<string>("LoadingMessage", "Linking Units");
-			foreach (Unit unit in units.Values)
+            ClientCommunicator.UpdateData<string>("LoadingMessage", "Linking Units");
+            foreach (Unit unit in units.Values)
             {
                 unit.setPosition(map.getTile(unit.getPosition()));
             }
         }
 
-		public override void SerializeFields()
-		{
+        public override void SerializeFields()
+        {
             SerializeField(units);
-		}
+        }
 
-		public override void DeserializeFields()
-		{
+        public override void DeserializeFields()
+        {
             units = DeserializeDictionary<string, Unit>();
-		}
-	}
+        }
+    }
 }

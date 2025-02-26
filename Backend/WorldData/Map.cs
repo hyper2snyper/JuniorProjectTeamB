@@ -45,11 +45,11 @@ namespace JuniorProject.Backend.WorldData
         public BiomeData?[,] BiomeMap { get { return biomeMap; } }
         float[,] heightMap;
 
-        public Map() 
+        public Map()
         {
-			Debug.Print("Loading Biome Data...");
-			LoadTerrain();
-		}
+            Debug.Print("Loading Biome Data...");
+            LoadTerrain();
+        }
 
         public Map(Vector2Int mapPixelSize, string seed, float freq, float amp, int octaves, float seaLevel, float treeLine)
         {
@@ -79,8 +79,8 @@ namespace JuniorProject.Backend.WorldData
         public void LoadMap(Bitmap bitmap)
         {
             worldImage = bitmap;
-			ClientCommunicator.RegisterData<Bitmap>("WorldImage", worldImage);
-		}
+            ClientCommunicator.RegisterData<Bitmap>("WorldImage", worldImage);
+        }
 
         void LoadTerrain()
         {

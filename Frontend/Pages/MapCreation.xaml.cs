@@ -107,11 +107,11 @@ namespace JuniorProject.Frontend.Pages
         {
             ClientCommunicator.CallAction<IState>("SetState", new Backend.States.Loading(
                 (Backend.States.Simulation simulation, ref bool loadingDone) =>
-			{
-				simulation.CreateWorld(seed, amp, freq, octaves, seaLevel, treeLine);
-				loadingDone = true;
-				ClientCommunicator.UpdateData<bool>("LoadingDone", loadingDone);
-			}));
+            {
+                simulation.CreateWorld(seed, amp, freq, octaves, seaLevel, treeLine);
+                loadingDone = true;
+                ClientCommunicator.UpdateData<bool>("LoadingDone", loadingDone);
+            }));
             NavigationService.Navigate(new Loading());
         }
 

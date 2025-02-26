@@ -97,12 +97,12 @@ namespace JuniorProject
             var fileDialouge = new Microsoft.Win32.SaveFileDialog();
             fileDialouge.DefaultDirectory = "Save";
             fileDialouge.DefaultExt = ".chs";
-			fileDialouge.Filter = "Cry Havoc Save (.chs)|*.chs";
-            if(fileDialouge.ShowDialog() != true)
+            fileDialouge.Filter = "Cry Havoc Save (.chs)|*.chs";
+            if (fileDialouge.ShowDialog() != true)
             {
                 return;
             }
-			ClientCommunicator.CallAction("SaveWorld", fileDialouge.FileName);
+            ClientCommunicator.CallAction("SaveWorld", fileDialouge.FileName);
         }
 
         public void BackToMainMenu(object sender, RoutedEventArgs e)

@@ -22,24 +22,24 @@ namespace JuniorProject.Backend.WorldData
 
             public bool impassible = false;
 
-			public override void SerializeFields()
-			{
+            public override void SerializeFields()
+            {
                 SerializeField(pos);
                 SerializeField(terrainPercentages);
                 SerializeField(movementCost);
                 SerializeField(elevationAvg);
                 SerializeField(impassible);
-			}
+            }
 
-			public override void DeserializeFields()
-			{
+            public override void DeserializeFields()
+            {
                 pos = DeserializeField<Vector2Int>();
                 terrainPercentages = DeserializeDictionary<string, float>();
                 movementCost = DeserializeField<int>();
                 elevationAvg = DeserializeField<float>();
                 impassible = DeserializeField<bool>();
-			}
-		}
+            }
+        }
 
         Tile[,] tiles;
         public Tile? getTile(int x, int y)
@@ -72,7 +72,7 @@ namespace JuniorProject.Backend.WorldData
         Vector2Int mapPixelSize;
 
         Map map;
-        public Map Map {  set {  map = value; } }
+        public Map Map { set { map = value; } }
 
         public TileMap() { }
 
@@ -151,23 +151,23 @@ namespace JuniorProject.Backend.WorldData
             map.SaveMap(serializer);
         }
 
-		public override void SerializeFields()
-		{
+        public override void SerializeFields()
+        {
             SerializeField(tileSize);
             SerializeField(mapSize);
             SerializeField(mapPixelSize);
             SerializeField(tiles);
-		}
+        }
 
-		public override void DeserializeFields()
-		{
+        public override void DeserializeFields()
+        {
             tileSize = DeserializeField<int>();
             mapSize = DeserializeField<Vector2Int>();
             mapPixelSize = DeserializeField<Vector2Int>();
             tiles = Deserialize2DArray<Tile>();
 
-			ClientCommunicator.RegisterData<Vector2Int>("mapPixelSize", mapPixelSize);
-			ClientCommunicator.RegisterData<int>("tileSize", tileSize);
-		}
-	}
+            ClientCommunicator.RegisterData<Vector2Int>("mapPixelSize", mapPixelSize);
+            ClientCommunicator.RegisterData<int>("tileSize", tileSize);
+        }
+    }
 }
