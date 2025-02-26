@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace JuniorProject.Backend.WorldData
 {
-    public class UnitManager
+    public class UnitManager : Serializable
     {
         public Dictionary<string, Unit> units = new Dictionary<string, Unit>();
         public event Action DictionaryChanged;
@@ -27,6 +27,25 @@ namespace JuniorProject.Backend.WorldData
         {
             if (units.Remove(name))
                 DictionaryChanged?.Invoke();
+        }
+
+        public void LinkUnits(TileMap map)
+        {
+            ClientCommunicator.UpdateData<string>("LoadingMessage", "Linking Units");
+            foreach (Unit unit in units.Values)
+            {
+                unit.setPosition(map.getTile(unit.getPosition()));
+            }
+        }
+
+        public override void SerializeFields()
+        {
+            SerializeField(units);
+        }
+
+        public override void DeserializeFields()
+        {
+            units = DeserializeDictionary<string, Unit>();
         }
     }
 }

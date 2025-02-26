@@ -13,6 +13,8 @@
   <ItemGroup>
     <None Remove="Frontend\Images\gui\CatalogButton.png" />
     <None Remove="Frontend\Images\gui\CatalogButtonHover.png" />
+    <None Remove="Frontend\Images\gui\LoadSimulationButton.png" />
+    <None Remove="Frontend\Images\gui\LoadSimulationButtonHover.png" />
     <None Remove="Frontend\Images\gui\SettingsButton.png" />
     <None Remove="Frontend\Images\gui\SettingsButtonHover.png" />
     <None Remove="Frontend\Images\gui\StartSimulationButton.png" />
@@ -35,6 +37,8 @@
   <ItemGroup>
     <Resource Include="Frontend\Images\gui\CatalogButton.png" />
     <Resource Include="Frontend\Images\gui\CatalogButtonHover.png" />
+    <Resource Include="Frontend\Images\gui\LoadSimulationButton.png" />
+    <Resource Include="Frontend\Images\gui\LoadSimulationButtonHover.png" />
     <Resource Include="Frontend\Images\gui\SettingsButton.png" />
     <Resource Include="Frontend\Images\gui\SettingsButtonHover.png" />
     <Resource Include="Frontend\Images\gui\StartSimulationButton.png" />

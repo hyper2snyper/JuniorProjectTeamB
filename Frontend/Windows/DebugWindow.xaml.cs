@@ -8,9 +8,6 @@ using JuniorProject.Backend.WorldData;
 
 namespace JuniorProject.Frontend.Windows
 {
-    /// <summary>
-    /// Interaction logic for DebugWindow.xaml
-    /// </summary>
     public partial class DebugWindow : Window
     {
         private static DebugWindow? _instance;
@@ -45,6 +42,10 @@ namespace JuniorProject.Frontend.Windows
             Instance.Show();
             Instance.simulationPage = simulation;
             Instance.KeyDown += Instance.KeyPressed;
+            simulation.Unloaded += (object sender, RoutedEventArgs e) =>
+            {
+                Instance.Close();
+            };
         }
 
         public static readonly Regex clearRegex = new Regex("^clear\\ *$");
@@ -70,7 +71,6 @@ namespace JuniorProject.Frontend.Windows
                 string unitType = stringInstance.Match(matches[0].Value).Value;
                 string unitTeam = stringInstance.Match(matches[1].Value).Value;
                 string unitName = stringInstance.Match(matches[2].Value).Value;
-
                 matches = intParam.Matches(Input.Text).ToList();
                 int x = int.Parse(intInstance.Match(matches[0].Value).Value);
                 int y = int.Parse(intInstance.Match(matches[1].Value).Value);
