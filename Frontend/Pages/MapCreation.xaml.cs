@@ -17,6 +17,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using JuniorProject.Frontend.Windows;
+using JuniorProject.Backend.States;
 namespace JuniorProject.Frontend.Pages
 {
     /// <summary>
@@ -104,7 +105,13 @@ namespace JuniorProject.Frontend.Pages
 
         private void Generate_Click(object sender, RoutedEventArgs e)
         {
-            ClientCommunicator.CallAction<IState>("SetState", new Backend.States.Loading(seed, amp, freq, octaves, seaLevel, treeLine));
+            ClientCommunicator.CallAction<IState>("SetState", new Backend.States.Loading(
+                (Backend.States.Simulation simulation, ref bool loadingDone) =>
+            {
+                simulation.CreateWorld(seed, amp, freq, octaves, seaLevel, treeLine);
+                loadingDone = true;
+                ClientCommunicator.UpdateData<bool>("LoadingDone", loadingDone);
+            }));
             NavigationService.Navigate(new Loading());
         }
 

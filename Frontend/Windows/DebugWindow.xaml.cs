@@ -9,9 +9,6 @@ using JuniorProject.Backend.WorldData.Managers;
 
 namespace JuniorProject.Frontend.Windows
 {
-    /// <summary>
-    /// Interaction logic for DebugWindow.xaml
-    /// </summary>
     public partial class DebugWindow : Window
     {
         private static DebugWindow? _instance;
@@ -46,6 +43,10 @@ namespace JuniorProject.Frontend.Windows
             Instance.Show();
             Instance.simulationPage = simulation;
             Instance.KeyDown += Instance.KeyPressed;
+            simulation.Unloaded += (object sender, RoutedEventArgs e) =>
+            {
+                Instance.Close();
+            };
         }
 
         public static readonly Regex clearRegex = new Regex("^clear\\ *$");
