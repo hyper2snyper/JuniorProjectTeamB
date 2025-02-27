@@ -5,7 +5,6 @@ using System.Windows.Input;
 using JuniorProject.Backend;
 using JuniorProject.Backend.Helpers;
 using JuniorProject.Backend.WorldData;
-using JuniorProject.Backend.WorldData.Managers;
 
 namespace JuniorProject.Frontend.Windows
 {
@@ -52,8 +51,8 @@ namespace JuniorProject.Frontend.Windows
         public static readonly Regex clearRegex = new Regex("^clear\\ *$");
         public static readonly Regex helpRegex = new Regex("^help\\ *$");
 
-        public static readonly Regex spawnUnitRegex = new Regex("^spawnUnit\\ *\\([a-zA-z]+,\\ *[0-9]+,\\ *[0-9]+\\)\\ *$");
-        public static readonly Regex deleteUnitRegex = new Regex("^deleteUnit\\ *\\(\\ *[0-9]+,\\ *[0-9]+\\)\\ *$");
+        public static readonly Regex spawnUnitRegex = new Regex("^spawnUnit\\ *\\([a-zA-z]+,\\ *[a-zA-z]+,\\ *[0-9]+,\\ *[0-9]+\\,\\ *[a-zA-z]+\\)\\ *$");
+        public static readonly Regex deleteUnitRegex = new Regex("^deleteUnit\\ *\\([a-zA-z]+\\)\\ *$");
         public static readonly Regex printUnitsRegex = new Regex("^printUnits\\(\\)\\ *$");
         public static readonly Regex printPossibleSpritesRegex = new Regex("^printPossibleSprites\\(\\)\\ *$");
 
@@ -76,13 +75,14 @@ namespace JuniorProject.Frontend.Windows
                 Console.Text += $"---> {Input.Text}\n";
 
                 List<Match> matches = stringParam.Matches(Input.Text).ToList();
-                string sprite = stringInstance.Match(matches[0].Value).Value;
-
+                string unitType = stringInstance.Match(matches[0].Value).Value;
+                string unitTeam = stringInstance.Match(matches[1].Value).Value;
+                string unitName = stringInstance.Match(matches[2].Value).Value;
                 matches = intParam.Matches(Input.Text).ToList();
                 int x = int.Parse(intInstance.Match(matches[0].Value).Value);
                 int y = int.Parse(intInstance.Match(matches[1].Value).Value);
-                ClientCommunicator.GetData<DrawableManager>("DrawableManager").AddUnit(new Vector2Int(x, y), sprite);
-                Console.Text += $"Unit spawned at {x},{y} with sprite [{sprite}]\n";
+                ClientCommunicator.GetData<UnitManager>("UnitManager").AddUnit(unitName, new Unit(unitType, unitTeam, ClientCommunicator.GetData<World>("World"), new Vector2Int(x, y)));
+                Console.Text += $"Unit spawned at {x},{y} of type [{unitType}] with name [{unitName}]\n";
 
                 Input.Text = "";
                 return;
@@ -93,8 +93,7 @@ namespace JuniorProject.Frontend.Windows
                 Console.Text += $"---> {Input.Text}\n";
 
                 Console.Text += "\nPossible sprites for units to spawn with: \n";
-                Console.Text += "Take the team name, and prepend it to the unit name\n";
-                Console.Text += "Ex: 'RedArcher'\n\n";
+                Console.Text += "Take the team name, and combine it with a unit name\n\n";
                 Console.Text += "Team Names: 'Yellow', 'Green', 'Red'\n";
                 Console.Text += "\n";
                 Console.Text += "Unit Types: 'Soldier', 'Archer'\n\n";
@@ -108,11 +107,9 @@ namespace JuniorProject.Frontend.Windows
                 Console.Text += $"---> {Input.Text}\n";
 
                 List<Match> matches = stringParam.Matches(Input.Text).ToList();
-                matches = intParam.Matches(Input.Text).ToList();
-                int x = int.Parse(intInstance.Match(matches[0].Value).Value);
-                int y = int.Parse(intInstance.Match(matches[1].Value).Value);
-                ClientCommunicator.GetData<DrawableManager>("DrawableManager").RemoveUnit(new Vector2Int(x, y));
-                Console.Text += $"Attempted to remove unit with at {x}, {y}\n";
+                string unitName = stringInstance.Match(matches[0].Value).Value;
+                ClientCommunicator.GetData<UnitManager>("UnitManager").RemoveUnit(unitName);
+                Console.Text += $"Attempted to remove unit with name {unitName}\n";
 
                 Input.Text = "";
                 return;
@@ -162,8 +159,8 @@ namespace JuniorProject.Frontend.Windows
                 Console.Text += $"---> {Input.Text}\n";
 
                 Console.Text += "\nPossible commands (be mindful of Regex possibly not detecting input): \n\n";
-                Console.Text += "spawnUnit(<Sprite>, <gridX>, <gridY>) -> Spawns a unit\n";
-                Console.Text += "deleteUnit(<gridX>, <gridY>) -> Removes a unit\n";
+                Console.Text += "spawnUnit(<Unit Type>, <Team>, <gridX>, <gridY>, <Name>) -> Spawns a unit\n";
+                Console.Text += "deleteUnit(<Name>) -> Removes a unit\n";
                 Console.Text += "printUnits() -> Prints current units\n";
                 Console.Text += "\n";
                 Console.Text += "printPossibleSprites() -> Prints possible sprites\n";
@@ -180,10 +177,10 @@ namespace JuniorProject.Frontend.Windows
             if (printUnitsRegex.IsMatch(Input.Text))
             {
                 Console.Text += $"---> {Input.Text}\n";
-                Console.Text += "\nGridPosition\tSprite:\n";
-                foreach (var u in ClientCommunicator.GetData<DrawableManager>("DrawableManager").drawables)
+                Console.Text += "\nName\t\tType\t\tTeam\t\tGridPosition:\n";
+                foreach (var u in ClientCommunicator.GetData<UnitManager>("UnitManager").units)
                 {
-                    Console.Text += $"[{u.Key.Item1}, {u.Key.Item2}]\t{u.Value}\n";
+                    Console.Text += $"{u.Key}\t\t{u.Value.unitType.name}\t\t{u.Value.team}\t\t[{u.Value.getPosition().X}, {u.Value.getPosition().Y}]\n";
                 }
 
                 Input.Text = "";

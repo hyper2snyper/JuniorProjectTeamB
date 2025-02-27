@@ -13,7 +13,6 @@ using Newtonsoft.Json;
 using System.IO;
 using System.Collections.Specialized;
 using JuniorProject.Backend.Agents;
-using JuniorProject.Backend.WorldData.Managers;
 using System.Xml.Linq;
 using JuniorProject.Backend.WorldData;
 
@@ -37,7 +36,7 @@ namespace JuniorProject.Frontend.Components
         public Dictionary<string, SpriteInfo> sprites { get; set; }
         Bitmap spriteSheet;
 
-        private DrawableManager drawableManager;
+        private UnitManager unitManager;
         private TileMap tileMap;
 
         public Queue<Drawable> drawables;
@@ -64,8 +63,8 @@ namespace JuniorProject.Frontend.Components
             mapPixelSize = ClientCommunicator.GetData<Vector2Int>("mapPixelSize");
             worldBitmap = ClientCommunicator.GetData<Drawing.Bitmap>("WorldImage");
 
-            drawableManager = ClientCommunicator.GetData<DrawableManager>("DrawableManager");
-            drawableManager.DictionaryChanged += OnDrawableManagerChange;
+            unitManager = ClientCommunicator.GetData<UnitManager>("UnitManager");
+            unitManager.DictionaryChanged += OnUnitManagerChange;
 
             tileMap = ClientCommunicator.GetData<TileMap>("TileMap");
             tileMap.TilesChanged += OnTilesChange;
@@ -93,7 +92,7 @@ namespace JuniorProject.Frontend.Components
             grid = new Drawable(gridImage, true, "Grid");
         }
 
-        private void OnDrawableManagerChange()
+        private void OnUnitManagerChange()
         {
             Application.Current.Dispatcher.Invoke(Draw);
         }
@@ -130,12 +129,16 @@ namespace JuniorProject.Frontend.Components
                     Height = tileBitmap.Height,
                     Source = TransferToWriteableBitmap(tileBitmap),
                 };
-                InfoModal im = new InfoModal(tileImage, "Tile", String.Empty);
+                InfoModal im = new InfoModal(tileImage, "Tile", getTileInformation(ref tile));
 
                 im.setTeam(tile.team);
-
+                
                 im.Show();
             }
+        }
+
+        public string getTileInformation(ref TileMap.Tile t) {
+            return $"Movement Cost -> {t.movementCost}\nElevation Average -> {t.elevationAvg}\nImpassible? -> {t.impassible.ToString()}\nTeam -> {t.team}";
         }
 
         public Bitmap extractFromSprite(string name)
@@ -201,9 +204,9 @@ namespace JuniorProject.Frontend.Components
                 AddTileImagesToCanvas($"{u.pos.X}{u.pos.Y}", extractFromSprite($"{u.team}TileCover"), new Vector2Int(u.pos.X, u.pos.Y));
             }
 
-            foreach (var u in drawableManager.drawables)
+            foreach (var u in unitManager.units)
             {
-                AddBitmapToCanvas($"{u.Value}_[{u.Key.Item1},{u.Key.Item2}]", extractFromSprite(u.Value), new Vector2Int(u.Key));
+                AddBitmapToCanvas(u.Key, extractFromSprite(u.Value.getSpriteName()), u.Value.getPosition());
             }
 
             //DebugImages();

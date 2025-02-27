@@ -18,6 +18,11 @@ namespace JuniorProject.Backend.WorldData
             public bool impassible = false;
 
             public string team = string.Empty;
+
+            //public string getInformation() {
+            //    return $"Movement Cost -> {movementCost}\nElevation Average -> {elevationAvg}\nImpassible? -> {impassible.ToString()}\nTeam -> {team}";    
+            //}
+
             public override void SerializeFields()
             {
                 SerializeField(pos);
@@ -25,6 +30,7 @@ namespace JuniorProject.Backend.WorldData
                 SerializeField(movementCost);
                 SerializeField(elevationAvg);
                 SerializeField(impassible);
+                SerializeField(team);
             }
 
             public override void DeserializeFields()
@@ -34,6 +40,7 @@ namespace JuniorProject.Backend.WorldData
                 movementCost = DeserializeField<int>();
                 elevationAvg = DeserializeField<float>();
                 impassible = DeserializeField<bool>();
+                team = DeserializeField<string>();
             }
         }
 
@@ -177,6 +184,7 @@ namespace JuniorProject.Backend.WorldData
 
             ClientCommunicator.RegisterData<Vector2Int>("mapPixelSize", mapPixelSize);
             ClientCommunicator.RegisterData<int>("tileSize", tileSize);
+            ClientCommunicator.RegisterData<TileMap>("TileMap", this);
         }
     }
 }
