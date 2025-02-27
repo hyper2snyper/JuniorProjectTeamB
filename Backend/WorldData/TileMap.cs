@@ -19,10 +19,6 @@ namespace JuniorProject.Backend.WorldData
 
             public string team = string.Empty;
 
-            //public string getInformation() {
-            //    return $"Movement Cost -> {movementCost}\nElevation Average -> {elevationAvg}\nImpassible? -> {impassible.ToString()}\nTeam -> {team}";    
-            //}
-
             public override void SerializeFields()
             {
                 SerializeField(pos);

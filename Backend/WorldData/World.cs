@@ -27,7 +27,7 @@ namespace JuniorProject.Backend.WorldData
             ClientCommunicator.UnregisterData("mapPixelSize");
             ClientCommunicator.UnregisterData("tileSize");
             ClientCommunicator.UnregisterData("World");
-            ClientCommunicator.UnregisterData("DrawableManager");
+            ClientCommunicator.UnregisterData("UnitManager");
             ClientCommunicator.UnregisterData("TileMap");
             ClientCommunicator.UnregisterAction("SaveWorld");
         }

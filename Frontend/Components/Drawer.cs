@@ -132,12 +132,13 @@ namespace JuniorProject.Frontend.Components
                 InfoModal im = new InfoModal(tileImage, "Tile", getTileInformation(ref tile));
 
                 im.setTeam(tile.team);
-                
+
                 im.Show();
             }
         }
 
-        public string getTileInformation(ref TileMap.Tile t) {
+        public string getTileInformation(ref TileMap.Tile t)
+        {
             return $"Movement Cost -> {t.movementCost}\nElevation Average -> {t.elevationAvg}\nImpassible? -> {t.impassible.ToString()}\nTeam -> {t.team}";
         }
 
