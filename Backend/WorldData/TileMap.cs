@@ -1,11 +1,6 @@
 ﻿using JuniorProject.Backend.Helpers;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace JuniorProject.Backend.WorldData
 {
@@ -22,6 +17,8 @@ namespace JuniorProject.Backend.WorldData
 
             public bool impassible = false;
 
+            public string team = string.Empty;
+
             public override void SerializeFields()
             {
                 SerializeField(pos);
@@ -29,6 +26,7 @@ namespace JuniorProject.Backend.WorldData
                 SerializeField(movementCost);
                 SerializeField(elevationAvg);
                 SerializeField(impassible);
+                SerializeField(team);
             }
 
             public override void DeserializeFields()
@@ -38,10 +36,12 @@ namespace JuniorProject.Backend.WorldData
                 movementCost = DeserializeField<int>();
                 elevationAvg = DeserializeField<float>();
                 impassible = DeserializeField<bool>();
+                team = DeserializeField<string>();
             }
         }
 
-        Tile[,] tiles;
+        public Tile[,] tiles;
+        public event Action TilesChanged;
         public Tile? getTile(int x, int y)
         {
             if (x < 0 || y < 0) return null;
@@ -51,6 +51,18 @@ namespace JuniorProject.Backend.WorldData
         public Tile? getTile(Vector2Int v)
         {
             return getTile(v.X, v.Y);
+        }
+
+        public void convertTile(Vector2Int gridPosition, string team)
+        {
+            if (team != "Yellow" && team != "Red" && team != "Green" && !String.IsNullOrEmpty(team))
+            {
+                Debug.Print("ERROR!!! Given team is not compatible with any team tiles");
+                return;
+            }
+
+            tiles[gridPosition.X, gridPosition.Y].team = team;
+            TilesChanged?.Invoke();
         }
 
         public Tile?[,] getTileNeighbors(Tile tile)
@@ -144,8 +156,8 @@ namespace JuniorProject.Backend.WorldData
                     tiles[tileX, tileY] = tile;
                 }
             }
+            ClientCommunicator.RegisterData<TileMap>("TileMap", this);
         }
-
         public void SaveMapImage(Serializer serializer)
         {
             map.SaveMap(serializer);
@@ -168,6 +180,7 @@ namespace JuniorProject.Backend.WorldData
 
             ClientCommunicator.RegisterData<Vector2Int>("mapPixelSize", mapPixelSize);
             ClientCommunicator.RegisterData<int>("tileSize", tileSize);
+            ClientCommunicator.RegisterData<TileMap>("TileMap", this);
         }
     }
 }

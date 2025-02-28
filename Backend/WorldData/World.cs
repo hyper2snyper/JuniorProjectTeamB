@@ -8,8 +8,7 @@ namespace JuniorProject.Backend.WorldData
     public class World : Serializable
     {
         public TileMap map;
-        UnitManager unitManager = new UnitManager();
-
+        UnitManager unitManager;
         public World()
         {
             ClientCommunicator.RegisterData<World>("World", this);
@@ -29,6 +28,7 @@ namespace JuniorProject.Backend.WorldData
             ClientCommunicator.UnregisterData("tileSize");
             ClientCommunicator.UnregisterData("World");
             ClientCommunicator.UnregisterData("UnitManager");
+            ClientCommunicator.UnregisterData("TileMap");
             ClientCommunicator.UnregisterAction("SaveWorld");
         }
 

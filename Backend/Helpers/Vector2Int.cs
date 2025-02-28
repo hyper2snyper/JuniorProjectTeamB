@@ -22,6 +22,11 @@ namespace JuniorProject.Backend.Helpers
         public int Y { get { return y; } }
         public int Magnitude { get { return (int)MathF.Sqrt((x * x) + (y * y)); } }
 
+        public Vector2Int((int, int) pos)
+        {
+            this.x = pos.Item1;
+            this.y = pos.Item2;
+        }
         public Vector2Int(int x = 0, int y = 0)
         {
             this.x = x;
