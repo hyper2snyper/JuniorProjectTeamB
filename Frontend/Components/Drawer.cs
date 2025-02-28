@@ -207,7 +207,7 @@ namespace JuniorProject.Frontend.Components
 
             foreach (var u in unitManager.units)
             {
-                AddBitmapToCanvas(u.Key, extractFromSprite(u.Value.getSpriteName()), u.Value.getPosition());
+                AddBitmapToCanvas(u.Key, extractFromSprite(u.Value.getSpriteName()), u.Value.getPosition().pos);
             }
 
             //DebugImages();

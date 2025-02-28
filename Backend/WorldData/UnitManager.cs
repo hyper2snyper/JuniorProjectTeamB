@@ -17,6 +17,14 @@ namespace JuniorProject.Backend.WorldData
             ClientCommunicator.RegisterData<UnitManager>("UnitManager", this);
         }
 
+        public void Update(ulong tickCount)
+        {
+            foreach (Unit unit in units.Values)
+            {
+                unit.TakeTurn();
+            }
+        }
+
         public void AddUnit(string name, Unit unit)
         {
             units.TryAdd(name, unit);
@@ -34,7 +42,8 @@ namespace JuniorProject.Backend.WorldData
             ClientCommunicator.UpdateData<string>("LoadingMessage", "Linking Units");
             foreach (Unit unit in units.Values)
             {
-                unit.setPosition(map.getTile(unit.getPosition()));
+				unit.tileMap = map;
+				unit.setPosition(unit.getPosition());
             }
         }
 

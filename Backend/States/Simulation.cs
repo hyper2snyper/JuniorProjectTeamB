@@ -52,20 +52,39 @@ namespace JuniorProject.Backend.States
             Debug.RePrint($"Tick count [{tickCount}]");
             tickCount++;
             lastTick = currentTick;
-            world.Update();
+            world.Update(tickCount);
             return this;
         }
+
         public void EnterState()
         {
             Debug.Print("Entered Simulation State.");
             lastTick = (uint)DateTime.Now.Ticks;
-            ClientCommunicator.RegisterAction("TogglePause", () => { paused = !paused; });
+            ClientCommunicator.RegisterAction("TogglePause", TogglePause);
+            ClientCommunicator.RegisterAction("Step", Step);
+            ClientCommunicator.RegisterData<bool>("Paused", paused);
+            
+        }
+
+        public void TogglePause()
+        {
+            paused = !paused;
+            ClientCommunicator.UpdateData<bool>("Paused", paused);
+        }
+
+        public void Step()
+        {
+            if (!paused) return;
+            tickCount++;
+            world.Update(tickCount);
         }
 
         public void ExitState()
         {
             world.FreeWorld();
             ClientCommunicator.UnregisterAction("TogglePause");
+            ClientCommunicator.UnregisterAction("Step");
+            ClientCommunicator.UnregisterData("Paused");
         }
 
     }

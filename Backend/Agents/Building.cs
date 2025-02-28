@@ -1,33 +1,40 @@
 ﻿using System;
 using System.Data.SQLite;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace JuniorProject.Backend.Agents
 {
     class Building : Serializable
     {
 
-        class BuildingTemplate
+        public class BuildingTemplate
         {
-            string name;
-            int cost;
-            int maxHealth;
-            int sprite;
-            public BuildingTemplate()
-            {
-                SQLiteDataReader results = DatabaseManager.ReadDB("SELECT * FROM Buildings;");
-                while (results.Read())
-                {
-                    name = results.GetString(0);
-                    cost = results.GetInt32(2);
-                    sprite = results.GetInt32(3);
-                }
-            }
-
+            public string name;
+            public int cost;
+            public int maxHealth;
+            public string sprite;
         }
+        public static Dictionary<string, BuildingTemplate> buildingTemplates;
+        public static BuildingTemplate capitalTemplate;
+        public static void LoadBuildingTemplates()
+        {
+            buildingTemplates = new Dictionary<string, BuildingTemplate>();
+			SQLiteDataReader results = DatabaseManager.ReadDB("SELECT * FROM Buildings;");
+			while (results.Read())
+			{
+                BuildingTemplate template = new BuildingTemplate();
+				template.name = results.GetString(0);
+				template.cost = results.GetInt32(1);
+                template.maxHealth = results.GetInt32(2);
+				template.sprite = results.GetString(3);
+				if (results.GetInt32(4) != 0)
+                {
+                    capitalTemplate = template;
+                }
+                buildingTemplates.Add(template.name, template);
+			}
+		}
+
 
         Nation owner;
         int health;

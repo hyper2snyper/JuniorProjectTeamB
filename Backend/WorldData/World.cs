@@ -8,19 +8,24 @@ namespace JuniorProject.Backend.WorldData
     public class World : Serializable
     {
         public TileMap map;
-        UnitManager unitManager;
+        public UnitManager unitManager = new UnitManager();
+        List<Nation> nations = new List<Nation>();
         public World()
         {
             ClientCommunicator.RegisterData<World>("World", this);
             ClientCommunicator.RegisterAction<string>("SaveWorld", SaveWorld);
             Unit.LoadUnitTemplates();
-            unitManager = new UnitManager();
+            Building.LoadBuildingTemplates();
         }
 
         public void GenerateWorld(int tileSize, Vector2Int mapPixelSize, string seed, float amp, float freq, int octaves, float seaLevel, float treeLine)
         {
             map = new TileMap(tileSize, mapPixelSize, seed, amp, freq, octaves, seaLevel, treeLine);
-        }
+			ClientCommunicator.UpdateData<string>("LoadingMessage", "Placing Nations...", true);
+			nations.Add(new Nation("Team Red", "Red", map, 0, this));
+			nations.Add(new Nation("Team Green", "Green", map, 1, this));
+			nations.Add(new Nation("Team Yellow", "Yellow", map, 2, this));
+		}
 
         public void FreeWorld()
         {
@@ -32,10 +37,13 @@ namespace JuniorProject.Backend.WorldData
             ClientCommunicator.UnregisterAction("SaveWorld");
         }
 
-
-        public void Update()
+        public void Update(ulong tickCount)
         {
-
+			foreach (Nation nation in nations)
+			{
+				nation.TakeTurn(tickCount);
+			}
+			unitManager.Update(tickCount);
         }
 
         public void SaveWorld(string location)

@@ -4,6 +4,7 @@ using JuniorProject.Backend.Helpers;
 using JuniorProject.Backend.WorldData;
 using System.Security.Policy;
 using System.Xml.Linq;
+using JuniorProject.Backend.Agents.Objectives;
 
 namespace JuniorProject.Backend.Agents
 {
@@ -18,23 +19,8 @@ namespace JuniorProject.Backend.Agents
             public int maxHealth;
             public string sprite;
             public int flags;
-
-            public UnitTemplate()
-            {
-                SQLiteDataReader results = DatabaseManager.ReadDB("SELECT * FROM Units;");
-                while (results.Read())
-                {
-                    name = results.GetString(0);
-                    description = results.GetString(1);
-                    attackDamage = results.GetInt32(2);
-                    attackRange = results.GetInt32(3);
-                    maxHealth = results.GetInt32(4);
-                    sprite = results.GetString(5);
-                    flags = results.GetInt32(6);
-                }
-            }
         }
-        static Dictionary<string, UnitTemplate> unitTemplates;
+        public static Dictionary<string, UnitTemplate> unitTemplates;
         public static void LoadUnitTemplates()
         {
             unitTemplates = new Dictionary<string, UnitTemplate>();
@@ -58,16 +44,14 @@ namespace JuniorProject.Backend.Agents
         public int health;
         public string team;
 
-        IObjective? objective;
+        Objective? objective;
 
-        TileMap tileMap;
+        public TileMap tileMap;
         TileMap.Tile pos;
-        Vector2Int posV;
 
         public Unit() { }
         public Unit(string type, string team, World world, Vector2Int posV)
         {
-            this.posV = posV;
             tileMap = world.map;
             this.team = team;
             pos = tileMap.getTile(posV);
@@ -84,21 +68,23 @@ namespace JuniorProject.Backend.Agents
             return String.Format("{0:S}{1:S}", team, unitType.name);
         }
 
-        public Vector2Int getPosition()
+        public TileMap.Tile getPosition()
         {
-            return posV;
+            return pos;
         }
 
-        public void setPosition(Vector2Int newPos)
+        public bool tryEnter(TileMap.Tile toEnter)
         {
-            posV = newPos;
+            return true;
         }
 
         public void setPosition(TileMap.Tile newPos)
         {
+            
             pos = newPos;
-            setPosition(newPos.pos);
-        }
+			tileMap.TilesUpdated();
+
+		}
 
         void SetType(UnitTemplate template)
         {
@@ -106,14 +92,18 @@ namespace JuniorProject.Backend.Agents
             health = template.maxHealth;
         }
 
-        public void SetObjective(IObjective objective)
+        public void SetObjective(Objective objective)
         {
             this.objective = objective;
+            objective.Attach(this);
         }
 
         public void TakeTurn()
         {
-
+            if(objective != null)
+            {
+                objective = objective.PerformTurn();
+            }
         }
 
         public void TakeDamage(int damage)
@@ -123,11 +113,7 @@ namespace JuniorProject.Backend.Agents
 
         public void MoveTo(TileMap.Tile toPos)
         {
-            List<TileMap.Tile> pathway = Astar.FindPath(tileMap, pos, toPos, (TileMap.Tile tile, TileMap.Tile target) =>
-            {
-                return (target.pos - tile.pos).Magnitude;
-            });
-
+            SetObjective(new MoveAction(toPos));
         }
 
         public void MoveTo(Vector2Int toPos)
@@ -141,7 +127,6 @@ namespace JuniorProject.Backend.Agents
             SerializeField(unitType.name); //Save the type.
             SerializeField(health);
             SerializeField(team);
-            SerializeField(posV);
 
             //Eventually we need to save objective states.
         }
@@ -151,7 +136,6 @@ namespace JuniorProject.Backend.Agents
             unitType = unitTemplates[DeserializeField<string>()]; //The templates need to be loaded first.
             health = DeserializeField<int>();
             team = DeserializeField<string>();
-            posV = DeserializeField<Vector2Int>();
 
             //pos will be set in a linking step after load.
         }

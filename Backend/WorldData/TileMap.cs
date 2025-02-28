@@ -19,6 +19,8 @@ namespace JuniorProject.Backend.WorldData
 
             public string team = string.Empty;
 
+
+
             public override void SerializeFields()
             {
                 SerializeField(pos);
@@ -42,6 +44,7 @@ namespace JuniorProject.Backend.WorldData
 
         public Tile[,] tiles;
         public event Action TilesChanged;
+
         public Tile? getTile(int x, int y)
         {
             if (x < 0 || y < 0) return null;
@@ -79,8 +82,30 @@ namespace JuniorProject.Backend.WorldData
             return neighbors;
         }
 
+		public Tile?[,] getPassableTileNeighbors(Tile tile)
+		{
+			Tile?[,] neighbors = new Tile?[3, 3];
+            if (tile == null) return neighbors;
+			for (int x = -1; x <= 1; x++)
+			{
+				for (int y = -1; y <= 1; y++)
+				{
+					if (x == 0 && y == 0) continue;
+                    Tile? t = getTile(tile.pos.X + x, tile.pos.Y + y);
+					if (t == null || t.impassible) continue;
+					neighbors[x + 1, y + 1] = getTile(tile.pos.X + x, tile.pos.Y + y);
+				}
+			}
+			return neighbors;
+		}
+
+		public void TilesUpdated()
+        {
+            TilesChanged?.Invoke();
+        }
+
         int tileSize;
-        Vector2Int mapSize;
+        public Vector2Int mapSize;
         Vector2Int mapPixelSize;
 
         Map map;
