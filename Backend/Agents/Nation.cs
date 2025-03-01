@@ -75,9 +75,11 @@ namespace JuniorProject.Backend.Agents
                 currentLand = nearestLand;
             } while (passables < 8);
 			tileMap.convertTile(currentLand.pos, color);
-            Unit unit = new Unit(Unit.unitTemplates.Keys.First(), color, world, currentLand.pos);
-            AddUnit(unit);
-            world.unitManager.AddUnit($"{unit.getSpriteName()}.{1}", unit);
+            Building castle = new Building("Castle", this, currentLand.pos);
+            AddBuilding(castle);
+            //Unit unit = new Unit(Unit.unitTemplates.Keys.First(), color, world, currentLand.pos);
+            //AddUnit(unit);
+            //world.unitManager.AddUnit($"{unit.getSpriteName()}.{1}", unit);
         }
 
         public void CalculateObjectives()
@@ -104,7 +106,7 @@ namespace JuniorProject.Backend.Agents
 
         public void AddBuilding(Building building)
         {
-
+            buildings.Add(building);
         }
 
         public void RemoveBuilding(Building building)
