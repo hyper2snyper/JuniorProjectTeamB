@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JuniorProject.Backend.Helpers;
+using System;
 using System.Data.SQLite;
 
 
@@ -39,7 +40,32 @@ namespace JuniorProject.Backend.Agents
         Nation owner;
         int health;
 
+        public Vector2Int gridPosition;
+        public string sprite;
 
+        public Building(string type, Nation nation, Vector2Int posV)
+        {
+            owner = nation;
+            gridPosition = posV;
+
+            switch (type) {
+                case "WheatFarm":
+                    sprite = type;
+                    break;
+                case "Mine":
+                    sprite = type;
+                    break;
+                case "Castle":
+                    sprite = $"{owner.color}{type}";
+                    break;
+                case "House":
+                    sprite = $"{owner.color}{type}";
+                    break;
+                default:
+                    Debug.Print($"ERROR!!! Given building type \"{type}\" is not resolvable");
+                    break;
+            }
+        }
 
         public override void DeserializeFields()
         {
