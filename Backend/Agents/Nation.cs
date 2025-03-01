@@ -15,9 +15,9 @@ namespace JuniorProject.Backend.Agents
 
         TileMap tileMap;
 
-        List<Unit> units = new List<Unit>();
-        List<Building> buildings = new List<Building>();
-        List<TileMap.Tile> territory = new List<TileMap.Tile>();
+        public List<Unit> units = new List<Unit>();
+        public List<Building> buildings = new List<Building>();
+        public List<TileMap.Tile> territory = new List<TileMap.Tile>();
 
         World world;
 
@@ -75,6 +75,7 @@ namespace JuniorProject.Backend.Agents
                 currentLand = nearestLand;
             } while (passables < 8);
 			tileMap.convertTile(currentLand.pos, color);
+            tileMap.convertTile(new Vector2Int(currentLand.pos.X + 1, currentLand.pos.Y + 1), color);
             Unit unit = new Unit(Unit.unitTemplates.Keys.First(), color, world, currentLand.pos);
             AddUnit(unit);
             world.unitManager.AddUnit($"{unit.getSpriteName()}.{1}", unit);

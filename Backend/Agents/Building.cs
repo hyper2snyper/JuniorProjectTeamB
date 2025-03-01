@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JuniorProject.Backend.Helpers;
+using System;
 using System.Data.SQLite;
 
 
@@ -39,6 +40,8 @@ namespace JuniorProject.Backend.Agents
         Nation owner;
         int health;
 
+        public Vector2Int gridPosition;
+        public string sprite;
 
 
         public override void DeserializeFields()

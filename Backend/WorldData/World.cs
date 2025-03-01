@@ -10,6 +10,8 @@ namespace JuniorProject.Backend.WorldData
         public TileMap map;
         public UnitManager unitManager = new UnitManager();
         List<Nation> nations = new List<Nation>();
+
+        public event Action RedrawAction;
         public World()
         {
             ClientCommunicator.RegisterData<World>("World", this);
@@ -44,6 +46,7 @@ namespace JuniorProject.Backend.WorldData
 				nation.TakeTurn(tickCount);
 			}
 			unitManager.Update(tickCount);
+            RedrawAction.Invoke();
         }
 
         public void SaveWorld(string location)
@@ -58,6 +61,26 @@ namespace JuniorProject.Backend.WorldData
         {
             unitManager.LinkUnits(this.map);
             this.map.Map = map;
+        }
+
+        public void PopulateDrawablesList(ref List<GenericDrawable> genericDrawables) {
+            Debug.Print("HELLLOOOO LEEEEEEEROY");
+            foreach (Nation currentNation in nations)
+            {
+                foreach (TileMap.Tile currentTile in map.tiles) // maybe change this to nation.territory?
+                {
+                    if (currentTile.team != String.Empty)
+                    {
+                        genericDrawables.Add(new GenericDrawable(currentTile.pos, $"{currentTile.team}TileCover", 0));
+                    }
+                }
+                foreach (Unit currentUnit in currentNation.units) {
+                    genericDrawables.Add(new GenericDrawable(currentUnit.getPosition().pos, currentUnit.getSpriteName(), 1));   
+                }
+                foreach (Building currentBuilding in currentNation.buildings) {
+                    genericDrawables.Add(new GenericDrawable(currentBuilding.gridPosition, currentBuilding.sprite, 1));
+                }
+            }
         }
 
         public override void SerializeFields()
