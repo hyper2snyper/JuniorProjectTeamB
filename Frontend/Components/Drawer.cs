@@ -340,6 +340,8 @@ namespace JuniorProject.Frontend.Components
             };
             Vector2Int pixelPosition = ConvertGridPositionToPixels(gridPos.X, gridPos.Y);
 
+            if (name.Contains("Tile")) img.Opacity = 0.3;
+
             drawables.Enqueue(new Drawable(img, true, name, imageSource, pixelPosition, gridPos));
 
             if (!name.Contains("Tile") && !drawableGridLocations.TryAdd((gridPos.X, gridPos.Y), drawables.Count))
