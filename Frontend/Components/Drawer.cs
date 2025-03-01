@@ -42,9 +42,6 @@ namespace JuniorProject.Frontend.Components
         public Queue<Drawable> drawables;
         private Dictionary<(int, int), int> drawableGridLocations;
 
-        List<GenericDrawable> drawableList;
-        public event Action drawableListChanged;
-
         Drawable map;
         Drawable grid;
 
@@ -60,7 +57,6 @@ namespace JuniorProject.Frontend.Components
             string jsonData = File.ReadAllText(jsonPath);
             sprites = JsonConvert.DeserializeObject<Dictionary<string, SpriteInfo>>(jsonData);
             spriteSheet = new Bitmap(spriteSheetPath);
-            drawableList = new List<GenericDrawable>();
         }
 
         public void Initialize()

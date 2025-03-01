@@ -20,9 +20,6 @@ namespace JuniorProject.Frontend.Components
             InitializeComponent();
             this.Image.Source = img.Source;
             this.Title.Text = title;
-            this.FoodValue.Text = "Hi";
-            this.GoldValue.Text = "Hi";
-            this.ArcherValue.Text = "Hi";
             //this.Information.Text = information;
         }
 

@@ -64,7 +64,6 @@ namespace JuniorProject.Backend.WorldData
         }
 
         public void PopulateDrawablesList(ref List<GenericDrawable> genericDrawables) {
-            Debug.Print("HELLLOOOO LEEEEEEEROY");
             foreach (Nation currentNation in nations)
             {
                 foreach (TileMap.Tile currentTile in map.tiles) // maybe change this to nation.territory?
