@@ -15,6 +15,7 @@ using System.Collections.Specialized;
 using JuniorProject.Backend.Agents;
 using System.Xml.Linq;
 using JuniorProject.Backend.WorldData;
+using System.Collections.Generic;
 
 namespace JuniorProject.Frontend.Components
 {
@@ -39,7 +40,7 @@ namespace JuniorProject.Frontend.Components
         private TileMap tileMap;
 
         public Queue<Drawable> drawables;
-        private Dictionary<(int, int), int> drawableGridLocations;
+        private Dictionary<(int, int), List<int>> drawableGridLocations;
 
         Drawable map;
         Drawable grid;
@@ -50,7 +51,7 @@ namespace JuniorProject.Frontend.Components
         {
             Canvas = mapCanvas;
             drawables = new Queue<Drawable>();
-            drawableGridLocations = new Dictionary<(int, int), int>();
+            drawableGridLocations = new Dictionary<(int, int), List<int>>();
             string jsonData = File.ReadAllText(jsonPath);
             sprites = JsonConvert.DeserializeObject<Dictionary<string, SpriteInfo>>(jsonData);
             spriteSheet = new Bitmap(spriteSheetPath);
@@ -102,41 +103,43 @@ namespace JuniorProject.Frontend.Components
         {
             Vector2Int p = ConvertPixelsToGridPosition(x, y);
 
-            if (drawableGridLocations.ContainsKey((p.X, p.Y)))
-            {
-                Drawable temp = drawables.ElementAt(drawableGridLocations[(p.X, p.Y)] - 1);
-                if (temp != null)
-                {
-                    if (temp.title.Contains("Castle"))
-                    {
-                        NationModal im = new NationModal(temp.image, temp.title, temp.getInformation());
-                        im.Show();
-                    }
-                    else {
-                        InfoModal im = new InfoModal(temp.image, temp.title, temp.getInformation());
-                        im.Show();
-                    }
-                }
-                else
-                {
-                    Debug.Print("Could not find image in drawables");
-                }
-            }
-            else
-            {
-                TileMap.Tile tile = tileMap.getTile(p);
-                Bitmap tileBitmap = extractTileFromMap(p.X * tileSize, p.Y * tileSize, 32, 32);
-                Controls.Image tileImage = new Controls.Image
-                {
-                    Width = tileBitmap.Width,
-                    Height = tileBitmap.Height,
-                    Source = TransferToWriteableBitmap(tileBitmap),
-                };
-                InfoModal im = new InfoModal(tileImage, "Tile", getTileInformation(ref tile));
+            List<Controls.Image> images = new List<Controls.Image>();
+            List<string> titles = new List<string>();
+            List<string> information = new List<string>();
 
-                im.setTeam(tile.Owner != null ? tile.Owner.color : "");
-                im.Show();
+            if (drawableGridLocations.ContainsKey((p.X, p.Y))) {
+                foreach (int index in drawableGridLocations[(p.X, p.Y)])
+                {
+                    Drawable temp = drawables.ElementAt(index - 1);
+                    if (temp == null)
+                    {
+                        Debug.Print("!!!ERROR: Could not drawable in Drawables");
+                        continue;
+                    }
+
+                    images.Add(temp.image);
+                    titles.Add(temp.title);
+                    information.Add(temp.getInformation());
+                }
             }
+
+            TileMap.Tile tile = tileMap.getTile(p);
+            Bitmap tileBitmap = extractTileFromMap(p.X * tileSize, p.Y * tileSize, 32, 32);
+            Controls.Image tileImage = new Controls.Image
+            {
+                Width = tileBitmap.Width,
+                Height = tileBitmap.Height,
+                Source = TransferToWriteableBitmap(tileBitmap),
+            };
+
+            images.Add(tileImage);
+            titles.Add("Tile");
+            information.Add(getTileInformation(ref tile));
+
+            string color = tile.Owner != null ? tile.Owner.color : null;
+
+            AccordionInfoModal im = new AccordionInfoModal($"Tile - [{p.X}, {p.Y}]", color, images, titles, information);
+            im.Show();
         }
 
         public string getTileInformation(ref TileMap.Tile t)
@@ -207,23 +210,11 @@ namespace JuniorProject.Frontend.Components
                 foreach (GenericDrawable d in genericDrawables)
                 {
                     if (d.sprite == null || d.sprite == "") continue;
-                    
-                    AddBitmapToCanvas($"{d.sprite} - {d.gridPosition.X}, {d.gridPosition.Y}", extractFromSprite(d.sprite), d.gridPosition);
-                    
+                    if (d.layer == i) {
+                        AddBitmapToCanvas($"{d.sprite} - {d.gridPosition.X}, {d.gridPosition.Y}", extractFromSprite(d.sprite), d.gridPosition);
+                    }
                 }
             }
-
-            //foreach (var u in tileMap.tiles)
-            //{
-            //    if (String.IsNullOrEmpty(u.team)) continue;
-
-            //    AddTileImagesToCanvas($"{u.pos.X}{u.pos.Y}", extractFromSprite($"{u.team}TileCover"), new Vector2Int(u.pos.X, u.pos.Y));
-            //}
-
-            //foreach (var u in unitManager.units)
-            //{
-            //    AddBitmapToCanvas(u.Key, extractFromSprite(u.Value.getSpriteName()), u.Value.getPosition().pos);
-            //}
 
             //DebugImages();
             PopulateCanvas();
@@ -300,13 +291,14 @@ namespace JuniorProject.Frontend.Components
             };
             Vector2Int pixelPosition = ConvertGridPositionToPixels(gridPos.X, gridPos.Y);
 
-            if (name.Contains("Tile")) img.Opacity = 0.3;
-
             drawables.Enqueue(new Drawable(img, true, name, imageSource, pixelPosition, gridPos));
 
-            if (!name.Contains("Tile") && !drawableGridLocations.TryAdd((gridPos.X, gridPos.Y), drawables.Count))
+            if (!name.Contains("Tile"))
             {
-                Debug.Print(String.Format("!!!ERROR: Cannot add {0:S} to drawableGridLocations", name));
+                if (!drawableGridLocations.ContainsKey((gridPos.X, gridPos.Y))) {
+                    drawableGridLocations.TryAdd((gridPos.X, gridPos.Y), new List<int>());
+                }
+                drawableGridLocations[(gridPos.X, gridPos.Y)].Add(drawables.Count);
             }
         }
 
