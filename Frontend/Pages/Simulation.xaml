@@ -7,12 +7,13 @@
         mc:Ignorable="d"
         Background="#FF424242">
     <Grid>
-        <Border BorderBrush="Black" BorderThickness="2" Margin="10,10,0,0" Padding="5" Width="524" Height="45" HorizontalAlignment="Left" VerticalAlignment="Top">
+        <Border BorderBrush="Black" BorderThickness="2" Margin="10,10,0,0" Padding="5" Width="600" Height="45" HorizontalAlignment="Left" VerticalAlignment="Top">
             <StackPanel Orientation="Horizontal" >
                 <Button Content="Refresh" HorizontalAlignment="Left" Height="32" Margin="10,0" VerticalAlignment="Top" Width="45" Click="RefreshClicked"/>
                 <Button Content="Start" HorizontalAlignment="Left" Height="32" Margin="10, 0" VerticalAlignment="Top" Width="45" Click="StartClicked"/>
                 <Button Content="Save" HorizontalAlignment="Left" Height="32" Margin="10, 0" VerticalAlignment="Top" Width="45" Click="SaveClicked"/>
-                <Button Content="Pause" HorizontalAlignment="Left" Height="32" Margin="10, 0" VerticalAlignment="Top" Width="45" Click="PauseClicked"/>
+                <Button x:Name="PauseButton" Content="Pause" HorizontalAlignment="Left" Height="32" Margin="10, 0" VerticalAlignment="Top" Width="45" Click="PauseClicked"/>
+                <Button Content="Step" HorizontalAlignment="Left" Height="32" Margin="10, 0" VerticalAlignment="Top" Width="45" Click="StepClicked"/>
                 <Button Content="Gridlines" Height="32" Margin="10, 0" VerticalAlignment="Top" Width="55" Click="SetGridlines"/>
                 <Button Content="Back" Height="32" Width="45" Margin="10, 0" Click="BackToMainMenu"/>
                 <Button Content="Simulation Settings" Height="32" Width="112" Click="SettingsClicked"/>

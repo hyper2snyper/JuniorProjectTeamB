@@ -1,0 +1,32 @@
+﻿<Window x:Class="JuniorProject.Frontend.Components.NationModal"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:JuniorProject"
+        mc:Ignorable="d"
+        Height="461" Width="422" Background="#FF424242">
+    <Grid Margin="0,0,0,-16">
+        <Border BorderBrush="Black" BorderThickness="2" Margin="0,10,0,0" Padding="5" Width="330" Height="45" HorizontalAlignment="Center" VerticalAlignment="Top">
+            <TextBlock x:Name="Title"  HorizontalAlignment="Center" Foreground="White" FontSize="25" Text="Cry Havoc" Width="310" VerticalAlignment="Center" Height="36" TextAlignment="Center"/>
+        </Border>
+        <Border BorderBrush="Black" BorderThickness="2" Margin="23,74,23,242">
+            <Grid>
+                <TextBlock  x:Name="FoodValue" Foreground="White" Margin="89,28,167,94" Focusable="True" TextAlignment="Left" Text="Field Value"/>
+                <TextBlock  x:Name="GoldValue" Foreground="White" Margin="89,63,167,59" Focusable="True" TextAlignment="Left" Text="Field Value"/>
+                <TextBlock  x:Name="IronValue" Foreground="White" Margin="89,96,167,26" Focusable="True" TextAlignment="Left" Text="Field Value"/>
+                <Image Margin="50,56,288,52" Source="/Frontend/Images/Sprites/IndividualImages/GoldResource.png" Stretch="Fill"/>
+                <Image Margin="51,22,289,87" Source="/Frontend/Images/Sprites/IndividualImages/FoodResource.png" Stretch="Fill"/>
+                <Image Margin="52,89,288,20" Source="/Frontend/Images/Sprites/IndividualImages/IronResource.png" Stretch="Fill"/>
+                <Image Margin="177,56,163,53" Source="/Frontend/Images/Sprites/IndividualImages/SoldierUnitResource.png" Stretch="Fill"/>
+                <TextBlock  x:Name="SoldierValue" Foreground="White" Margin="215,63,41,59" Focusable="True" TextAlignment="Left" Text="Field Value"/>
+                <Image Margin="173,22,167,87" Source="/Frontend/Images/Sprites/IndividualImages/ArcherUnitResource.png" Stretch="Fill"/>
+                <TextBlock  x:Name="ArcherValue" Foreground="White" Margin="215,28,41,94" Focusable="True" TextAlignment="Left" Text="Field Value"/>
+            </Grid>
+        </Border>
+        <Border x:Name="ImageBorder" BorderBrush="Black" BorderThickness="2" Margin="121,217,121,47" Height="150" Width="150">
+            <Image x:Name="Image" Width="75" Height="75" />
+        </Border>
+
+    </Grid>
+</Window>
