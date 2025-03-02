@@ -23,7 +23,7 @@ namespace JuniorProject.Backend.Agents
 		}
 		public Nation? nation;
 		public string sprite;
-		public int layer = 0;
+		public int layer = 1;
 
 		public Mob() { }
 

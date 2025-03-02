@@ -91,7 +91,7 @@ namespace JuniorProject.Backend.Agents
         {
 			foreach (TileMap.Tile tile in territory)
 			{
-                genericDrawables.Add(new GenericDrawable(tile.pos, $"{color}TileCover", 2));
+                genericDrawables.Add(new GenericDrawable(tile.pos, $"{color}TileCover", 0));
 			}
 			foreach (Building building in buildings)
 			{

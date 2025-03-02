@@ -20,7 +20,7 @@ namespace JuniorProject.Backend.States
         {
             world = new World();
             ClientCommunicator.UpdateData<string>("LoadingMessage", "Generating World");
-            world.GenerateWorld(32, new Vector2Int(1000, 1000), seed, freq, amp, octaves, seaLevel, treeLine);
+            world.GenerateWorld(32, new Vector2Int(1024, 1024), seed, freq, amp, octaves, seaLevel, treeLine);
         }
 
         public void LoadFromFile(string filename)
