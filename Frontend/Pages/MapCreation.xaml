@@ -12,15 +12,98 @@
       VerticalAlignment="Stretch"
       HorizontalAlignment="Stretch"
       Title="MapCreation" Width="1124">
+
+    <Page.Resources>
+        <SolidColorBrush x:Key="Button.MouseOver.Background" Color="#FFBEE6FD"/>
+        <SolidColorBrush x:Key="Button.MouseOver.Border" Color="#FF3C7FB1"/>
+        <SolidColorBrush x:Key="Button.Pressed.Background" Color="#FFC4E5F6"/>
+        <SolidColorBrush x:Key="Button.Pressed.Border" Color="#FF2C628B"/>
+        <SolidColorBrush x:Key="Button.Disabled.Background" Color="#FFF4F4F4"/>
+        <SolidColorBrush x:Key="Button.Disabled.Border" Color="#FFADB2B5"/>
+        <SolidColorBrush x:Key="Button.Disabled.Foreground" Color="#FF838383"/>
+        <ControlTemplate x:Key="GenerateTemplate" TargetType="{x:Type ButtonBase}">
+            <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" SnapsToDevicePixels="true">
+                <ContentPresenter x:Name="contentPresenter" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="Button.IsDefaulted" Value="true">
+                    <Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="true">
+                    <Setter TargetName="border" Property="Background">
+                        <Setter.Value>
+                            <ImageBrush ImageSource="/Frontend/gui/Images/GenerateButtonHover.png"/>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+        <Style x:Key="FocusVisual">
+            <Setter Property="Control.Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Rectangle Margin="2" StrokeDashArray="1 2" Stroke="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" SnapsToDevicePixels="true" StrokeThickness="1"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <ControlTemplate x:Key="SimSettingsTemplate" TargetType="{x:Type ButtonBase}">
+            <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" SnapsToDevicePixels="true">
+                <ContentPresenter x:Name="contentPresenter" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="Button.IsDefaulted" Value="true">
+                    <Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="true">
+                    <Setter TargetName="border" Property="Background">
+                        <Setter.Value>
+                            <ImageBrush ImageSource="/Frontend/gui/Images/SimSettingsButtonHover.png"/>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+    </Page.Resources>
     <Grid>
         <Rectangle Height="54" Margin="10,10,9,0" Stroke="White" VerticalAlignment="Top" Fill="#FF969696"/>
         <TextBox x:Name="Seed" HorizontalAlignment="Left" Margin="20,36,0,0" VerticalAlignment="Top" Width="115" Height="28" FontSize="18" TextChanged="Seed_TextChanged" />
         <TextBox x:Name="Amp" HorizontalAlignment="Left" Margin="140,36,0,0" Text="2" VerticalAlignment="Top" Width="115" Height="28" FontSize="18" PreviewTextInput="Amp_PreviewTextInput" TextChanged="Amp_TextChanged"/>
         <TextBox x:Name="Freq" HorizontalAlignment="Left" Margin="260,36,0,0" Text="0.002" VerticalAlignment="Top" Width="115" Height="28" FontSize="18" PreviewTextInput="Freq_PreviewTextInput" TextChanged="Freq_TextChanged"/>
         <TextBox x:Name="Octaves" HorizontalAlignment="Left" Margin="380,37,0,0" Text="8" VerticalAlignment="Top" Width="115" Height="28" FontSize="18" PreviewTextInput="Octaves_PreviewTextInput" TextChanged="Octaves_TextChanged"/>
-        <Label Content="Seed:               Amp:                Freq:                Octaves:           Sea Level:        Tree Line:" HorizontalAlignment="Left" Margin="20,3,0,0" VerticalAlignment="Top" Width="715" FontSize="18"/>
-        <Button x:Name="Generate" Content="Generate" HorizontalAlignment="Left" Margin="740,36,0,0" VerticalAlignment="Top" Height="28" Width="107" FontSize="20" Click="Generate_Click"/>
-        <Button x:Name="SimSettings" Content="Simulation Settings" HorizontalAlignment="Left" Margin="868,36,0,0" VerticalAlignment="Top" Height="28" Width="189" FontSize="20" Click="SimSettings_Click"/>
+        <Label Content="Seed:               Amp:           Freq:             Octaves:           Sea Level:        Tree Line:" FontFamily="pack://application:,,,/Frontend/GUI/Fonts/#Alagard" HorizontalAlignment="Left" Margin="20,3,0,0" VerticalAlignment="Top" Width="715" FontSize="18"/>
+        <Button x:Name="Generate" BorderThickness="0" Template="{DynamicResource GenerateTemplate}" HorizontalAlignment="Left" Margin="740,20,0,0" VerticalAlignment="Top" Height="47" Width="189" FontSize="20" Click="Generate_Click">
+            <Button.Style>
+                <Style TargetType ="{x:Type Button}">
+                    <Setter Property="Background">
+                        <Setter.Value>
+                            <ImageBrush x:Name="BackButtonBrush" ImageSource="/FrontEnd/gui/Images/GenerateButton.png"/>
+                        </Setter.Value>
+                    </Setter>
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Opacity" Value="0.8"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+        </Button>
+        <Button x:Name="SimSettings" BorderThickness="0" Template="{DynamicResource SimSettingsTemplate}" HorizontalAlignment="Left" Margin="925,19,0,0" VerticalAlignment="Top" Height="47" Width="189" FontSize="20" Click="SimSettings_Click">
+            <Button.Style>
+                <Style TargetType ="{x:Type Button}">
+                    <Setter Property="Background">
+                        <Setter.Value>
+                            <ImageBrush x:Name="BackButtonBrush" ImageSource="/FrontEnd/gui/Images/SimSettingsButton.png"/>
+                        </Setter.Value>
+                    </Setter>
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Opacity" Value="0.8"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+        </Button>
         <TextBox x:Name="SeaLevel" HorizontalAlignment="Left" Margin="500,37,0,0" Text="0" VerticalAlignment="Top" Width="115" Height="28" FontSize="18" PreviewTextInput="SeaLevel_PreviewTextInput"  TextChanged="SeaLevel_TextChanged"/>
         <TextBox x:Name="TreeLine" HorizontalAlignment="Left" Margin="620,36,0,0" Text="0.8" VerticalAlignment="Top" Width="115" Height="28" FontSize="18" PreviewTextInput="TreeLine_PreviewTextInput" TextChanged="TreeLine_TextChanged"/>
 

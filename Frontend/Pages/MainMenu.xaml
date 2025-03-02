@@ -145,7 +145,7 @@
                Text="Cry Havoc" 
                Margin="0,111,0,267" 
                Width="230" 
-               FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard"/>
+               FontFamily="pack://application:,,,/Frontend/GUI/Fonts/#Alagard"/>
             </Grid>
 
         </Grid>
