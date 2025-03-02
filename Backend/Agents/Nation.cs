@@ -1,5 +1,6 @@
 ﻿using JuniorProject.Backend.Helpers;
 using JuniorProject.Backend.WorldData;
+using JuniorProject.Frontend.Components;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,28 +9,28 @@ using System.Threading.Tasks;
 
 namespace JuniorProject.Backend.Agents
 {
-    class Nation : Serializable
+    public class Nation : Serializable
     {
         public string name = "";
         public string color = "";
 
-        TileMap tileMap;
-
+		World world;
+        public World World { set { world = value; } }
+		
         public List<Unit> units = new List<Unit>();
         public List<Building> buildings = new List<Building>();
         public List<TileMap.Tile> territory = new List<TileMap.Tile>();
 
-        World world;
 
-        public Nation(string name, string color, TileMap tileMap, World world)
+        public Nation() { }
+        public Nation(string name, string color, World world)
         {
             this.name = name;
             this.color = color;
-            this.tileMap = tileMap;
             this.world = world;
         }
 
-        public Nation(string name, string color, TileMap tileMap, int quadrant, World world) : this(name, color, tileMap, world)
+        public Nation(string name, string color, int quadrant, World world) : this(name, color, world)
         {
             PlaceStart(quadrant);   
         }
@@ -39,13 +40,13 @@ namespace JuniorProject.Backend.Agents
             Vector2Int startingPos = new Vector2Int();
             switch(quadrant)
             {
-                case 0: startingPos = new Vector2Int((tileMap.mapSize.X / 4), (tileMap.mapSize.Y/ 4)); break;
-                case 1: startingPos = new Vector2Int((tileMap.mapSize.X/2) + (tileMap.mapSize.X/4), (tileMap.mapSize.Y / 4)); break;
-                case 2: startingPos = new Vector2Int((tileMap.mapSize.X / 4), (tileMap.mapSize.Y / 2) + (tileMap.mapSize.Y / 4)); break;
-                case 3: startingPos = new Vector2Int((tileMap.mapSize.X / 2) + (tileMap.mapSize.X / 4), (tileMap.mapSize.Y / 2) + (tileMap.mapSize.Y / 4)); break;
+                case 0: startingPos = new Vector2Int((world.map.mapSize.X / 4), (world.map.mapSize.Y/ 4)); break;
+                case 1: startingPos = new Vector2Int((world.map.mapSize.X/2) + (world.map.mapSize.X/4), (world.map.mapSize.Y / 4)); break;
+                case 2: startingPos = new Vector2Int((world.map.mapSize.X / 4), (world.map.mapSize.Y / 2) + (world.map.mapSize.Y / 4)); break;
+                case 3: startingPos = new Vector2Int((world.map.mapSize.X / 2) + (world.map.mapSize.X / 4), (world.map.mapSize.Y / 2) + (world.map.mapSize.Y / 4)); break;
             }
             
-            TileMap.Tile tile = tileMap.getTile(startingPos);
+            TileMap.Tile tile = world.map.getTile(startingPos);
             for(int x = -1; x < 1; x++)
             {
                 for(int y = -1; y < 1; y++)
@@ -53,33 +54,19 @@ namespace JuniorProject.Backend.Agents
                     if (x == 0 && y == 0) continue;
                     for(int i = 1; tile == null || tile.impassible; i++)
                     {
-                        if (startingPos.X + (x * i) > tileMap.mapSize.X || startingPos.X + (x * i) < 0) break;
-						if (startingPos.Y + (y * i) > tileMap.mapSize.Y || startingPos.Y + (y * i) < 0) break;
-						tile = tileMap.getTile(new Vector2Int(startingPos.X + (x*i), startingPos.Y + (y*i)));
+                        if (startingPos.X + (x * i) > world.map.mapSize.X || startingPos.X + (x * i) < 0) break;
+						if (startingPos.Y + (y * i) > world.map.mapSize.Y || startingPos.Y + (y * i) < 0) break;
+						tile = world.map.getTile(new Vector2Int(startingPos.X + (x*i), startingPos.Y + (y*i)));
                     }
+                    if (tile != null && tile.impassible == false) break;
                 }
-            }
-            TileMap.Tile[,] tiles;
-            TileMap.Tile? currentLand = tile;
-            TileMap.Tile? nearestLand = null;
-			int passables = 0;
-            do
-            {
-                tiles = tileMap.getPassableTileNeighbors(currentLand);
-                foreach (TileMap.Tile t in tiles)
-                {
-                    if (nearestLand == null) nearestLand = t;
-                    if (t == null) continue;
-                    passables++;
-                }
-                currentLand = nearestLand;
-            } while (passables < 8);
-			tileMap.convertTile(currentLand.pos, color);
-            Building castle = new Building("Castle", this, currentLand.pos);
+				if (tile != null && tile.impassible == false) break;
+			}
+            AddTerritory(tile);
+            Building castle = new Building("Capital", world.map, tile, this);
             AddBuilding(castle);
-            //Unit unit = new Unit(Unit.unitTemplates.Keys.First(), color, world, currentLand.pos);
-            //AddUnit(unit);
-            //world.unitManager.AddUnit($"{unit.getSpriteName()}.{1}", unit);
+            Unit unit = new Unit("Soldier", $"soldier{color}", this, world.map, tile);
+            AddUnit(unit);
         }
 
         public void CalculateObjectives()
@@ -89,49 +76,111 @@ namespace JuniorProject.Backend.Agents
 
         public void TakeTurn(ulong tick)
         {
+            foreach(Building building in buildings)
+            {
+                building.TakeTurn(tick);
+            }
 
+            foreach(Unit unit in units)
+            {
+                unit.TakeTurn(tick);
+            }
         }
 
-        public void AddTerritory(TileMap.Tile tile)
+		public void PopulateDrawablesList(ref List<GenericDrawable> genericDrawables)
         {
-            tileMap.convertTile(tile.pos, color);
-            territory.Add(tile);
+			foreach (TileMap.Tile tile in territory)
+			{
+                genericDrawables.Add(new GenericDrawable(tile.pos, $"{color}TileCover", 2));
+			}
+			foreach (Building building in buildings)
+			{
+                building.populateDrawables(ref genericDrawables);
+			}
+			foreach (Unit unit in units)
+            {
+                unit.populateDrawables(ref genericDrawables);
+            }
         }
+
+
+
+		public void AddTerritory(TileMap.Tile tile)
+        {
+            tile.Owner = this;
+            territory.Add(tile);
+			world.RedrawAction?.Invoke();
+		}
 
         public void RemoveTerritory(TileMap.Tile tile)
         {
-            tileMap.convertTile(tile.pos, "");
+            tile.Owner = null;
             territory.Remove(tile);
-        }
+			world.RedrawAction?.Invoke();
+		}
 
         public void AddBuilding(Building building)
         {
             buildings.Add(building);
+            world.RedrawAction?.Invoke();
         }
 
         public void RemoveBuilding(Building building)
         {
-
+            buildings.Remove(building);
+            world.RedrawAction?.Invoke();
         }
 
         public void AddUnit(Unit unit)
         {
             units.Add(unit);
+            unit.name = $"{color}{unit.unitType.name}{units.Count}";
+            world.RedrawAction?.Invoke();
         }
 
         public void RemoveUnit(Unit unit)
         {
-
+            units.Remove(unit);
+            world.RedrawAction?.Invoke();
         }
 
 		public override void SerializeFields()
 		{
-			throw new NotImplementedException();
+            SerializeField(name);
+            SerializeField(color);
+
+            SerializeField<Unit>(units);
+            SerializeField<Building>(buildings);
+            SerializeField(territory.Count); //Save only the coords.
+            foreach(TileMap.Tile tile in territory)
+            {
+                SerializeField(tile.pos);
+            }
+             
 		}
 
 		public override void DeserializeFields()
 		{
-			throw new NotImplementedException();
+            name = DeserializeField<string>(); 
+            color = DeserializeField<string>();
+
+            units = DeserializeList<Unit>((Unit u) =>
+            {
+                u.tileMap = world.map;
+                u.nation = this;
+            });
+            buildings = DeserializeList<Building>((Building b) =>
+			{
+				b.tileMap = world.map;
+                b.nation = this;
+			});
+
+            int territoryCount = DeserializeField<int>();
+            for(int i = 0; i < territoryCount; i++)
+            {
+                AddTerritory(world.map.getTile(DeserializeField<Vector2Int>()));
+            }
+            
 		}
 	}
 }

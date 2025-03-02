@@ -1,4 +1,5 @@
-﻿using JuniorProject.Backend.Helpers;
+﻿using JuniorProject.Backend.Agents;
+using JuniorProject.Backend.Helpers;
 using System.Diagnostics;
 using System.Drawing;
 
@@ -12,23 +13,34 @@ namespace JuniorProject.Backend.WorldData
             public Vector2Int pos = new Vector2Int();
 
             public Dictionary<string, float> terrainPercentages = new Dictionary<string, float>();
-            public int movementCost;
+            public float movementCost;
             public float elevationAvg;
 
             public bool impassible = false;
 
-            public string team = string.Empty;
+            Nation? _owner = null;
+            public Nation? Owner
+            {
+                get { return _owner; }
+                set
+                {
+                    if(value == null)
+                    {
+                        _owner?.RemoveTerritory(this);
+                        return;
+                    }
+                    _owner = value;
 
-
+                }
+            }
 
             public override void SerializeFields()
             {
                 SerializeField(pos);
-                SerializeField(terrainPercentages);
+                SerializeField<string, float>(terrainPercentages);
                 SerializeField(movementCost);
                 SerializeField(elevationAvg);
                 SerializeField(impassible);
-                SerializeField(team);
             }
 
             public override void DeserializeFields()
@@ -38,34 +50,17 @@ namespace JuniorProject.Backend.WorldData
                 movementCost = DeserializeField<int>();
                 elevationAvg = DeserializeField<float>();
                 impassible = DeserializeField<bool>();
-                team = DeserializeField<string>();
             }
         }
 
         public Tile[,] tiles;
         public event Action TilesChanged;
 
-        public Tile? getTile(int x, int y)
-        {
-            if (x < 0 || y < 0) return null;
-            if (x >= mapSize.X || y >= mapSize.Y) return null;
-            return tiles[x, y];
-        }
         public Tile? getTile(Vector2Int v)
         {
-            return getTile(v.X, v.Y);
-        }
-
-        public void convertTile(Vector2Int gridPosition, string team)
-        {
-            if (team != "Yellow" && team != "Red" && team != "Green" && !String.IsNullOrEmpty(team))
-            {
-                Debug.Print("ERROR!!! Given team is not compatible with any team tiles");
-                return;
-            }
-
-            tiles[gridPosition.X, gridPosition.Y].team = team;
-            TilesChanged?.Invoke();
+            if (v.X < 0 || v.Y < 0) return null;
+            if (v.X >= mapSize.X || v.Y >= mapSize.Y) return null;
+            return tiles[v.X, v.Y];
         }
 
         public Tile?[,] getTileNeighbors(Tile tile)
@@ -76,7 +71,7 @@ namespace JuniorProject.Backend.WorldData
                 for (int y = -1; y <= 1; y++)
                 {
                     if (x == 0 && y == 0) continue;
-                    neighbors[x + 1, y + 1] = getTile(tile.pos.X + x, tile.pos.Y + y);
+                    neighbors[x + 1, y + 1] = getTile(new Vector2Int(tile.pos.X + x, tile.pos.Y + y));
                 }
             }
             return neighbors;
@@ -91,9 +86,9 @@ namespace JuniorProject.Backend.WorldData
 				for (int y = -1; y <= 1; y++)
 				{
 					if (x == 0 && y == 0) continue;
-                    Tile? t = getTile(tile.pos.X + x, tile.pos.Y + y);
+                    Tile? t = getTile(new Vector2Int(tile.pos.X + x, tile.pos.Y + y));
 					if (t == null || t.impassible) continue;
-					neighbors[x + 1, y + 1] = getTile(tile.pos.X + x, tile.pos.Y + y);
+					neighbors[x + 1, y + 1] = getTile(new Vector2Int(tile.pos.X + x, tile.pos.Y + y));
 				}
 			}
 			return neighbors;
@@ -107,6 +102,7 @@ namespace JuniorProject.Backend.WorldData
         int tileSize;
         public Vector2Int mapSize;
         Vector2Int mapPixelSize;
+        public string seed;
 
         Map map;
         public Map Map { set { map = value; } }
@@ -122,6 +118,7 @@ namespace JuniorProject.Backend.WorldData
             mapSize = new Vector2Int(mapPixelSize.X / tileSize, mapPixelSize.Y / tileSize);
             tiles = new Tile[mapSize.X, mapSize.Y];
             this.map = new Map(mapPixelSize, seed, freq, amp, octaves, seaLevel, treeLine);
+            this.seed = map.Seed;
             GenerateMap();
         }
 
@@ -155,10 +152,16 @@ namespace JuniorProject.Backend.WorldData
                             if (pixelPosY >= mapPixelSize.Y) continue;
                             if (map.BiomeMap[pixelPosX, pixelPosY] == null)
                             {
-                                movementCostTotal += 5; //Mountain move modifier.
+                                if (map.heightMap[pixelPosX, pixelPosY] > map.treeLine)
+                                {
+                                    movementCostTotal += 5;
+                                }
+                                else
+                                {
+                                    movementCostTotal++;
+                                }
                                 continue;
                             }
-
                             string landType = map.BiomeMap[pixelPosX, pixelPosY].name;
                             if (landTypes.ContainsKey(landType))
                             {
@@ -172,12 +175,15 @@ namespace JuniorProject.Backend.WorldData
                         }
                     }
                     if (landTypes.Keys.Count == 0) tile.impassible = true;
+                    float totalLandPercentage = 0;
                     foreach (string landType in landTypes.Keys)
                     {
-                        float relativePercentage = landTypes[landType] / (tileSize * tileSize);
+                        float relativePercentage = landTypes[landType] / (float)(tileSize * tileSize);
+                        totalLandPercentage += relativePercentage;
                         tile.terrainPercentages.Add(landType, relativePercentage);
                     }
-                    tile.movementCost = movementCostTotal / (tileSize * tileSize);
+                    if (totalLandPercentage < 0.3) tile.impassible = true;
+                    tile.movementCost = movementCostTotal / (float)(tileSize * tileSize);
                     tiles[tileX, tileY] = tile;
                 }
             }
@@ -193,7 +199,8 @@ namespace JuniorProject.Backend.WorldData
             SerializeField(tileSize);
             SerializeField(mapSize);
             SerializeField(mapPixelSize);
-            SerializeField(tiles);
+            SerializeField<Tile>(tiles);
+            SerializeField(seed);
         }
 
         public override void DeserializeFields()
@@ -202,6 +209,7 @@ namespace JuniorProject.Backend.WorldData
             mapSize = DeserializeField<Vector2Int>();
             mapPixelSize = DeserializeField<Vector2Int>();
             tiles = Deserialize2DArray<Tile>();
+            seed = DeserializeField<string>();
 
             ClientCommunicator.RegisterData<Vector2Int>("mapPixelSize", mapPixelSize);
             ClientCommunicator.RegisterData<int>("tileSize", tileSize);

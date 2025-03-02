@@ -30,11 +30,13 @@ namespace JuniorProject.Frontend.Windows
         }
 
         List<string> usedCommands = new List<string>();
+        Dictionary<string, Unit> total_units = new Dictionary<string, Unit>();
         int current_command;
 
         public DebugWindow()
         {
             InitializeComponent();
+            Input.Focus();
         }
 
         public static void ShowWindow(Simulation simulation)
@@ -45,6 +47,7 @@ namespace JuniorProject.Frontend.Windows
             {
                 Instance.Close();
             };
+            Instance.total_units = ClientCommunicator.GetData<World>("World").GetAllUnits();
         }
 
         public static readonly Regex clearRegex = new Regex("^clear\\ *$");
@@ -57,6 +60,8 @@ namespace JuniorProject.Frontend.Windows
 
         public static readonly Regex deleteTileCover = new Regex("^deleteTileCover\\ *\\([0-9]+,\\ *[0-9]+\\)\\ *$");
         public static readonly Regex modifyTileCover = new Regex("^modifyTileCover\\ *\\([a-zA-z]+,\\ *[0-9]+,\\ *[0-9]+\\)\\ *$");
+
+        public static readonly Regex getSeed = new Regex("^seed$");
 
         public static readonly Regex stringParam = new Regex("\\([a-zA-z]+|,\\ *[a-zA-z]+");
         public static readonly Regex stringInstance = new Regex("[a-zA-z]+");
@@ -108,9 +113,12 @@ namespace JuniorProject.Frontend.Windows
                 matches = intParam.Matches(Input.Text).ToList();
                 int x = int.Parse(intInstance.Match(matches[0].Value).Value);
                 int y = int.Parse(intInstance.Match(matches[1].Value).Value);
-                ClientCommunicator.GetData<UnitManager>("UnitManager").AddUnit(unitName, new Unit(unitType, unitTeam, ClientCommunicator.GetData<World>("World"), new Vector2Int(x, y)));
+                World w = ClientCommunicator.GetData<World>("World");
+                if (!w.nations.ContainsKey(unitTeam)) return;
+                Unit u = new Unit(unitType, unitName, w.nations[unitTeam], w.map, w.map.getTile(new Vector2Int(x, y)));
+                w.nations[unitTeam].AddUnit(u);
+                total_units.Add(unitName, u);
                 Console.Text += $"Unit spawned at {x},{y} of type [{unitType}] with name [{unitName}]\n";
-
 				finishCommand();
 				return;
             }
@@ -135,7 +143,8 @@ namespace JuniorProject.Frontend.Windows
 
                 List<Match> matches = stringParam.Matches(Input.Text).ToList();
                 string unitName = stringInstance.Match(matches[0].Value).Value;
-                ClientCommunicator.GetData<UnitManager>("UnitManager").RemoveUnit(unitName);
+                total_units[unitName].nation.RemoveUnit(total_units[unitName]);
+                total_units.Remove(unitName);
                 Console.Text += $"Attempted to remove unit with name {unitName}\n";
 
 				finishCommand();
@@ -153,7 +162,8 @@ namespace JuniorProject.Frontend.Windows
                 int x = int.Parse(intInstance.Match(matches[0].Value).Value);
                 int y = int.Parse(intInstance.Match(matches[1].Value).Value);
 
-                ClientCommunicator.GetData<TileMap>("TileMap").convertTile(new Vector2Int(x, y), team);
+                World w = ClientCommunicator.GetData<World>("World");
+				w.nations[team].AddTerritory(w.map.getTile(new Vector2Int(x,y)));
 
 				finishCommand();
 				return;
@@ -168,8 +178,8 @@ namespace JuniorProject.Frontend.Windows
                 int x = int.Parse(intInstance.Match(matches[0].Value).Value);
                 int y = int.Parse(intInstance.Match(matches[1].Value).Value);
 
-                ClientCommunicator.GetData<TileMap>("TileMap").convertTile(new Vector2Int(x, y), String.Empty);
-
+				World w = ClientCommunicator.GetData<World>("World");
+                w.map.getTile(new Vector2Int(x, y)).Owner = null;
 				finishCommand();
 				return;
             }
@@ -201,13 +211,20 @@ namespace JuniorProject.Frontend.Windows
 				return;
             }
 
+            if(getSeed.IsMatch(Input.Text))
+            {
+                Console.Text += $"World Seed: {ClientCommunicator.GetData<World>("World").map.seed}\n";
+                finishCommand();
+            }
+
+
             if (printUnitsRegex.IsMatch(Input.Text))
             {
                 Console.Text += $"---> {Input.Text}\n";
                 Console.Text += "\nName\t\tType\t\tTeam\t\tGridPosition:\n";
-                foreach (var u in ClientCommunicator.GetData<UnitManager>("UnitManager").units)
+                foreach (var u in total_units.Values)
                 {
-                    Console.Text += $"{u.Key}\t\t{u.Value.unitType.name}\t\t{u.Value.team}\t\t[{u.Value.getPosition().pos.X}, {u.Value.getPosition().pos.Y}]\n";
+                    Console.Text += $"{u.name}\t\t{u.unitType.name}\t\t{u.nation.name}\t\t[{u.PosVector.X}, {u.PosVector.Y}]\n";
                 }
 
 				finishCommand();
@@ -220,8 +237,8 @@ namespace JuniorProject.Frontend.Windows
 
                 string unit = identifier.Match(Input.Text).Value;
                 unit = unit.TrimEnd('.');
-                UnitManager manager = ClientCommunicator.GetData<UnitManager>("UnitManager");
-                if (!manager.units.ContainsKey(unit))
+                
+                if (!total_units.ContainsKey(unit))
                 {
                     Console.Text += $"No unit created with name {unit}\n";
 					finishCommand();
@@ -237,7 +254,8 @@ namespace JuniorProject.Frontend.Windows
                             List<Match> parameters = intParam.Matches(Input.Text).ToList();
                             int x = int.Parse(intInstance.Match(parameters[0].Value).Value);
                             int y = int.Parse(intInstance.Match(parameters[1].Value).Value);
-                            manager.units[unit].MoveTo(new Vector2Int(x, y));
+                            World w = ClientCommunicator.GetData<World>("World");
+                            total_units[unit].MoveTo(w.map.getTile(new Vector2Int(x,y)));
                             break;
                         }
                 }

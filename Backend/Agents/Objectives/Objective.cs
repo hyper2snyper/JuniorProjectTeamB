@@ -15,7 +15,7 @@ namespace JuniorProject.Backend.Agents
             this.unit = unit;
         }
 
-        public virtual Objective? PerformTurn()
+        public virtual Objective? PerformTurn(ulong tick)
         {
             return null;
         }

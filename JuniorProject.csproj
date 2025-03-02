@@ -19,13 +19,6 @@
     <None Remove="Frontend\Images\gui\SettingsButtonHover.png" />
     <None Remove="Frontend\Images\gui\StartSimulationButton.png" />
     <None Remove="Frontend\Images\gui\StartSimulationButtonHover.png" />
-    <None Remove="LocalData\Map.png" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="LocalData\Map.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
 
   <ItemGroup>
@@ -58,6 +51,12 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="LocalData\Map.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>

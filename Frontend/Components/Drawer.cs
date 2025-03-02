@@ -36,7 +36,6 @@ namespace JuniorProject.Frontend.Components
         public Dictionary<string, SpriteInfo> sprites { get; set; }
         Bitmap spriteSheet;
 
-        private UnitManager unitManager;
         private TileMap tileMap;
 
         public Queue<Drawable> drawables;
@@ -44,8 +43,6 @@ namespace JuniorProject.Frontend.Components
 
         Drawable map;
         Drawable grid;
-
-        Boolean drawGridLines = true;
 
         World world;
 
@@ -66,8 +63,7 @@ namespace JuniorProject.Frontend.Components
             worldBitmap = ClientCommunicator.GetData<Drawing.Bitmap>("WorldImage");
             world = ClientCommunicator.GetData<World>("World");
 
-            unitManager = ClientCommunicator.GetData<UnitManager>("UnitManager");
-            unitManager.DictionaryChanged += OnUnitManagerChange;
+
 
             tileMap = ClientCommunicator.GetData<TileMap>("TileMap");
             tileMap.TilesChanged += OnTilesChange;
@@ -95,11 +91,6 @@ namespace JuniorProject.Frontend.Components
                 Source = TransferToWriteableBitmap(GetGridlines())
             };
             grid = new Drawable(gridImage, true, "Grid");
-        }
-
-        private void OnUnitManagerChange()
-        {
-            Application.Current.Dispatcher.Invoke(Draw);
         }
 
         private void OnTilesChange()
@@ -133,7 +124,7 @@ namespace JuniorProject.Frontend.Components
             }
             else
             {
-                TileMap.Tile tile = tileMap.getTile(p.X, p.Y);
+                TileMap.Tile tile = tileMap.getTile(p);
                 Bitmap tileBitmap = extractTileFromMap(p.X * tileSize, p.Y * tileSize, 32, 32);
                 Controls.Image tileImage = new Controls.Image
                 {
@@ -143,15 +134,14 @@ namespace JuniorProject.Frontend.Components
                 };
                 InfoModal im = new InfoModal(tileImage, "Tile", getTileInformation(ref tile));
 
-                im.setTeam(tile.team);
-
+                im.setTeam(tile.Owner != null ? tile.Owner.color : "");
                 im.Show();
             }
         }
 
         public string getTileInformation(ref TileMap.Tile t)
         {
-            return $"Movement Cost -> {t.movementCost}\nElevation Average -> {t.elevationAvg}\nImpassible? -> {t.impassible.ToString()}\nTeam -> {t.team}";
+            return $"Movement Cost -> {t.movementCost}\nElevation Average -> {t.elevationAvg}\nImpassible? -> {t.impassible.ToString()}\nTeam -> {t.Owner?.name}";
         }
 
         public Bitmap extractFromSprite(string name)
@@ -216,10 +206,10 @@ namespace JuniorProject.Frontend.Components
             for (int i = 0; i < 2; i++) {
                 foreach (GenericDrawable d in genericDrawables)
                 {
-                    if (d.layer == i)
-                    {
-                        AddBitmapToCanvas($"{d.sprite} - {d.gridPosition.X}, {d.gridPosition.Y}", extractFromSprite(d.sprite), d.gridPosition);
-                    }
+                    if (d.sprite == null || d.sprite == "") continue;
+                    
+                    AddBitmapToCanvas($"{d.sprite} - {d.gridPosition.X}, {d.gridPosition.Y}", extractFromSprite(d.sprite), d.gridPosition);
+                    
                 }
             }
 

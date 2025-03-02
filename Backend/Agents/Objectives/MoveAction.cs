@@ -16,19 +16,19 @@ namespace JuniorProject.Backend.Agents.Objectives
 			this.action = action;
 		}
 
-		public override Objective? PerformTurn()
+		public override Objective? PerformTurn(ulong tick)
 		{
 			if(pathway == null) 
 			{
-				pathway = Astar.FindPath(unit.tileMap, unit.getPosition(), target);
+				pathway = Astar.FindPath(unit.tileMap, unit.pos, target);
 				if(pathway.Count == 0) { return null; }
 			}
 			pos++;
-			if (!unit.tryEnter(pathway[pos]))
+			if (!unit.TryEnter(pathway[pos]))
 			{
 				//Recalculate path if possible.
 			}
-			unit.setPosition(pathway[pos]);
+			unit.EnterTile(pathway[pos]);
 			if(pos ==  pathway.Count-1)
 			{
 				action?.DynamicInvoke();

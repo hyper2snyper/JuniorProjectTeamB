@@ -8,7 +8,7 @@ using JuniorProject.Backend.Agents.Objectives;
 
 namespace JuniorProject.Backend.Agents
 {
-    public class Unit : Serializable
+    public class Unit : Mob
     {
         public class UnitTemplate //The template of the unit, the type if you will.
         {
@@ -41,20 +41,17 @@ namespace JuniorProject.Backend.Agents
 
 
         public UnitTemplate unitType;
+
+        public string name;
         public int health;
-        public string team;
 
         Objective? objective;
 
-        public TileMap tileMap;
-        TileMap.Tile pos;
-
         public Unit() { }
-        public Unit(string type, string team, World world, Vector2Int posV)
+
+        public Unit(string type, string name, Nation? nation, TileMap tileMap, TileMap.Tile tile) : base(tileMap, tile, nation)
         {
-            tileMap = world.map;
-            this.team = team;
-            pos = tileMap.getTile(posV);
+            this.name = name;
             if (!unitTemplates.Keys.Contains(type))
             {
                 Debug.Print($"Unit was attempted to be created with type {type}, but that type does not exist.");
@@ -63,34 +60,18 @@ namespace JuniorProject.Backend.Agents
             SetType(unitTemplates[type]);
         }
 
-        public string getSpriteName()
-        {
-            return String.Format("{0:S}{1:S}", team, unitType.name);
-        }
+		void SetType(UnitTemplate template)
+		{
+			unitType = template;
+            sprite = unitType.sprite;
 
-        public TileMap.Tile getPosition()
-        {
-            return pos;
-        }
-
-        public bool tryEnter(TileMap.Tile toEnter)
-        {
-            return true;
-        }
-
-        public void setPosition(TileMap.Tile newPos)
-        {
-            
-            pos = newPos;
-			tileMap.TilesUpdated();
-
+			health = unitType.maxHealth;
 		}
 
-        void SetType(UnitTemplate template)
-        {
-            unitType = template;
-            health = template.maxHealth;
-        }
+		public override string GetSprite()
+		{
+			return $"{nation?.color}{base.GetSprite()}";
+		}
 
         public void SetObjective(Objective objective)
         {
@@ -98,11 +79,12 @@ namespace JuniorProject.Backend.Agents
             objective.Attach(this);
         }
 
-        public void TakeTurn()
+        public override void TakeTurn(ulong tick)
         {
+            base.TakeTurn(tick);
             if(objective != null)
             {
-                objective = objective.PerformTurn();
+                objective = objective.PerformTurn(tick);
             }
         }
 
@@ -111,33 +93,36 @@ namespace JuniorProject.Backend.Agents
 
         }
 
-        public void MoveTo(TileMap.Tile toPos)
+
+		public override void EnterTile(TileMap.Tile tile)
+		{
+            if (tile.Owner != nation) nation.AddTerritory(tile);
+			base.EnterTile(tile);
+		}
+
+
+		public void MoveTo(TileMap.Tile toPos)
         {
             SetObjective(new MoveAction(toPos));
         }
 
-        public void MoveTo(Vector2Int toPos)
-        {
-            MoveTo(tileMap.getTile(toPos));
-        }
-
-
         public override void SerializeFields()
         {
+            base.SerializeFields();
             SerializeField(unitType.name); //Save the type.
             SerializeField(health);
-            SerializeField(team);
+            SerializeField(name);
 
             //Eventually we need to save objective states.
         }
 
         public override void DeserializeFields()
         {
+            base.DeserializeFields();
             unitType = unitTemplates[DeserializeField<string>()]; //The templates need to be loaded first.
             health = DeserializeField<int>();
-            team = DeserializeField<string>();
-
-            //pos will be set in a linking step after load.
+            name = DeserializeField<string>();
+            
         }
     }
 }

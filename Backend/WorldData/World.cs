@@ -8,14 +8,14 @@ namespace JuniorProject.Backend.WorldData
     public class World : Serializable
     {
         public TileMap map;
-        public UnitManager unitManager = new UnitManager();
-        List<Nation> nations = new List<Nation>();
+        public Dictionary<string, Nation> nations = new Dictionary<string, Nation>();
 
-        public event Action RedrawAction;
+        public Action RedrawAction;
         public World()
         {
             ClientCommunicator.RegisterData<World>("World", this);
             ClientCommunicator.RegisterAction<string>("SaveWorld", SaveWorld);
+            Map.LoadTerrain();
             Unit.LoadUnitTemplates();
             Building.LoadBuildingTemplates();
         }
@@ -24,9 +24,9 @@ namespace JuniorProject.Backend.WorldData
         {
             map = new TileMap(tileSize, mapPixelSize, seed, amp, freq, octaves, seaLevel, treeLine);
 			ClientCommunicator.UpdateData<string>("LoadingMessage", "Placing Nations...", true);
-			nations.Add(new Nation("Team Red", "Red", map, 0, this));
-			nations.Add(new Nation("Team Green", "Green", map, 1, this));
-			nations.Add(new Nation("Team Yellow", "Yellow", map, 2, this));
+			nations.Add("Red", new Nation("Team Red", "Red", 0, this));
+			nations.Add("Green", new Nation("Team Green", "Green", 1, this));
+			nations.Add("Yellow", new Nation("Team Yellow", "Yellow", 2, this));
 		}
 
         public void FreeWorld()
@@ -41,12 +41,11 @@ namespace JuniorProject.Backend.WorldData
 
         public void Update(ulong tickCount)
         {
-			foreach (Nation nation in nations)
+			foreach (Nation nation in nations.Values)
 			{
 				nation.TakeTurn(tickCount);
 			}
-			unitManager.Update(tickCount);
-            RedrawAction.Invoke();
+            
         }
 
         public void SaveWorld(string location)
@@ -59,39 +58,42 @@ namespace JuniorProject.Backend.WorldData
 
         public void LoadWorld(Map map)
         {
-            unitManager.LinkUnits(this.map);
             this.map.Map = map;
         }
 
         public void PopulateDrawablesList(ref List<GenericDrawable> genericDrawables) {
-            foreach (Nation currentNation in nations)
+            foreach (Nation currentNation in nations.Values)
             {
-                foreach (TileMap.Tile currentTile in map.tiles) // maybe change this to nation.territory?
-                {
-                    if (currentTile.team != String.Empty)
-                    {
-                        genericDrawables.Add(new GenericDrawable(currentTile.pos, $"{currentTile.team}TileCover", 0));
-                    }
-                }
-                foreach (Unit currentUnit in currentNation.units) {
-                    genericDrawables.Add(new GenericDrawable(currentUnit.getPosition().pos, currentUnit.getSpriteName(), 1));   
-                }
-                foreach (Building currentBuilding in currentNation.buildings) {
-                    genericDrawables.Add(new GenericDrawable(currentBuilding.gridPosition, currentBuilding.sprite, 1));
-                }
+                currentNation.PopulateDrawablesList(ref genericDrawables);
             }
+        }
+
+        public Dictionary<string, Unit> GetAllUnits()
+        {
+            Dictionary<string, Unit> totalUnits = new Dictionary<string, Unit>();
+            foreach(Nation currentNation in nations.Values)
+            {
+                foreach(Unit unit in currentNation.units)
+                {
+                    totalUnits.Add(unit.name, unit);
+                }    
+            }
+            return totalUnits;
         }
 
         public override void SerializeFields()
         {
-            SerializeField(unitManager);
-            SerializeField(map);
+			SerializeField(map);
+			SerializeField<string, Nation>(nations);
         }
 
         public override void DeserializeFields()
         {
-            unitManager = (UnitManager)DeserializeObject();
             map = (TileMap)DeserializeObject();
+            nations = DeserializeDictionary<string, Nation>((Nation n) =>
+            {
+                n.World = this;
+            });
         }
     }
 

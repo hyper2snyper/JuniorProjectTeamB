@@ -1,11 +1,12 @@
 ﻿using JuniorProject.Backend.Helpers;
+using JuniorProject.Backend.WorldData;
 using System;
 using System.Data.SQLite;
 
 
 namespace JuniorProject.Backend.Agents
 {
-    class Building : Serializable
+    public class Building : Mob
     {
 
         public class BuildingTemplate
@@ -14,6 +15,7 @@ namespace JuniorProject.Backend.Agents
             public int cost;
             public int maxHealth;
             public string sprite;
+            public bool hasColor = false;
         }
         public static Dictionary<string, BuildingTemplate> buildingTemplates;
         public static BuildingTemplate capitalTemplate;
@@ -28,7 +30,8 @@ namespace JuniorProject.Backend.Agents
 				template.cost = results.GetInt32(1);
                 template.maxHealth = results.GetInt32(2);
 				template.sprite = results.GetString(3);
-				if (results.GetInt32(4) != 0)
+                template.hasColor = results.GetBoolean(4);
+				if (results.GetInt32(5) != 0)
                 {
                     capitalTemplate = template;
                 }
@@ -36,49 +39,54 @@ namespace JuniorProject.Backend.Agents
 			}
 		}
 
+        BuildingTemplate template;
 
-        Nation owner;
         int health;
 
-        public Vector2Int gridPosition;
-        public string sprite;
-
-        public Building(string type, Nation nation, Vector2Int posV)
+        public Building() { }
+        public Building(string type, TileMap map, TileMap.Tile tile, Nation? nation) : base(map, tile, nation)
         {
-            owner = nation;
-            gridPosition = posV;
-
-            switch (type) {
-                case "WheatFarm":
-                    sprite = type;
-                    break;
-                case "Mine":
-                    sprite = type;
-                    break;
-                case "Castle":
-                    sprite = $"{owner.color}{type}";
-                    break;
-                case "House":
-                    sprite = $"{owner.color}{type}";
-                    break;
-                default:
-                    Debug.Print($"ERROR!!! Given building type \"{type}\" is not resolvable");
-                    break;
+            if(!buildingTemplates.ContainsKey(type))
+            {
+                Debug.Print($"Building was initialized with nonexistant type. {type}");
+                return;
             }
+            SetType(buildingTemplates[type]);
         }
 
-        public override void DeserializeFields()
+        void SetType(BuildingTemplate template)
         {
-            throw new NotImplementedException();
+            this.template = template;
+            health = template.maxHealth;
+            sprite = template.sprite;
         }
+
+		public override string GetSprite()
+		{
+			return $"{(template.hasColor ? (nation?.color) : "")}{base.GetSprite()}";
+		}
 
         public override void SerializeFields()
         {
-            throw new NotImplementedException();
+			base.SerializeFields();
+			SerializeField(template.name);
+
+            SerializeField(health);
+            SerializeField(sprite);
+            
         }
 
+		public override void DeserializeFields()
+		{
+            base.DeserializeFields();
+            template = buildingTemplates[DeserializeField<string>()];
+
+            health = DeserializeField<int>();  
+            sprite = DeserializeField<string>();
+		}
 
 
 
-    }
+
+	}
 }
