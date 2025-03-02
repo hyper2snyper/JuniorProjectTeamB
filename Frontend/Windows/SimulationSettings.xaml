@@ -7,6 +7,60 @@
         Background="#FF424242"
         mc:Ignorable="d"
         Title="SimulationSettings" Height="416" Width="800">
+    <Window.Resources>
+        <SolidColorBrush x:Key="Button.MouseOver.Background" Color="#FFBEE6FD"/>
+        <SolidColorBrush x:Key="Button.MouseOver.Border" Color="#FF3C7FB1"/>
+        <SolidColorBrush x:Key="Button.Pressed.Background" Color="#FFC4E5F6"/>
+        <SolidColorBrush x:Key="Button.Pressed.Border" Color="#FF2C628B"/>
+        <SolidColorBrush x:Key="Button.Disabled.Background" Color="#FFF4F4F4"/>
+        <SolidColorBrush x:Key="Button.Disabled.Border" Color="#FFADB2B5"/>
+        <SolidColorBrush x:Key="Button.Disabled.Foreground" Color="#FF838383"/>
+        <ControlTemplate x:Key="SaveTemplate" TargetType="{x:Type ButtonBase}">
+            <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" SnapsToDevicePixels="true">
+                <ContentPresenter x:Name="contentPresenter" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="Button.IsDefaulted" Value="true">
+                    <Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="true">
+                    <Setter TargetName="border" Property="Background">
+                        <Setter.Value>
+                            <ImageBrush ImageSource="/Frontend/gui/Images/SaveButtonHover.png"/>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+        <Style x:Key="FocusVisual">
+            <Setter Property="Control.Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Rectangle Margin="2" StrokeDashArray="1 2" Stroke="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" SnapsToDevicePixels="true" StrokeThickness="1"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <ControlTemplate x:Key="CancelTemplate" TargetType="{x:Type ButtonBase}">
+            <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" SnapsToDevicePixels="true">
+                <ContentPresenter x:Name="contentPresenter" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="Button.IsDefaulted" Value="true">
+                    <Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="true">
+                    <Setter TargetName="border" Property="Background">
+                        <Setter.Value>
+                            <ImageBrush ImageSource="/Frontend/gui/Images/CancelButtonHover.png"/>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+
+    </Window.Resources>
     <Grid>
 
         <Grid.RowDefinitions>
@@ -16,6 +70,7 @@
             <RowDefinition Height="*" />
 
         </Grid.RowDefinitions>
+
         <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.RowSpan="2" Margin="9,0,-9,-700">
             <Grid Margin="0,0,7,0" Height="1804">
                 <Grid.RowDefinitions>
@@ -149,7 +204,37 @@
                 <TextBlock HorizontalAlignment="Left" Margin="411,794,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="80" Foreground="White"><Run FontWeight="Bold" Text="Food"/></TextBlock>
             </Grid>
         </ScrollViewer>
-        <Button Content="Save" HorizontalAlignment="Left" Margin="696,302,0,0" VerticalAlignment="Top" Width="62" Grid.RowSpan="2" Click="SavedClicked"/>
-        <Button Content="Cancel" HorizontalAlignment="Left" Margin="696,328,0,0" VerticalAlignment="Top" Width="62" Grid.RowSpan="2" Click="CancelClicked"/>
+        <Button Template="{DynamicResource SaveTemplate}" BorderThickness="0" Margin="678,285,24,0" VerticalAlignment="Top" Height="40" Grid.RowSpan="2" Click="SavedClicked">
+            <Button.Style>
+                <Style TargetType ="Button">
+                    <Setter Property="Background">
+                        <Setter.Value>
+                            <ImageBrush x:Name="BackButtonBrush" ImageSource="/FrontEnd/gui/Images/SaveButton.png"/>
+                        </Setter.Value>
+                    </Setter>
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Opacity" Value="0.8"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+        </Button>
+        <Button Template="{DynamicResource CancelTemplate}" BorderThickness="0" Margin="678,316,24,44"  Height="40" Grid.RowSpan="2" Click="CancelClicked">
+            <Button.Style>
+                <Style TargetType ="Button">
+                    <Setter Property="Background">
+                        <Setter.Value>
+                            <ImageBrush x:Name="BackButtonBrush" ImageSource="/FrontEnd/gui/Images/CancelButton.png"/>
+                        </Setter.Value>
+                    </Setter>
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Opacity" Value="0.8"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+        </Button>
     </Grid>
 </Window>
