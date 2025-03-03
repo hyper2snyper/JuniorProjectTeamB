@@ -10,9 +10,7 @@ namespace JuniorProject
 {
     class Debug
     {
-
         static bool rewriting = false;
-
 
         [Conditional("DEBUG")]
         public static void Print(string message)

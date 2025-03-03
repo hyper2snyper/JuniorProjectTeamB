@@ -288,5 +288,6 @@
                 </Canvas.RenderTransform>
             </Canvas>
         </ScrollViewer>
+        <Label x:Name="Coords" Content="(0, 0)" Foreground="White" Background="Black" Height="26" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="50"/>
     </Grid>
 </Page>

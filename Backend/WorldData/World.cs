@@ -5,14 +5,16 @@ using JuniorProject.Frontend.Components;
 
 namespace JuniorProject.Backend.WorldData
 {
-    class World
+    public class World : Serializable
     {
-        TileMap map;
-        List<Unit> units = new List<Unit>();
-
+        public TileMap map;
+        UnitManager unitManager;
         public World()
         {
-
+            ClientCommunicator.RegisterData<World>("World", this);
+            ClientCommunicator.RegisterAction<string>("SaveWorld", SaveWorld);
+            Unit.LoadUnitTemplates();
+            unitManager = new UnitManager();
         }
 
         public void GenerateWorld(int tileSize, Vector2Int mapPixelSize, string seed, float amp, float freq, int octaves, float seaLevel, float treeLine)
@@ -24,6 +26,10 @@ namespace JuniorProject.Backend.WorldData
         {
             ClientCommunicator.UnregisterData("mapPixelSize");
             ClientCommunicator.UnregisterData("tileSize");
+            ClientCommunicator.UnregisterData("World");
+            ClientCommunicator.UnregisterData("UnitManager");
+            ClientCommunicator.UnregisterData("TileMap");
+            ClientCommunicator.UnregisterAction("SaveWorld");
         }
 
 
@@ -32,12 +38,31 @@ namespace JuniorProject.Backend.WorldData
 
         }
 
-
-        public void SaveWorld()
+        public void SaveWorld(string location)
         {
-
+            Serializer serializer = new Serializer(location);
+            map.SaveMapImage(serializer);
+            serializer.SaveObject(this);
+            serializer.Save();
         }
 
+        public void LoadWorld(Map map)
+        {
+            unitManager.LinkUnits(this.map);
+            this.map.Map = map;
+        }
+
+        public override void SerializeFields()
+        {
+            SerializeField(unitManager);
+            SerializeField(map);
+        }
+
+        public override void DeserializeFields()
+        {
+            unitManager = (UnitManager)DeserializeObject();
+            map = (TileMap)DeserializeObject();
+        }
     }
 
 }

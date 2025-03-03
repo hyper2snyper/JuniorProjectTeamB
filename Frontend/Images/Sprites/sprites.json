@@ -1,0 +1,146 @@
+{
+  "RedCastle": {
+    "x1": 64,
+    "y1": 0,
+    "width": 31,
+    "height": 31
+  },
+  "RedSoldier": {
+    "x1": 64,
+    "y1": 32,
+    "width": 31,
+    "height": 31
+  },
+  "RedArcher": {
+    "x1": 160,
+    "y1": 32,
+    "width": 31,
+    "height": 31
+  },
+  "RedHouse": {
+    "x1": 64,
+    "y1": 64,
+    "width": 31,
+    "height": 31
+  },
+  "YellowCastle": {
+    "x1": 0,
+    "y1": 0,
+    "width": 31,
+    "height": 31
+  },
+  "YellowSoldier": {
+    "x1": 0,
+    "y1": 32,
+    "width": 31,
+    "height": 31
+  },
+  "YellowArcher": {
+    "x1": 96,
+    "y1": 32,
+    "width": 31,
+    "height": 31
+  },
+  "YellowHouse": {
+    "x1": 0,
+    "y1": 64,
+    "width": 31,
+    "height": 31
+  },
+  "GreenCastle": {
+    "x1": 32,
+    "y1": 0,
+    "width": 31,
+    "height": 31
+  },
+  "GreenSoldier": {
+    "x1": 32,
+    "y1": 32,
+    "width": 31,
+    "height": 31
+  },
+  "GreenArcher": {
+    "x1": 128,
+    "y1": 32,
+    "width": 31,
+    "height": 31
+  },
+  "GreenHouse": {
+    "x1": 32,
+    "y1": 64,
+    "width": 31,
+    "height": 31
+  },
+  "FoodResource": {
+    "x1": 0,
+    "y1": 96,
+    "width": 31,
+    "height": 31
+  },
+  "GoldResource": {
+    "x1": 32,
+    "y1": 96,
+    "width": 31,
+    "height": 31
+  },
+  "WoodResource": {
+    "x1": 64,
+    "y1": 96,
+    "width": 31,
+    "height": 31
+  },
+  "StoneResource": {
+    "x1": 96,
+    "y1": 96,
+    "width": 31,
+    "height": 31
+  },
+  "IronResource": {
+    "x1": 128,
+    "y1": 96,
+    "width": 31,
+    "height": 31
+  },
+  "SoldierResource": {
+    "x1": 160,
+    "y1": 96,
+    "width": 31,
+    "height": 31
+  },
+  "ArcherResource": {
+    "x1": 192,
+    "y1": 96,
+    "width": 31,
+    "height": 31
+  },
+  "WheatFarm": {
+    "x1": 0,
+    "y1": 128,
+    "width": 31,
+    "height": 31
+  },
+  "Mine": {
+    "x1": 32,
+    "y1": 128,
+    "width": 31,
+    "height": 31
+  },
+  "YellowTileCover": {
+    "x1": 0,
+    "y1": 224,
+    "width": 32,
+    "height": 32
+  },
+  "GreenTileCover": {
+    "x1": 33,
+    "y1": 224,
+    "width": 32,
+    "height": 32
+  },
+  "RedTileCover": {
+    "x1": 66,
+    "y1": 224,
+    "width": 32,
+    "height": 32
+  }
+}
