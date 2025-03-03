@@ -32,7 +32,7 @@
                 <Trigger Property="IsMouseOver" Value="true">
                     <Setter TargetName="border" Property="Background">
                         <Setter.Value>
-                            <ImageBrush ImageSource="/Frontend/gui/Images/GenerateButtonHover.png"/>
+                            <ImageBrush ImageSource="/Frontend/gui/Buttons/GenerateButtonHover.png"/>
                         </Setter.Value>
                     </Setter>
                 </Trigger>
@@ -58,7 +58,7 @@
                 <Trigger Property="IsMouseOver" Value="true">
                     <Setter TargetName="border" Property="Background">
                         <Setter.Value>
-                            <ImageBrush ImageSource="/Frontend/gui/Images/SimSettingsButtonHover.png"/>
+                            <ImageBrush ImageSource="/Frontend/GUI/Buttons/SimSettingsButtonHover.png"/>
                         </Setter.Value>
                     </Setter>
                 </Trigger>
@@ -77,7 +77,7 @@
                 <Style TargetType ="{x:Type Button}">
                     <Setter Property="Background">
                         <Setter.Value>
-                            <ImageBrush x:Name="BackButtonBrush" ImageSource="/FrontEnd/gui/Images/GenerateButton.png"/>
+                            <ImageBrush x:Name="BackButtonBrush" ImageSource="/Frontend/gui/Buttons/GenerateButton.png"/>
                         </Setter.Value>
                     </Setter>
                     <Style.Triggers>
@@ -93,7 +93,7 @@
                 <Style TargetType ="{x:Type Button}">
                     <Setter Property="Background">
                         <Setter.Value>
-                            <ImageBrush x:Name="BackButtonBrush" ImageSource="/FrontEnd/gui/Images/SimSettingsButton.png"/>
+                            <ImageBrush x:Name="BackButtonBrush" ImageSource="/Frontend/gui/Buttons/SimSettingsButton.png"/>
                         </Setter.Value>
                     </Setter>
                     <Style.Triggers>

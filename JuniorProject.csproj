@@ -11,27 +11,29 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Frontend\gui\Buttons\LoadSimulationButton.png" />
+    <None Remove="Frontend\gui\Buttons\LoadSimulationButtonHover.png" />
     <None Remove="Frontend\GUI\CatalogButton.png" />
     <None Remove="Frontend\GUI\CatalogButtonHover.png" />
     <None Remove="Frontend\GUI\Fonts\Alagard.ttf" />
-    <None Remove="Frontend\GUI\Images\BackButton.png" />
-    <None Remove="Frontend\GUI\Images\BackButtonHover.png" />
-    <None Remove="Frontend\GUI\Images\CancelButton.png" />
-    <None Remove="Frontend\GUI\Images\CancelButtonHover.png" />
-    <None Remove="Frontend\GUI\Images\GenerateButton.png" />
-    <None Remove="Frontend\GUI\Images\GenerateButtonHover.png" />
-    <None Remove="Frontend\GUI\Images\GLButton.png" />
-    <None Remove="Frontend\GUI\Images\GLButtonHover.png" />
-    <None Remove="Frontend\GUI\Images\PauseButton.png" />
-    <None Remove="Frontend\GUI\Images\PauseButtonHover.png" />
-    <None Remove="Frontend\GUI\Images\RefreshButton.png" />
-    <None Remove="Frontend\GUI\Images\RefreshButtonHover.png" />
-    <None Remove="Frontend\GUI\Images\SaveButton.png" />
-    <None Remove="Frontend\GUI\Images\SaveButtonHover.png" />
-    <None Remove="Frontend\GUI\Images\SimSettingsButton.png" />
-    <None Remove="Frontend\GUI\Images\SimSettingsButtonHover.png" />
-    <None Remove="Frontend\GUI\Images\StartButton.png" />
-    <None Remove="Frontend\GUI\Images\StartButtonHover.png" />
+    <None Remove="Frontend\GUI\Buttons\BackButton.png" />
+    <None Remove="Frontend\GUI\Buttons\BackButtonHover.png" />
+    <None Remove="Frontend\GUI\Buttons\CancelButton.png" />
+    <None Remove="Frontend\GUI\Buttons\CancelButtonHover.png" />
+    <None Remove="Frontend\GUI\Buttons\GenerateButton.png" />
+    <None Remove="Frontend\GUI\Buttons\GenerateButtonHover.png" />
+    <None Remove="Frontend\GUI\Buttons\GLButton.png" />
+    <None Remove="Frontend\GUI\Buttons\GLButtonHover.png" />
+    <None Remove="Frontend\GUI\Buttons\PauseButton.png" />
+    <None Remove="Frontend\GUI\Buttons\PauseButtonHover.png" />
+    <None Remove="Frontend\GUI\Buttons\RefreshButton.png" />
+    <None Remove="Frontend\GUI\Buttons\RefreshButtonHover.png" />
+    <None Remove="Frontend\GUI\Buttons\SaveButton.png" />
+    <None Remove="Frontend\GUI\Buttons\SaveButtonHover.png" />
+    <None Remove="Frontend\GUI\Buttons\SimSettingsButton.png" />
+    <None Remove="Frontend\GUI\Buttons\SimSettingsButtonHover.png" />
+    <None Remove="Frontend\GUI\Buttons\StartButton.png" />
+    <None Remove="Frontend\GUI\Buttons\StartButtonHover.png" />
     <None Remove="Frontend\GUI\SettingsButton.png" />
     <None Remove="Frontend\GUI\SettingsButtonHover.png" />
     <None Remove="Frontend\GUI\StartSimulationButton.png" />
@@ -46,77 +48,96 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Frontend\gui\Buttons\LoadSimulationButton.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Frontend\gui\Buttons\LoadSimulationButtonHover.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Frontend\GUI\Fonts\Alagard.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="System.Data.SQLite" Version="1.0.119" />
-    <PackageReference Include="System.Drawing.Common" Version="9.0.0" />
+    <PackageReference Include="System.Drawing.Common" Version="9.0.2" />
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Frontend\GUI\Images\BackButton.png">
+    <Resource Include="Frontend\GUI\Buttons\BackButton.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Frontend\GUI\Images\BackButtonHover.png">
+    <Resource Include="Frontend\GUI\Buttons\BackButtonHover.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Frontend\GUI\Images\CancelButton.png">
+    <Resource Include="Frontend\GUI\Buttons\CancelButton.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Frontend\GUI\Images\CancelButtonHover.png">
+    <Resource Include="Frontend\GUI\Buttons\CancelButtonHover.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Frontend\GUI\Images\CatalogButton.png" />
-    <Resource Include="Frontend\GUI\Images\CatalogButtonHover.png" />
-    <Resource Include="Frontend\GUI\Images\GenerateButton.png">
+    <Resource Include="Frontend\GUI\Buttons\CatalogButton.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Frontend\GUI\Images\GenerateButtonHover.png">
+    <Resource Include="Frontend\GUI\Buttons\CatalogButtonHover.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Frontend\GUI\Images\GLButton.png">
+    <Resource Include="Frontend\GUI\Buttons\GenerateButton.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Frontend\GUI\Images\GLButtonHover.png">
+    <Resource Include="Frontend\GUI\Buttons\GenerateButtonHover.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Frontend\GUI\Images\PauseButton.png">
+    <Resource Include="Frontend\GUI\Buttons\GLButton.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Frontend\GUI\Images\PauseButtonHover.png">
+    <Resource Include="Frontend\GUI\Buttons\GLButtonHover.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Frontend\GUI\Images\RefreshButton.png">
+    <Resource Include="Frontend\GUI\Buttons\PauseButton.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Frontend\GUI\Images\RefreshButtonHover.png">
+    <Resource Include="Frontend\GUI\Buttons\PauseButtonHover.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Frontend\GUI\Images\SaveButton.png">
+    <Resource Include="Frontend\GUI\Buttons\RefreshButton.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Frontend\GUI\Images\SaveButtonHover.png">
+    <Resource Include="Frontend\GUI\Buttons\RefreshButtonHover.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Frontend\GUI\Images\SettingsButton.png" />
-    <Resource Include="Frontend\GUI\Images\SettingsButtonHover.png" />
-    <Resource Include="Frontend\GUI\Images\SimSettingsButton.png">
+    <Resource Include="Frontend\GUI\Buttons\SaveButton.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Frontend\GUI\Images\SimSettingsButtonHover.png">
+    <Resource Include="Frontend\GUI\Buttons\SaveButtonHover.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Frontend\GUI\Images\StartButton.png">
+    <Resource Include="Frontend\GUI\Buttons\SettingsButton.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Frontend\GUI\Images\StartButtonHover.png">
+    <Resource Include="Frontend\GUI\Buttons\SettingsButtonHover.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Frontend\GUI\Images\StartSimulationButton.png" />
-    <Resource Include="Frontend\GUI\Images\StartSimulationButtonHover.png" />
+    <Resource Include="Frontend\GUI\Buttons\SimSettingsButton.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Frontend\GUI\Buttons\SimSettingsButtonHover.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Frontend\GUI\Buttons\StartButton.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Frontend\GUI\Buttons\StartButtonHover.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Frontend\GUI\Buttons\StartSimulationButton.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Frontend\GUI\Buttons\StartSimulationButtonHover.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
   <ItemGroup>

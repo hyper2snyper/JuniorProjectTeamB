@@ -28,7 +28,7 @@
                 <Trigger Property="IsMouseOver" Value="true">
                     <Setter TargetName="border" Property="Background">
                         <Setter.Value>
-                            <ImageBrush ImageSource="/Frontend/gui/Images/StartSimulationButtonHover.png"/>
+                            <ImageBrush ImageSource="/Frontend/GUI/Buttons/StartSimulationButtonHover.png"/>
                         </Setter.Value>
                     </Setter>
                 </Trigger>
@@ -61,7 +61,7 @@
                 <Trigger Property="IsMouseOver" Value="true">
                     <Setter TargetName="border" Property="Background">
                         <Setter.Value>
-                            <ImageBrush ImageSource="/Frontend/Images/gui/LoadSimulationButtonHover.png"/>
+                            <ImageBrush ImageSource="/Frontend/GUI/Buttons/LoadSimulationButtonHover.png"/>
                         </Setter.Value>
                     </Setter>
                 </Trigger>
@@ -107,7 +107,7 @@
                             <Trigger Property="IsMouseOver" Value="true">
                                 <Setter TargetName="border" Property="Background">
                                     <Setter.Value>
-                                        <ImageBrush ImageSource="/Frontend/gui/Images/CatalogButtonHover.png"/>
+                                        <ImageBrush ImageSource="/Frontend/GUI/Buttons/CatalogButtonHover.png"/>
                                     </Setter.Value>
                                 </Setter>
                             </Trigger>
@@ -156,7 +156,7 @@
                             <Trigger Property="IsMouseOver" Value="true">
                                 <Setter TargetName="border" Property="Background">
                                     <Setter.Value>
-                                        <ImageBrush ImageSource="/Frontend/gui/Images/SettingsButtonHover.png"/>
+                                        <ImageBrush ImageSource="/Frontend/GUI/Buttons/SettingsButtonHover.png"/>
                                     </Setter.Value>
                                 </Setter>
                             </Trigger>
@@ -188,7 +188,7 @@
                     <Style TargetType="Button">
                         <Setter Property="Background">
                             <Setter.Value>
-                                <ImageBrush x:Name="SimulationButtonImageBrush"  ImageSource="/Frontend/gui/Images/StartSimulationButton.png" />
+                                <ImageBrush x:Name="SimulationButtonImageBrush"  ImageSource="/Frontend/GUI/Buttons/StartSimulationButton.png" />
                             </Setter.Value>
                         </Setter>
                         <Style.Triggers>
@@ -204,7 +204,7 @@
                     <Style TargetType="Button">
                         <Setter Property="Background">
                             <Setter.Value>
-                                <ImageBrush x:Name="SimulationButtonImageBrush"  ImageSource="/Frontend/Images/gui/LoadSimulationButton.png" />
+                                <ImageBrush x:Name="SimulationButtonImageBrush"  ImageSource="/Frontend/gui/Buttons/LoadSimulationButton.png" />
                             </Setter.Value>
                         </Setter>
                         <Style.Triggers>
@@ -217,12 +217,12 @@
             </Button>
             <Button Style="{DynamicResource CatalogTemplate}" x:Name="catalogButton" Height="54" Width="284" Click="Catalog" Margin="0, 5" BorderThickness="0">
                 <Button.Background>
-                    <ImageBrush ImageSource="/Frontend/gui/Images/CatalogButton.png" />
+                    <ImageBrush ImageSource="/Frontend/gui/Buttons/CatalogButton.png" />
                 </Button.Background>
             </Button>
             <Button Style="{DynamicResource SettingsTemplate}" x:Name="settingsButton" Height="54" Width="284" Click="Settings" Margin="0, 5" BorderThickness="0">
                 <Button.Background>
-                    <ImageBrush ImageSource="/Frontend/gui/Images/SettingsButton.png" />
+                    <ImageBrush ImageSource="/Frontend/gui/Buttons/SettingsButton.png" />
                 </Button.Background>
             </Button>
         </StackPanel>

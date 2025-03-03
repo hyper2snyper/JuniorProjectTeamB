@@ -31,8 +31,8 @@ namespace JuniorProject.Frontend.Components
         Bitmap worldBitmap;
         Canvas Canvas;
 
-        string spriteSheetPath = $"{Properties.Resources.ProjectDir}\\Frontend\\Images\\Sprites\\SpriteSheet.png";
-        string jsonPath = $"{Properties.Resources.ProjectDir}\\Frontend\\Images\\Sprites\\sprites.json";
+        string spriteSheetPath = $"{Properties.Resources.ProjectDir}\\Frontend\\GUI\\Sprites\\SpriteSheet.png";
+        string jsonPath = $"{Properties.Resources.ProjectDir}\\Frontend\\GUI\\Sprites\\sprites.json";
         public Dictionary<string, SpriteInfo> sprites { get; set; }
         Bitmap spriteSheet;
 

@@ -26,7 +26,7 @@
                 <Trigger Property="IsMouseOver" Value="true">
                     <Setter TargetName="border" Property="Background">
                         <Setter.Value>
-                            <ImageBrush ImageSource="/Frontend/gui/Images/SaveButtonHover.png"/>
+                            <ImageBrush ImageSource="/Frontend/gui/Buttons/SaveButtonHover.png"/>
                         </Setter.Value>
                     </Setter>
                 </Trigger>
@@ -53,7 +53,7 @@
                 <Trigger Property="IsMouseOver" Value="true">
                     <Setter TargetName="border" Property="Background">
                         <Setter.Value>
-                            <ImageBrush ImageSource="/Frontend/gui/Images/CancelButtonHover.png"/>
+                            <ImageBrush ImageSource="/Frontend/gui/Buttons/CancelButtonHover.png"/>
                         </Setter.Value>
                     </Setter>
                 </Trigger>
@@ -209,7 +209,7 @@
                 <Style TargetType ="Button">
                     <Setter Property="Background">
                         <Setter.Value>
-                            <ImageBrush x:Name="BackButtonBrush" ImageSource="/FrontEnd/gui/Images/SaveButton.png"/>
+                            <ImageBrush x:Name="BackButtonBrush" ImageSource="/FrontEnd/gui/Buttons/SaveButton.png"/>
                         </Setter.Value>
                     </Setter>
                     <Style.Triggers>
@@ -225,7 +225,7 @@
                 <Style TargetType ="Button">
                     <Setter Property="Background">
                         <Setter.Value>
-                            <ImageBrush x:Name="BackButtonBrush" ImageSource="/FrontEnd/gui/Images/CancelButton.png"/>
+                            <ImageBrush x:Name="BackButtonBrush" ImageSource="/FrontEnd/gui/Buttons/CancelButton.png"/>
                         </Setter.Value>
                     </Setter>
                     <Style.Triggers>
