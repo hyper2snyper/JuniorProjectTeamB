@@ -189,8 +189,6 @@ namespace JuniorProject.Frontend.Windows
             {
                 Console.Text += $"---> {Input.Text}\n";
 
-                //Debug.Print("STARTING EXPANDING TERRITORY");
-
                 List<Match> matches = stringParam.Matches(Input.Text).ToList();
                 string team = stringInstance.Match(matches[0].Value).Value;
 
@@ -198,8 +196,6 @@ namespace JuniorProject.Frontend.Windows
                 foreach (TileMap.Tile t in w.nations[team].GetBorderingTiles()) {
                     w.nations[team].AddTerritory(t);
                 }
-
-                //Debug.Print("FINISHED EXPANDING TERRITORY");
 
                 finishCommand();
                 return;
@@ -302,6 +298,7 @@ namespace JuniorProject.Frontend.Windows
 
         void finishCommand()
         {
+            ClientCommunicator.GetData<World>("World").RedrawAction?.Invoke(); // Need this to see changes after calling command, otherwise you need to press 'step'
             usedCommands.Add(Input.Text);
             current_command = usedCommands.Count;
 			Input.Text = "";
