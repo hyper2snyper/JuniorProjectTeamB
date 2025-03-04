@@ -272,6 +272,15 @@ namespace JuniorProject.Frontend.Components
 
             //AddBitmapToCanvas("WheatFarm", extractFromSprite("WheatFarm"), 7, 3);
             //AddBitmapToCanvas("Mine", extractFromSprite("Mine"), 7, 4);
+
+            //AddBitmapToCanvas("YellowDock", extractFromSprite("YellowDock"), 8, 3);
+            //AddBitmapToCanvas("YellowShip", extractFromSprite("YellowShip"), 8, 4);
+
+            //AddBitmapToCanvas("GreenDock", extractFromSprite("GreenDock"), 9, 3);
+            //AddBitmapToCanvas("GreenShip", extractFromSprite("GreenShip"), 9, 4);
+
+            //AddBitmapToCanvas("RedDock", extractFromSprite("RedDock"), 10, 3);
+            //AddBitmapToCanvas("RedShip", extractFromSprite("RedShip"), 10, 4);
         }
 
         public void AddBitmapToCanvas(string name, Bitmap bitmap)
