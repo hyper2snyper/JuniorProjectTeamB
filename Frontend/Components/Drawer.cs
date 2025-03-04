@@ -189,6 +189,8 @@ namespace JuniorProject.Frontend.Components
                     Canvas.Children.Add(d.image);
                 }
             }
+
+            //Debug.Print("FINISHED DRAWING");
         }
 
         public void SetGridlines()
@@ -199,6 +201,7 @@ namespace JuniorProject.Frontend.Components
 
         public void Draw()
         {
+            //Debug.Print("STARTING DRAWING");
             List<GenericDrawable> genericDrawables = new List<GenericDrawable>();
             world.PopulateDrawablesList(ref genericDrawables);
 

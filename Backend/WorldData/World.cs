@@ -44,6 +44,7 @@ namespace JuniorProject.Backend.WorldData
 			foreach (Nation nation in nations.Values)
 			{
 				nation.TakeTurn(tickCount);
+                RedrawAction?.Invoke();
 			}
             
         }

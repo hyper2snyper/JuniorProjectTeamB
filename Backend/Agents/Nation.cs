@@ -103,45 +103,52 @@ namespace JuniorProject.Backend.Agents
             }
         }
 
+        public List<TileMap.Tile> GetBorderingTiles() 
+        {
+            HashSet<TileMap.Tile> borderingTiles = new HashSet<TileMap.Tile>();
 
+            foreach (TileMap.Tile tile in territory) {
+                foreach (TileMap.Tile possibleTile in world.map.getPassableTileNeighbors(tile)) {
+                    if (possibleTile == null) continue;
+                    if (possibleTile.Owner != this) { 
+                        borderingTiles.Add(possibleTile);
+                    }
+                }
+
+            }
+            return borderingTiles.ToList<TileMap.Tile>();
+        }
 
 		public void AddTerritory(TileMap.Tile tile)
         {
             tile.Owner = this;
             territory.Add(tile);
-			world.RedrawAction?.Invoke();
 		}
 
         public void RemoveTerritory(TileMap.Tile tile)
         {
-            tile.Owner = null;
             territory.Remove(tile);
-			world.RedrawAction?.Invoke();
 		}
 
         public void AddBuilding(Building building)
         {
             buildings.Add(building);
-            world.RedrawAction?.Invoke();
         }
 
         public void RemoveBuilding(Building building)
         {
             buildings.Remove(building);
-            world.RedrawAction?.Invoke();
         }
 
         public void AddUnit(Unit unit)
         {
             units.Add(unit);
             unit.name = $"{color}{unit.unitType.name}{units.Count}";
-            world.RedrawAction?.Invoke();
         }
 
         public void RemoveUnit(Unit unit)
         {
             units.Remove(unit);
-            world.RedrawAction?.Invoke();
         }
 
 		public override void SerializeFields()

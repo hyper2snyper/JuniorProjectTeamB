@@ -24,13 +24,15 @@ namespace JuniorProject.Backend.WorldData
                 get { return _owner; }
                 set
                 {
-                    if(value == null)
-                    {
-                        _owner?.RemoveTerritory(this);
+                    if (_owner == null) {
+                        _owner = value;
                         return;
                     }
-                    _owner = value;
 
+                    if (_owner == value) return;
+
+                    _owner?.RemoveTerritory(this);
+                    _owner = value;
                 }
             }
 

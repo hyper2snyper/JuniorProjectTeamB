@@ -44,6 +44,7 @@ namespace JuniorProject.Backend.Agents
 
         public string name;
         public int health;
+        public Vector2Int followObjectivePosition;
 
         Objective? objective;
 
@@ -96,7 +97,10 @@ namespace JuniorProject.Backend.Agents
 
 		public override void EnterTile(TileMap.Tile tile)
 		{
-            if (tile.Owner != nation) nation.AddTerritory(tile);
+            if (tile.Owner != nation)
+            {
+                nation.AddTerritory(tile);
+            }
 			base.EnterTile(tile);
 		}
 
@@ -104,6 +108,10 @@ namespace JuniorProject.Backend.Agents
 		public void MoveTo(TileMap.Tile toPos)
         {
             SetObjective(new MoveAction(toPos));
+        }
+
+        public void Follow(Unit mob) { 
+            SetObjective(new FollowAction(mob));
         }
 
         public override void SerializeFields()
