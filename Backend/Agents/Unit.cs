@@ -44,6 +44,7 @@ namespace JuniorProject.Backend.Agents
 
         public string name;
         public int health;
+        public bool embarked = false;
         public Vector2Int followObjectivePosition;
 
         Objective? objective;
@@ -71,7 +72,7 @@ namespace JuniorProject.Backend.Agents
 
 		public override string GetSprite()
 		{
-			return $"{nation?.color}{base.GetSprite()}";
+			return $"{nation?.color}{(embarked ? "Ship" : base.GetSprite())}";
 		}
 
         public void SetObjective(Objective objective)
@@ -99,7 +100,7 @@ namespace JuniorProject.Backend.Agents
 
 		public override void EnterTile(TileMap.Tile tile)
 		{
-            if (tile.Owner != nation)
+            if (!tile.impassible && tile.Owner != nation)
             {
                 nation.AddTerritory(tile);
             }

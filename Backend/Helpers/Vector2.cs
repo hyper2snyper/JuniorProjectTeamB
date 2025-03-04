@@ -21,8 +21,15 @@ namespace JuniorProject.Backend.Helpers
         public float X { get { return x; } }
         public float Y { get { return y; } }
         public float Magnitude { get { return MathF.Sqrt((x * x) + (y * y)); } }
+		public Vector2 Normalize
+		{
+			get
+			{
+				return new Vector2(X / Magnitude, Y / Magnitude);
+			}
+		}
 
-        public Vector2(float x = 0, float y = 0)
+		public Vector2(float x = 0, float y = 0)
         {
             this.x = x;
             this.y = y;

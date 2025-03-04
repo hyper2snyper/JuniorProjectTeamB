@@ -115,6 +115,7 @@ namespace JuniorProject.Backend.WorldData
                 this.seed = seedInt.ToString(); //It is.
             } else
             {
+                this.seed = seed;
 				seedInt = 0;
 				foreach (char c in seed)
 				{

@@ -17,6 +17,7 @@ namespace JuniorProject.Backend.WorldData
             public float elevationAvg;
 
             public bool impassible = false;
+            public bool coast = false;
 
             List<Mob> occupants = new List<Mob>();
             public List<Mob> Occupants
@@ -54,6 +55,7 @@ namespace JuniorProject.Backend.WorldData
                 SerializeField(movementCost);
                 SerializeField(elevationAvg);
                 SerializeField(impassible);
+                SerializeField(coast);
             }
 
             public override void DeserializeFields()
@@ -63,6 +65,7 @@ namespace JuniorProject.Backend.WorldData
                 movementCost = DeserializeField<float>();
                 elevationAvg = DeserializeField<float>();
                 impassible = DeserializeField<bool>();
+                coast = DeserializeField<bool>();
             }
         }
 
@@ -76,7 +79,8 @@ namespace JuniorProject.Backend.WorldData
             return tiles[v.X, v.Y];
         }
 
-        public Tile?[,] getTileNeighbors(Tile tile)
+		public delegate bool neighborFilter(Tile tile);
+		public Tile?[,] getTileNeighbors(Tile tile, neighborFilter? filter = null)
         {
             Tile?[,] neighbors = new Tile?[3, 3];
             for (int x = -1; x <= 1; x++)
@@ -84,27 +88,19 @@ namespace JuniorProject.Backend.WorldData
                 for (int y = -1; y <= 1; y++)
                 {
                     if (x == 0 && y == 0) continue;
-                    neighbors[x + 1, y + 1] = getTile(new Vector2Int(tile.pos.X + x, tile.pos.Y + y));
+                    Tile? t = getTile(new Vector2Int(tile.pos.X + x, tile.pos.Y + y));
+					if (filter != null && t != null)
+                    {
+                        if (filter(t)) continue;
+                    }
+                    neighbors[x + 1, y + 1] = t;
                 }
             }
             return neighbors;
         }
-
 		public Tile?[,] getPassableTileNeighbors(Tile tile)
 		{
-			Tile?[,] neighbors = new Tile?[3, 3];
-            if (tile == null) return neighbors;
-			for (int x = -1; x <= 1; x++)
-			{
-				for (int y = -1; y <= 1; y++)
-				{
-					if (x == 0 && y == 0) continue;
-                    Tile? t = getTile(new Vector2Int(tile.pos.X + x, tile.pos.Y + y));
-					if (t == null || t.impassible) continue;
-					neighbors[x + 1, y + 1] = getTile(new Vector2Int(tile.pos.X + x, tile.pos.Y + y));
-				}
-			}
-			return neighbors;
+            return getTileNeighbors(tile, (Tile t) => { return t.impassible; });
 		}
 
 		public void TilesUpdated()
@@ -172,6 +168,7 @@ namespace JuniorProject.Backend.WorldData
                                 else
                                 {
                                     movementCostTotal++;
+                                    tile.coast = true;
                                 }
                                 continue;
                             }

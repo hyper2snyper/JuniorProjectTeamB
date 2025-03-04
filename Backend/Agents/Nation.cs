@@ -124,7 +124,66 @@ namespace JuniorProject.Backend.Agents
                     if (x.movementCost == y.movementCost) return 0;
                     return (x.movementCost > y.movementCost ? 1 : -1);
                 });
-            if(desiredLand.Count == 0) return;
+            if(desiredLand.Count == 0)
+            {
+                Building? port = null;
+                foreach(Building building in buildings)
+                {
+                    if (building.template.name != "Port") continue;
+                    port = building;
+                    break;
+                }
+                if(port == null)
+                {
+                    TileMap.Tile? shoreTile = null;
+                    foreach(TileMap.Tile tile in territory)
+                    {
+                        if (!tile.coast || tile.Occupants.Count >= 1) continue;
+                        shoreTile = tile;
+                        break;
+                    }
+                    if (shoreTile == null) return; //Sucks to suck i guess.
+                    if(unassignedUnits.Count == 0) return;
+                    unassignedUnits[0].MoveTo(shoreTile,
+                        (TileMap.Tile tile, Unit unit) =>
+                        {
+                            AddBuilding(new Building("Port", world.map, shoreTile, this));
+                            return null;
+                        });
+                    return;
+                }
+                foreach(Unit unit in unassignedUnits)
+                {
+                    unit.MoveTo(port.pos,
+                        (TileMap.Tile tile, Unit u) =>
+                        {
+                            TileMap.Tile? nearestOcean = null;
+                            foreach (TileMap.Tile neighbor in world.map.getTileNeighbors(tile,
+                                (TileMap.Tile t) =>
+                                {
+                                    return !t.impassible;
+                                }))
+                            {
+                                nearestOcean = neighbor;
+                                if (nearestOcean == null) continue;
+								Vector2Int dir = (nearestOcean.pos - tile.pos).Normalize;
+								TileMap.Tile? currentTile = nearestOcean;
+								while (nearestOcean.impassible)
+								{
+									currentTile = world.map.getTile(currentTile.pos + dir);
+                                    if (currentTile == null) break;
+									if (!currentTile.impassible) break;
+								}
+                                if (currentTile == null) continue;
+								Sail sail = new Sail(currentTile);
+								sail.Attach(u);
+                                return sail;
+							}
+                            return null;
+                        });
+                }
+                return;
+            }
             foreach(Unit unit in unassignedUnits)
             {
                 unit.MoveTo(desiredLand[0], UnitPostMove);

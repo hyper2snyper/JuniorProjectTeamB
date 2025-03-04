@@ -44,6 +44,7 @@ namespace JuniorProject.Frontend.Components
 
         Dictionary<string, ImageSource> imageCache = new Dictionary<string, ImageSource>();
         Dictionary<string, Bitmap> bitmapCache = new Dictionary<string, Bitmap>();
+        Dictionary<(int, int), Bitmap> tileMapBitmapCache = new Dictionary<(int, int), Bitmap>();
 
         Drawable map;
         Drawable grid;
@@ -128,11 +129,18 @@ namespace JuniorProject.Frontend.Components
 
             TileMap.Tile tile = tileMap.getTile(p);
             Bitmap tileBitmap = extractTileFromMap(p.X * tileSize, p.Y * tileSize, 32, 32);
+            ImageSource imageSource;
+            if (bitmapCache.ContainsKey($"{p}"))
+            {
+                imageSource = imageCache[$"{p}"];
+            }
+            else imageSource = TransferToWriteableBitmap(tileBitmap);
+
             Controls.Image tileImage = new Controls.Image
             {
                 Width = tileBitmap.Width,
                 Height = tileBitmap.Height,
-                Source = TransferToWriteableBitmap(tileBitmap),
+                Source = imageSource
             };
 
             images.Add(tileImage);
@@ -172,6 +180,10 @@ namespace JuniorProject.Frontend.Components
 
         public Bitmap extractTileFromMap(int x1, int y1, int width, int height)
         {
+            if(tileMapBitmapCache.ContainsKey((x1,y1)))
+            {
+                return tileMapBitmapCache[(x1,y1)];
+            }
             Rectangle section = new Rectangle(x1, y1, width, height);
             return worldBitmap.Clone(section, spriteSheet.PixelFormat);
         }
@@ -348,7 +360,6 @@ namespace JuniorProject.Frontend.Components
         }
         public WriteableBitmap TransferToWriteableBitmap(Bitmap worldBitmap)
         {
-            
             WriteableBitmap map = new WriteableBitmap(worldBitmap.Width, worldBitmap.Height, 96, 96, PixelFormats.Bgra32, null);
             byte[] pixels = new byte[4 * (worldBitmap.Width * worldBitmap.Height)]; //pixel color buffer. each color is four bytes.
             for (int y = 0; y < worldBitmap.Width; y++)

@@ -39,7 +39,7 @@ namespace JuniorProject.Backend.Agents
 			}
 		}
 
-        BuildingTemplate template;
+        public BuildingTemplate template;
 
         int health;
 
