@@ -63,8 +63,8 @@ namespace JuniorProject.Frontend.Windows
 
         public static readonly Regex getSeed = new Regex("^seed$");
 
-        public static readonly Regex stringParam = new Regex("\\([a-zA-z]+|,\\ *[a-zA-z]+");
-        public static readonly Regex stringInstance = new Regex("[a-zA-z]+");
+        public static readonly Regex stringParam = new Regex("\\([a-zA-z]+[0-9]*|,\\ *[a-zA-z]+[0-9]*");
+        public static readonly Regex stringInstance = new Regex("[a-zA-z]+[0-9]*");
         public static readonly Regex intParam = new Regex("\\([0-9]+|,\\ *[0-9]+");
         public static readonly Regex intInstance = new Regex("[0-9]+");
 
@@ -256,6 +256,21 @@ namespace JuniorProject.Frontend.Windows
                             int y = int.Parse(intInstance.Match(parameters[1].Value).Value);
                             World w = ClientCommunicator.GetData<World>("World");
                             total_units[unit].MoveTo(w.map.getTile(new Vector2Int(x,y)));
+                            break;
+                        }
+                    case "Follow":
+                        {
+                            List<Match> parameters = stringParam.Matches(Input.Text).ToList();
+                            string mob = stringInstance.Match(parameters[0].Value).Value;
+                            
+                            if (!total_units.ContainsKey(mob)) {
+                                Console.Text += $"No mob found with name {mob} to follow\n";
+                                finishCommand();
+                                return;
+                            }
+
+                            World w = ClientCommunicator.GetData<World>("World");
+                            total_units[unit].Follow(total_units[mob]);
                             break;
                         }
                 }

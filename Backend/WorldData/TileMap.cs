@@ -24,10 +24,9 @@ namespace JuniorProject.Backend.WorldData
                 get { return _owner; }
                 set
                 {
-                    if(value == null)
+                    if(value != null)
                     {
                         _owner?.RemoveTerritory(this);
-                        return;
                     }
                     _owner = value;
 
