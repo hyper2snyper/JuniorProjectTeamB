@@ -142,5 +142,41 @@
     "y1": 224,
     "width": 32,
     "height": 32
+  },
+  "YellowDock": {
+    "x1": 0,
+    "y1": 160,
+    "width": 32,
+    "height": 32
+  },
+  "GreenDock": {
+    "x1": 32,
+    "y1": 160,
+    "width": 32,
+    "height": 32
+  },
+  "RedDock": {
+    "x1": 64,
+    "y1": 160,
+    "width": 32,
+    "height": 32
+  },
+  "YellowShip": {
+    "x1": 0,
+    "y1": 192,
+    "width": 32,
+    "height": 32
+  },
+  "GreenShip": {
+    "x1": 32,
+    "y1": 192,
+    "width": 32,
+    "height": 32
+  },
+  "RedShip": {
+    "x1": 64,
+    "y1": 192,
+    "width": 32,
+    "height": 32
   }
 }
