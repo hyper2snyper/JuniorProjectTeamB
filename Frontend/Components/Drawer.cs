@@ -210,7 +210,7 @@ namespace JuniorProject.Frontend.Components
                 AddBitmapToCanvas(u.Key, extractFromSprite(u.Value.getSpriteName()), u.Value.getPosition());
             }
 
-            DebugImages();
+            //DebugImages();
             PopulateCanvas();
         }
 
