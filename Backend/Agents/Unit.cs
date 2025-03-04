@@ -107,6 +107,10 @@ namespace JuniorProject.Backend.Agents
 
 		public void MoveTo(TileMap.Tile toPos)
         {
+            foreach (TileMap.Tile t in nation.GetBorderingTiles()) {
+                Debug.Print($"[{t.pos.X}, {t.pos.Y}]");
+            }
+            
             SetObjective(new MoveAction(toPos));
         }
 

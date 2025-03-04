@@ -103,7 +103,26 @@ namespace JuniorProject.Backend.Agents
             }
         }
 
+        public List<TileMap.Tile> GetBorderingTiles() 
+        {
+            List<Vector2Int> directions = new List<Vector2Int>([new Vector2Int(-1, 0), new Vector2Int(1, 0), new Vector2Int(0, -1), new Vector2Int(0, 1), new Vector2Int(-1, -1), new Vector2Int(-1, 1), new Vector2Int(1, -1), new Vector2Int(1, 1)]);
+            HashSet<TileMap.Tile> borderingTiles = new HashSet<TileMap.Tile>();
 
+            foreach (TileMap.Tile tile in territory) {
+                foreach (TileMap.Tile possibleTile in world.map.getPassableTileNeighbors(tile)) {
+                    if (possibleTile == null) continue;
+                    if (possibleTile.Owner != this) { 
+                        borderingTiles.Add(possibleTile);
+                    }
+                }
+                //foreach (var dir in directions) {
+                //    if (world.map.getTile(dir + tile.pos).Owner != this) { 
+                        
+                //    }
+                //}
+            }
+            return borderingTiles.ToList<TileMap.Tile>();
+        }
 
 		public void AddTerritory(TileMap.Tile tile)
         {

@@ -60,6 +60,7 @@ namespace JuniorProject.Frontend.Windows
 
         public static readonly Regex deleteTileCover = new Regex("^deleteTileCover\\ *\\([0-9]+,\\ *[0-9]+\\)\\ *$");
         public static readonly Regex modifyTileCover = new Regex("^modifyTileCover\\ *\\([a-zA-z]+,\\ *[0-9]+,\\ *[0-9]+\\)\\ *$");
+        public static readonly Regex expandTerritory = new Regex("^expandTerritory\\ *\\([a-zA-z]+\\)\\ *$");
 
         public static readonly Regex getSeed = new Regex("^seed$");
 
@@ -184,6 +185,26 @@ namespace JuniorProject.Frontend.Windows
 				return;
             }
 
+            if (expandTerritory.IsMatch(Input.Text))
+            {
+                Console.Text += $"---> {Input.Text}\n";
+
+                //Debug.Print("STARTING EXPANDING TERRITORY");
+
+                List<Match> matches = stringParam.Matches(Input.Text).ToList();
+                string team = stringInstance.Match(matches[0].Value).Value;
+
+                World w = ClientCommunicator.GetData<World>("World");
+                foreach (TileMap.Tile t in w.nations[team].GetBorderingTiles()) {
+                    w.nations[team].AddTerritory(t);
+                }
+
+                //Debug.Print("FINISHED EXPANDING TERRITORY");
+
+                finishCommand();
+                return;
+            }
+
             if (clearRegex.IsMatch(Input.Text))
             {
                 Console.Text = "";
@@ -204,6 +225,7 @@ namespace JuniorProject.Frontend.Windows
                 Console.Text += "\n";
                 Console.Text += "modifyTileCover(<Team>, <gridX>, <gridY>) -> Update tile cover team\n";
                 Console.Text += "deleteTileCover(<gridX>, <gridY>) -> Removes tile cover\n";
+                Console.Text += "expandTerritory(<Team>)\n";
                 Console.Text += "\n";
                 Console.Text += "clear -> clears console\n\n";
 

@@ -24,10 +24,7 @@ namespace JuniorProject.Backend.Agents.Objectives
 
         public Boolean IsAdjacent() {
             Vector2Int difference = unit.pos.pos - targetMob.pos.pos;
-            if (Math.Abs(difference.X) == 1 && Math.Abs(difference.Y) == 1) {
-                return true;
-            }
-            return false;
+            return (Math.Abs(difference.X) == 1 && Math.Abs(difference.Y) == 1);
         }
 
         public override Objective? PerformTurn(ulong tick)
