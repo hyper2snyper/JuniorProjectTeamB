@@ -18,6 +18,12 @@ namespace JuniorProject.Backend.WorldData
 
             public bool impassible = false;
 
+            List<Mob> occupants = new List<Mob>();
+            public List<Mob> Occupants
+            {
+                get { return occupants; }
+            }
+
             Nation? _owner = null;
             public Nation? Owner
             {
@@ -36,7 +42,12 @@ namespace JuniorProject.Backend.WorldData
                 }
             }
 
-            public override void SerializeFields()
+			public override string ToString()
+			{
+                return pos.ToString();
+			}
+
+			public override void SerializeFields()
             {
                 SerializeField(pos);
                 SerializeField<string, float>(terrainPercentages);
@@ -49,7 +60,7 @@ namespace JuniorProject.Backend.WorldData
             {
                 pos = DeserializeField<Vector2Int>();
                 terrainPercentages = DeserializeDictionary<string, float>();
-                movementCost = DeserializeField<int>();
+                movementCost = DeserializeField<float>();
                 elevationAvg = DeserializeField<float>();
                 impassible = DeserializeField<bool>();
             }

@@ -80,6 +80,8 @@ namespace JuniorProject.Backend.Agents
             objective.Attach(this);
         }
 
+        public Objective? GetObjective() {  return objective; }
+
         public override void TakeTurn(ulong tick)
         {
             base.TakeTurn(tick);
@@ -101,20 +103,33 @@ namespace JuniorProject.Backend.Agents
             {
                 nation.AddTerritory(tile);
             }
+            foreach(Mob m in tile.Occupants)
+            {
+                if(m is Building b)
+                {
+                    if (m.nation == nation) continue;
+                    nation?.AddBuilding(b);
+                }
+            }
 			base.EnterTile(tile);
 		}
 
-
-		public void MoveTo(TileMap.Tile toPos)
+		public void MoveTo(TileMap.Tile toPos, MoveAction.PostMoveAction? action = null)
         {
-            SetObjective(new MoveAction(toPos));
+            SetObjective(new MoveAction(toPos, action));
         }
 
         public void Follow(Unit mob) { 
             SetObjective(new FollowAction(mob));
         }
 
-        public override void SerializeFields()
+		public override void DestroyMob()
+		{
+			base.DestroyMob();
+            objective = null;
+		}
+
+		public override void SerializeFields()
         {
             base.SerializeFields();
             SerializeField(unitType.name); //Save the type.

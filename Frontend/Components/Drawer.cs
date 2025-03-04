@@ -42,6 +42,9 @@ namespace JuniorProject.Frontend.Components
         public Queue<Drawable> drawables;
         private Dictionary<(int, int), List<int>> drawableGridLocations;
 
+        Dictionary<string, ImageSource> imageCache = new Dictionary<string, ImageSource>();
+        Dictionary<string, Bitmap> bitmapCache = new Dictionary<string, Bitmap>();
+
         Drawable map;
         Drawable grid;
 
@@ -149,11 +152,16 @@ namespace JuniorProject.Frontend.Components
 
         public Bitmap extractFromSprite(string name)
         {
+            if (bitmapCache.ContainsKey(name))
+            {
+                return bitmapCache[name];
+            }
             if (sprites.TryGetValue(name, out SpriteInfo targetSprite))
             {
                 Rectangle section = new Rectangle(targetSprite.x1, targetSprite.y1, targetSprite.width, targetSprite.height);
-
-                return spriteSheet.Clone(section, spriteSheet.PixelFormat);
+                Bitmap bitmap = spriteSheet.Clone(section, spriteSheet.PixelFormat);
+                bitmapCache.Add(name, bitmap); 
+                return bitmap;
             }
             else
             {
@@ -286,11 +294,21 @@ namespace JuniorProject.Frontend.Components
         public void AddBitmapToCanvas(string name, Bitmap bitmap, Vector2Int gridPos)
         {
             string imageSource = "SpriteSheet";
+            ImageSource source;
+            if(imageCache.ContainsKey(name))
+            {
+                source = imageCache[name];
+            } else
+            {
+                source = TransferToWriteableBitmap(bitmap);
+                imageCache.Add(name, source);
+            }
+            
             Controls.Image img = new Controls.Image
             {
                 Width = bitmap.Width,
                 Height = bitmap.Height,
-                Source = TransferToWriteableBitmap(bitmap)
+                Source = source
             };
             Vector2Int pixelPosition = ConvertGridPositionToPixels(gridPos.X, gridPos.Y);
 
@@ -321,6 +339,7 @@ namespace JuniorProject.Frontend.Components
         }
         public WriteableBitmap TransferToWriteableBitmap(Bitmap worldBitmap)
         {
+            
             WriteableBitmap map = new WriteableBitmap(worldBitmap.Width, worldBitmap.Height, 96, 96, PixelFormats.Bgra32, null);
             byte[] pixels = new byte[4 * (worldBitmap.Width * worldBitmap.Height)]; //pixel color buffer. each color is four bytes.
             for (int y = 0; y < worldBitmap.Width; y++)

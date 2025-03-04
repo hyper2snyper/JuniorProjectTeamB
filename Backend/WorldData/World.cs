@@ -10,7 +10,10 @@ namespace JuniorProject.Backend.WorldData
         public TileMap map;
         public Dictionary<string, Nation> nations = new Dictionary<string, Nation>();
 
+
         public Action RedrawAction;
+        
+        
         public World()
         {
             ClientCommunicator.RegisterData<World>("World", this);
@@ -46,7 +49,6 @@ namespace JuniorProject.Backend.WorldData
 				nation.TakeTurn(tickCount);
                 RedrawAction?.Invoke();
 			}
-            
         }
 
         public void SaveWorld(string location)

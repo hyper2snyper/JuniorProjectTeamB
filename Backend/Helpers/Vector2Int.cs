@@ -51,5 +51,10 @@ namespace JuniorProject.Backend.Helpers
             return v1.x * v2.x + v1.y * v2.y;
         }
 
-    }
+		public override string ToString()
+		{
+            return $"({X}, {Y})";
+		}
+
+	}
 }

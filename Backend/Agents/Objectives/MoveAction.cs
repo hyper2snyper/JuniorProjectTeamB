@@ -3,14 +3,15 @@ using JuniorProject.Backend.WorldData;
 
 namespace JuniorProject.Backend.Agents.Objectives
 {
-	class MoveAction : Objective
+	public class MoveAction : Objective
 	{
-		readonly Delegate? action = null;
+		public delegate Objective? PostMoveAction(TileMap.Tile tile, Unit unit);
+		readonly PostMoveAction? action = null;
 		readonly TileMap.Tile target;
 		List<TileMap.Tile> pathway;
 		int pos = 0;
 
-		public MoveAction(TileMap.Tile target, Delegate? action = null)
+		public MoveAction(TileMap.Tile target, PostMoveAction? action = null)
 		{
 			this.target = target;
 			this.action = action;
@@ -18,6 +19,10 @@ namespace JuniorProject.Backend.Agents.Objectives
 
 		public override Objective? PerformTurn(ulong tick)
 		{
+			if(unit.pos == target)
+			{
+				return action?.Invoke(unit.pos, unit);
+			}
 			if(pathway == null) 
 			{
 				pathway = Astar.FindPath(unit.tileMap, unit.pos, target);
@@ -31,8 +36,7 @@ namespace JuniorProject.Backend.Agents.Objectives
 			unit.EnterTile(pathway[pos]);
 			if(pos ==  pathway.Count-1)
 			{
-				action?.DynamicInvoke();
-				return null;
+				return action?.Invoke(unit.pos, unit); ;
 			}
 			return this;
 		}

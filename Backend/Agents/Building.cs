@@ -61,6 +61,15 @@ namespace JuniorProject.Backend.Agents
             sprite = template.sprite;
         }
 
+		public override void TakeTurn(ulong tick)
+		{
+			base.TakeTurn(tick);
+            if(template.name == "Farm" && nation != null)
+            {
+                nation.money++;
+            }
+		}
+
 		public override string GetSprite()
 		{
 			return $"{(template.hasColor ? (nation?.color) : "")}{base.GetSprite()}";

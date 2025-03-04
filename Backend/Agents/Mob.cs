@@ -44,9 +44,13 @@ namespace JuniorProject.Backend.Agents
 			ExitTile(pos);
 			pos = tile;
 			tileMap.TilesUpdated();
+			tile.Occupants.Add(this);
 		}
 
-		public virtual void ExitTile(TileMap.Tile tile) { }
+		public virtual void ExitTile(TileMap.Tile tile) 
+		{
+			tile?.Occupants.Remove(this);
+		}
 
 		public void populateDrawables(ref List<GenericDrawable> genericDrawables)
 		{
@@ -58,6 +62,14 @@ namespace JuniorProject.Backend.Agents
 			return sprite;
 		}
 
+		public virtual void DestroyMob()
+		{
+			ExitTile(pos);
+			pos = null;
+			nation?.mobsToRemove.Add(this);
+		}
+
+
 		public override void SerializeFields()
 		{
 			SerializeField(PosVector);
@@ -67,6 +79,7 @@ namespace JuniorProject.Backend.Agents
 		public override void DeserializeFields()
 		{
 			pos = tileMap?.getTile(DeserializeField<Vector2Int>());
+			EnterTile(pos);
 			sprite = DeserializeField<string>();
 		}
 
