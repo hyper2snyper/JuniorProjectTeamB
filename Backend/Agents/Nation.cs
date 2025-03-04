@@ -114,7 +114,6 @@ namespace JuniorProject.Backend.Agents
 
         public void RemoveTerritory(TileMap.Tile tile)
         {
-            tile.Owner = null;
             territory.Remove(tile);
 			world.RedrawAction?.Invoke();
 		}

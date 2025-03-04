@@ -99,7 +99,6 @@ namespace JuniorProject.Backend.Agents
 		{
             if (tile.Owner != nation)
             {
-                //tile.Owner = null;
                 nation.AddTerritory(tile);
             }
 			base.EnterTile(tile);
