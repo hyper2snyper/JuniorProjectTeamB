@@ -1,51 +1,101 @@
-﻿using System;
+﻿using JuniorProject.Backend.Helpers;
+using JuniorProject.Backend.WorldData;
+using System;
 using System.Data.SQLite;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace JuniorProject.Backend.Agents
 {
-    class Building : Serializable
+    public class Building : Mob
     {
 
-        class BuildingTemplate
+        public class BuildingTemplate
         {
-            string name;
-            int cost;
-            int maxHealth;
-            int sprite;
-            public BuildingTemplate()
-            {
-                SQLiteDataReader results = DatabaseManager.ReadDB("SELECT * FROM Buildings;");
-                while (results.Read())
-                {
-                    name = results.GetString(0);
-                    cost = results.GetInt32(2);
-                    sprite = results.GetInt32(3);
-                }
-            }
-
+            public string name;
+            public int cost;
+            public int maxHealth;
+            public string sprite;
+            public bool hasColor = false;
         }
+        public static Dictionary<string, BuildingTemplate> buildingTemplates;
+        public static BuildingTemplate capitalTemplate;
+        public static void LoadBuildingTemplates()
+        {
+            buildingTemplates = new Dictionary<string, BuildingTemplate>();
+			SQLiteDataReader results = DatabaseManager.ReadDB("SELECT * FROM Buildings;");
+			while (results.Read())
+			{
+                BuildingTemplate template = new BuildingTemplate();
+				template.name = results.GetString(0);
+				template.cost = results.GetInt32(1);
+                template.maxHealth = results.GetInt32(2);
+				template.sprite = results.GetString(3);
+                template.hasColor = results.GetBoolean(4);
+				if (results.GetInt32(5) != 0)
+                {
+                    capitalTemplate = template;
+                }
+                buildingTemplates.Add(template.name, template);
+			}
+		}
 
-        Nation owner;
+        public BuildingTemplate template;
+
         int health;
 
-
-
-        public override void DeserializeFields()
+        public Building() { }
+        public Building(string type, TileMap map, TileMap.Tile tile, Nation? nation) : base(map, tile, nation)
         {
-            throw new NotImplementedException();
+            if(!buildingTemplates.ContainsKey(type))
+            {
+                Debug.Print($"Building was initialized with nonexistant type. {type}");
+                return;
+            }
+            SetType(buildingTemplates[type]);
         }
+
+        void SetType(BuildingTemplate template)
+        {
+            this.template = template;
+            health = template.maxHealth;
+            sprite = template.sprite;
+        }
+
+		public override void TakeTurn(ulong tick)
+		{
+			base.TakeTurn(tick);
+            if(template.name == "Farm" && nation != null)
+            {
+                nation.money++;
+            }
+		}
+
+		public override string GetSprite()
+		{
+			return $"{(template.hasColor ? (nation?.color) : "")}{base.GetSprite()}";
+		}
 
         public override void SerializeFields()
         {
-            throw new NotImplementedException();
+			base.SerializeFields();
+			SerializeField(template.name);
+
+            SerializeField(health);
+            SerializeField(sprite);
+            
         }
 
+		public override void DeserializeFields()
+		{
+            base.DeserializeFields();
+            template = buildingTemplates[DeserializeField<string>()];
+
+            health = DeserializeField<int>();  
+            sprite = DeserializeField<string>();
+		}
 
 
 
-    }
+
+	}
 }

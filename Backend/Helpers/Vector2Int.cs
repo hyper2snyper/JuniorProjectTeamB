@@ -21,6 +21,13 @@ namespace JuniorProject.Backend.Helpers
         public int X { get { return x; } }
         public int Y { get { return y; } }
         public int Magnitude { get { return (int)MathF.Sqrt((x * x) + (y * y)); } }
+        public Vector2Int Normalize
+        {
+            get
+            {
+                return new Vector2Int(X/Magnitude, Y/Magnitude);
+            }
+        }
 
         public Vector2Int((int, int) pos)
         {
@@ -51,5 +58,10 @@ namespace JuniorProject.Backend.Helpers
             return v1.x * v2.x + v1.y * v2.y;
         }
 
-    }
+		public override string ToString()
+		{
+            return $"({X}, {Y})";
+		}
+
+	}
 }
