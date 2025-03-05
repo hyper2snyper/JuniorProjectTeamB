@@ -17,7 +17,7 @@ namespace JuniorProject.Frontend.Components
         }
 
         public Vector2Int gridPosition;
-        public string sprite;
+        public string sprite; 
         public int layer;
         public string uniqueIdentifier;
     }

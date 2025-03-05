@@ -18,14 +18,16 @@ namespace JuniorProject.Frontend.Components
         public Boolean shouldMove;
 
         public string team;
+        public string sprite;
 
-        public CachedDrawable(Image image, Vector2Int pixelPos, Vector2Int gridPos, string team = "") {
+        public CachedDrawable(Image image, Vector2Int pixelPos, Vector2Int gridPos, string team = "", string sprite = "") {
             this.image = image;
             this.pixelPosition = pixelPos;
             this.gridPosition = gridPos;
             this.shouldDelete = false;
             this.shouldMove = false;
             this.team = team;
+            this.sprite = sprite;
         }
     }
 }

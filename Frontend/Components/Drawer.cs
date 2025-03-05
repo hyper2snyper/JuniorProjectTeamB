@@ -273,7 +273,7 @@ namespace JuniorProject.Frontend.Components
                 {
                     if (d.sprite == null || d.sprite == "") continue;
                     if (d.layer == i) {
-                        AddToDrawables(d.sprite, d.gridPosition, d.uniqueIdentifier);
+                        AddToDrawables(d.sprite, d.gridPosition, d.uniqueIdentifier, d.sprite);
                     }
                 }
             }
@@ -379,7 +379,7 @@ namespace JuniorProject.Frontend.Components
             }
         }
 
-        public void AddToDrawables(string name, Vector2Int gridPos, string uniqueIdentifier)
+        public void AddToDrawables(string name, Vector2Int gridPos, string uniqueIdentifier, string sprite)
         {
             string imageSource = "SpriteSheet";
             Vector2Int pixelPosition = ConvertGridPositionToPixels(gridPos.X, gridPos.Y);
@@ -387,8 +387,12 @@ namespace JuniorProject.Frontend.Components
             // UNITS
             if (uniqueIdentifier != null)
             {
-                if (!cachedUnits.ContainsKey(uniqueIdentifier))
+                if (!cachedUnits.ContainsKey(uniqueIdentifier) || (cachedUnits[uniqueIdentifier].sprite != sprite))
                 {
+                    if (cachedUnits.ContainsKey(uniqueIdentifier)) { 
+                        Canvas.Children.Remove(cachedUnits[uniqueIdentifier].image);
+                    }
+
                     Controls.Image newUnitImage = new Controls.Image
                     {
                         Source = getPreloadedSprite(name),
