@@ -99,7 +99,7 @@ namespace JuniorProject.Frontend.Components
                 Height = worldBitmap.Height,
                 Source = TransferToWriteableBitmap(worldBitmap),
             };
-            map = new Drawable(mapImage, true, "WorldMap");
+            map = new Drawable(mapImage, true, "WorldMap", 0);
 
             Controls.Image gridImage = new Controls.Image
             {
@@ -107,7 +107,7 @@ namespace JuniorProject.Frontend.Components
                 Height = worldBitmap.Height,
                 Source = TransferToWriteableBitmap(GetGridlines())
             };
-            grid = new Drawable(gridImage, true, "Grid");
+            grid = new Drawable(gridImage, true, "Grid", 1);
         }
 
         private void preloadAllSprites()
@@ -248,7 +248,8 @@ namespace JuniorProject.Frontend.Components
                     {
                         Canvas.SetLeft(d.image, d.pixelPosition.X);
                         Canvas.SetTop(d.image, d.pixelPosition.Y);
-                    } 
+                    }
+                    Panel.SetZIndex(d.image, d.layer);
                     Canvas.Children.Add(d.image);
                 }
             }
@@ -298,6 +299,8 @@ namespace JuniorProject.Frontend.Components
                     }
                 }
             }
+
+            checkCachedDrawingsToDelete();
 
             Debug.Print($"Amount of new images added: {images}");
 
@@ -378,6 +381,32 @@ namespace JuniorProject.Frontend.Components
             //AddBitmapToCanvas("RedShip", extractFromSprite("RedShip"), 10, 4);
         }
 
+        public void checkCachedDrawingsToDelete() {
+            foreach (var u in cachedUnits)
+            {
+                if (u.Value.shouldDelete) {
+                    Canvas.Children.Remove(u.Value.image);
+                }
+                u.Value.shouldDelete = true;
+            }
+            foreach (var u in cachedTiles)
+            {
+                if (u.Value.shouldDelete)
+                {
+                    Canvas.Children.Remove(u.Value.image);
+                }
+                u.Value.shouldDelete = true;
+            }
+            foreach (var u in cachedBuildings)
+            {
+                if (u.Value.shouldDelete)
+                {
+                    Canvas.Children.Remove(u.Value.image);
+                }
+                u.Value.shouldDelete = true;
+            }
+        }
+
         public void AddToDrawables(string name, Vector2Int gridPos, string uniqueIdentifier) {
             string imageSource = "SpriteSheet";
             Vector2Int pixelPosition = ConvertGridPositionToPixels(gridPos.X, gridPos.Y);
@@ -391,7 +420,7 @@ namespace JuniorProject.Frontend.Components
                         Width = getPreloadedSprite(name).Width,
                         Height = getPreloadedSprite(name).Height,
                     };
-                    drawables.Enqueue(new Drawable(newUnitImage, true, name, imageSource, pixelPosition, gridPos));
+                    drawables.Enqueue(new Drawable(newUnitImage, true, name, imageSource, pixelPosition, gridPos, 4));
                     cachedUnits[uniqueIdentifier] = new CachedDrawable(newUnitImage, pixelPosition, gridPos);
                     return;
                 }
@@ -399,8 +428,11 @@ namespace JuniorProject.Frontend.Components
                 if (cachedUnits[uniqueIdentifier].gridPosition.X != gridPos.X || cachedUnits[uniqueIdentifier].gridPosition.Y != gridPos.Y) {
                     cachedUnits[uniqueIdentifier] = new CachedDrawable(cachedUnits[uniqueIdentifier].image, pixelPosition, gridPos);
                     cachedUnits[uniqueIdentifier].shouldMove = true;
+                    cachedUnits[uniqueIdentifier].shouldDelete = false;
                     return;
                 }
+
+                cachedUnits[uniqueIdentifier].shouldDelete = false;
                 return;
             }
             //Dictionary<(int, int), CachedDrawable> cachedTiles = new Dictionary<(int, int), CachedDrawable>();
@@ -419,23 +451,33 @@ namespace JuniorProject.Frontend.Components
                         Height = getPreloadedSprite(name).Height,
                     };
                     cachedTiles[(gridPos.X, gridPos.Y)] = new CachedDrawable(newTile, pixelPosition, gridPos, name);
-                    drawables.Enqueue(new Drawable(newTile, true, "Tile", "SpriteSheet", pixelPosition, gridPos));
+                    drawables.Enqueue(new Drawable(newTile, true, "Tile", "SpriteSheet", pixelPosition, gridPos, 2));
                     Debug.Print($"ADDED TILE: {name} [{gridPos.X}, {gridPos.Y}]");
                 }
+                cachedTiles[(gridPos.X, gridPos.Y)].shouldDelete = false;
                 return;
             }
 
             // BUILDINGS
-            if (!cachedBuildings.ContainsKey((gridPos.X, gridPos.Y))) {
+            if (!cachedBuildings.ContainsKey((gridPos.X, gridPos.Y)) || cachedBuildings[(gridPos.X, gridPos.Y)].team != name)
+            {
+                if (cachedBuildings.ContainsKey((gridPos.X, gridPos.Y)))
+                {
+                    Canvas.Children.Remove(cachedBuildings[(gridPos.X, gridPos.Y)].image);
+                }
+
                 Controls.Image newBuilding = new Controls.Image
                 {
                     Source = getPreloadedSprite(name),
                     Width = getPreloadedSprite(name).Width,
                     Height = getPreloadedSprite(name).Height,
                 };
-                cachedBuildings[(gridPos.X, gridPos.Y)] = new CachedDrawable(newBuilding, pixelPosition, gridPos);
-                drawables.Enqueue(new Drawable(newBuilding, true, name, "SpriteSheet", pixelPosition, gridPos));
+                cachedBuildings[(gridPos.X, gridPos.Y)] = new CachedDrawable(newBuilding, pixelPosition, gridPos, name);
+                drawables.Enqueue(new Drawable(newBuilding, true, name, "SpriteSheet", pixelPosition, gridPos, 3));
                 return;
+            }
+            else {
+                cachedBuildings[(gridPos.X, gridPos.Y)].shouldDelete = false;
             }
 
             //if (uniqueIdentifier != null)
@@ -513,7 +555,7 @@ namespace JuniorProject.Frontend.Components
             };
             Vector2Int pixelPosition = ConvertGridPositionToPixels(gridPos.X, gridPos.Y);
 
-            drawables.Enqueue(new Drawable(img, true, name, imageSource, pixelPosition, gridPos));
+            drawables.Enqueue(new Drawable(img, true, name, imageSource, pixelPosition, gridPos, 1));
 
             if (!name.Contains("Tile"))
             {
