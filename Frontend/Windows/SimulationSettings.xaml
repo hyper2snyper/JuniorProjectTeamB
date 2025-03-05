@@ -7,6 +7,60 @@
         Background="#FF424242"
         mc:Ignorable="d"
         Title="SimulationSettings" Height="416" Width="800">
+    <Window.Resources>
+        <SolidColorBrush x:Key="Button.MouseOver.Background" Color="#FFBEE6FD"/>
+        <SolidColorBrush x:Key="Button.MouseOver.Border" Color="#FF3C7FB1"/>
+        <SolidColorBrush x:Key="Button.Pressed.Background" Color="#FFC4E5F6"/>
+        <SolidColorBrush x:Key="Button.Pressed.Border" Color="#FF2C628B"/>
+        <SolidColorBrush x:Key="Button.Disabled.Background" Color="#FFF4F4F4"/>
+        <SolidColorBrush x:Key="Button.Disabled.Border" Color="#FFADB2B5"/>
+        <SolidColorBrush x:Key="Button.Disabled.Foreground" Color="#FF838383"/>
+        <ControlTemplate x:Key="SaveTemplate" TargetType="{x:Type ButtonBase}">
+            <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" SnapsToDevicePixels="true">
+                <ContentPresenter x:Name="contentPresenter" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="Button.IsDefaulted" Value="true">
+                    <Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="true">
+                    <Setter TargetName="border" Property="Background">
+                        <Setter.Value>
+                            <ImageBrush ImageSource="/Frontend/gui/Buttons/SaveButtonHover.png"/>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+        <Style x:Key="FocusVisual">
+            <Setter Property="Control.Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Rectangle Margin="2" StrokeDashArray="1 2" Stroke="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" SnapsToDevicePixels="true" StrokeThickness="1"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <ControlTemplate x:Key="CancelTemplate" TargetType="{x:Type ButtonBase}">
+            <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" SnapsToDevicePixels="true">
+                <ContentPresenter x:Name="contentPresenter" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="Button.IsDefaulted" Value="true">
+                    <Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="true">
+                    <Setter TargetName="border" Property="Background">
+                        <Setter.Value>
+                            <ImageBrush ImageSource="/Frontend/gui/Buttons/CancelButtonHover.png"/>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+
+    </Window.Resources>
     <Grid>
 
         <Grid.RowDefinitions>
@@ -16,119 +70,79 @@
             <RowDefinition Height="*" />
 
         </Grid.RowDefinitions>
-        <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.RowSpan="2" Margin="-6,0,6,-647">
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.RowSpan="2" Margin="9,0,0,-700">
             <Grid Margin="0,0,7,0" Height="1804">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="1804"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
+                <Border x:Name="Border2_Copy" BorderBrush="White" BorderThickness="1" Margin="284,84,296,1587"/>
                 <Border x:Name="Border7" BorderBrush="White" BorderThickness="1" Margin="50,247,532,1430"/>
                 <Border x:Name="Border5" BorderBrush="White" BorderThickness="1" Margin="283,247,296,1430"/>
                 <Border x:Name="Border3" BorderBrush="White" BorderThickness="1" Margin="507,82,67,1589"/>
                 <Border x:Name="Border" BorderBrush="White" BorderThickness="1" Margin="50,84,532,1587"/>
-                <TextBlock HorizontalAlignment="Left" Margin="319,255,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="22" Width="116" Foreground="White"><Run FontWeight="Bold" Text="Cannoneer Options"/></TextBlock>
-                <TextBlock HorizontalAlignment="Left" Margin="335,93,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="27" Width="96" Foreground="White"><Run FontWeight="Bold" Text="Soldier Options"/></TextBlock>
-                <TextBlock HorizontalAlignment="Left" Margin="64,129,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="18" Width="93" Foreground="White"><Run FontWeight="Bold" Text="Attack Damage"/></TextBlock>
-                <TextBox HorizontalAlignment="Left" Margin="160,129,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="55"/>
-                <TextBlock HorizontalAlignment="Left" Margin="64,157,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="18" Width="80" Foreground="White"><Run FontWeight="Bold" Text="Attack Range"/></TextBlock>
-                <TextBox HorizontalAlignment="Left" Margin="160,156,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="55"/>
-                <TextBlock HorizontalAlignment="Left" Margin="103,95,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="27" Width="98" Foreground="#FFF9F4F4"><Run FontWeight="Bold" Text="Archer Options"/></TextBlock>
-                <TextBlock HorizontalAlignment="Left" Margin="63,184,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="20" Width="80" Foreground="White"><Run FontWeight="Bold" Text="Max Health"/></TextBlock>
-                <TextBox HorizontalAlignment="Left" Margin="160,183,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="55"/>
-                <TextBox HorizontalAlignment="Left" Margin="163,287,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="55"/>
-                <TextBox HorizontalAlignment="Left" Margin="163,311,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="55"/>
-                <TextBox HorizontalAlignment="Left" Margin="163,335,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="55"/>
-                <TextBox HorizontalAlignment="Left" Margin="628,130,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="53"/>
-                <TextBox HorizontalAlignment="Left" Margin="628,157,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="53"/>
-                <TextBlock HorizontalAlignment="Left" Margin="562,93,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="27" Width="98" Foreground="#FFF9F4F4"><Run FontWeight="Bold" Text="Cavalier Options"/></TextBlock>
-                <TextBox HorizontalAlignment="Left" Margin="628,184,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="53"/>
-                <TextBox HorizontalAlignment="Left" Margin="406,130,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="53"/>
-                <TextBox HorizontalAlignment="Left" Margin="406,157,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="53"/>
-                <TextBox HorizontalAlignment="Left" Margin="406,183,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="53"/>
-                <TextBox HorizontalAlignment="Left" Margin="400,304,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="53"/>
-                <TextBox HorizontalAlignment="Left" Margin="400,329,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="53"/>
-                <TextBox HorizontalAlignment="Left" Margin="400,281,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="53"/>
-                <TextBlock HorizontalAlignment="Left" Margin="298,182,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="18" Width="80" Foreground="White"><Run FontWeight="Bold" Text="Max Health"/></TextBlock>
-                <TextBlock HorizontalAlignment="Left" Margin="297,157,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="18" Width="80" Foreground="White"><Run FontWeight="Bold" Text="Attack Range"/></TextBlock>
-                <TextBlock HorizontalAlignment="Left" Margin="298,130,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="98" Foreground="White"><Run FontWeight="Bold" Text="Attack Damage"/></TextBlock>
-                <TextBlock HorizontalAlignment="Left" Margin="531,130,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="17" Width="102" Foreground="White" Text="{Binding Child, ElementName=Border3}"><Run FontWeight="Bold" Text="Attack Damage"/></TextBlock>
-                <TextBlock HorizontalAlignment="Left" Margin="531,157,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="18" Width="80" Foreground="White"><Run FontWeight="Bold" Text="Attack Range"/></TextBlock>
-                <TextBlock HorizontalAlignment="Left" Margin="532,184,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="18" Width="80" Foreground="White"><Run FontWeight="Bold" Text="Max Health"/></TextBlock>
-                <TextBlock HorizontalAlignment="Left" Margin="103,255,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="27" Width="106" Foreground="White"><Run FontWeight="Bold" Text="Catapult Options"/></TextBlock>
-                <TextBlock HorizontalAlignment="Left" Margin="72,334,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="18" Width="80" Foreground="White"><Run FontWeight="Bold" Text="Max Health"/></TextBlock>
-                <TextBlock HorizontalAlignment="Left" Margin="72,309,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="21" Width="80" Foreground="White"><Run FontWeight="Bold" Text="Attack Range"/></TextBlock>
-                <TextBlock HorizontalAlignment="Left" Margin="71,287,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="17" Width="89" Foreground="White"><Run FontWeight="Bold" Text="Attack Damage"/></TextBlock>
-                <TextBlock HorizontalAlignment="Left" Margin="297,280,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="88" Foreground="White"><Run FontWeight="Bold" Text="Attack Damage"/></TextBlock>
-                <TextBlock HorizontalAlignment="Left" Margin="297,301,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="21" Width="80" Foreground="White"><Run FontWeight="Bold" Text="Attack Range"/></TextBlock>
-                <TextBlock HorizontalAlignment="Left" Margin="298,327,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="80" Foreground="White"><Run FontWeight="Bold" Text="Max Health"/></TextBlock>
-                <Border x:Name="Border2_Copy" BorderBrush="White" BorderThickness="1" Margin="284,84,296,1587"/>
-                <TextBlock HorizontalAlignment="Left" Margin="319,255,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="22" Width="116" Foreground="White"><Run FontWeight="Bold" Text="Cannoneer Options"/></TextBlock>
-                <TextBlock HorizontalAlignment="Left" Margin="335,93,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="27" Width="96" Foreground="White"><Run FontWeight="Bold" Text="Soldier Options"/></TextBlock>
-                <TextBlock HorizontalAlignment="Left" Margin="64,129,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="18" Width="93" Foreground="White"><Run FontWeight="Bold" Text="Attack Damage"/></TextBlock>
-                <TextBox HorizontalAlignment="Left" Margin="160,129,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="55"/>
-                <TextBlock HorizontalAlignment="Left" Margin="64,157,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="18" Width="80" Foreground="White"><Run FontWeight="Bold" Text="Attack Range"/></TextBlock>
-                <TextBox HorizontalAlignment="Left" Margin="160,156,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="55"/>
-                <TextBlock HorizontalAlignment="Left" Margin="103,95,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="27" Width="98" Foreground="#FFF9F4F4"><Run FontWeight="Bold" Text="Archer Options"/></TextBlock>
-                <TextBlock HorizontalAlignment="Left" Margin="63,184,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="20" Width="80" Foreground="White"><Run FontWeight="Bold" Text="Max Health"/></TextBlock>
-                <TextBox HorizontalAlignment="Left" Margin="160,183,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="55"/>
-                <TextBox HorizontalAlignment="Left" Margin="163,287,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="55"/>
-                <TextBox HorizontalAlignment="Left" Margin="163,311,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="55"/>
-                <TextBox HorizontalAlignment="Left" Margin="163,335,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="55"/>
-                <TextBox HorizontalAlignment="Left" Margin="628,130,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="53"/>
-                <TextBox HorizontalAlignment="Left" Margin="628,157,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="53"/>
-                <TextBlock HorizontalAlignment="Left" Margin="562,93,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="27" Width="98" Foreground="#FFF9F4F4"><Run FontWeight="Bold" Text="Cavalier Options"/></TextBlock>
-                <TextBox HorizontalAlignment="Left" Margin="628,184,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="53"/>
-                <TextBox HorizontalAlignment="Left" Margin="406,130,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="53"/>
-                <TextBox HorizontalAlignment="Left" Margin="406,157,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="53"/>
-                <TextBox HorizontalAlignment="Left" Margin="406,183,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="53"/>
-                <TextBox HorizontalAlignment="Left" Margin="400,304,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="53"/>
-                <TextBox HorizontalAlignment="Left" Margin="400,329,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="53"/>
-                <TextBox HorizontalAlignment="Left" Margin="400,281,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="53"/>
-                <TextBlock HorizontalAlignment="Left" Margin="298,182,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="18" Width="80" Foreground="White"><Run FontWeight="Bold" Text="Max Health"/></TextBlock>
-                <TextBlock HorizontalAlignment="Left" Margin="297,157,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="18" Width="80" Foreground="White"><Run FontWeight="Bold" Text="Attack Range"/></TextBlock>
-                <TextBlock HorizontalAlignment="Left" Margin="298,130,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="98" Foreground="White"><Run FontWeight="Bold" Text="Attack Damage"/></TextBlock>
-                <TextBlock HorizontalAlignment="Left" Margin="531,130,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="17" Width="102" Foreground="White" Text="{Binding Child, ElementName=Border3}"><Run FontWeight="Bold" Text="Attack Damage"/></TextBlock>
-                <TextBlock HorizontalAlignment="Left" Margin="531,157,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="18" Width="80" Foreground="White"><Run FontWeight="Bold" Text="Attack Range"/></TextBlock>
-                <TextBlock HorizontalAlignment="Left" Margin="532,184,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="18" Width="80" Foreground="White"><Run FontWeight="Bold" Text="Max Health"/></TextBlock>
-                <TextBlock HorizontalAlignment="Left" Margin="103,255,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="27" Width="106" Foreground="White"><Run FontWeight="Bold" Text="Catapult Options"/></TextBlock>
-                <TextBlock HorizontalAlignment="Left" Margin="72,334,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="18" Width="80" Foreground="White"><Run FontWeight="Bold" Text="Max Health"/></TextBlock>
-                <TextBlock HorizontalAlignment="Left" Margin="72,309,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="21" Width="80" Foreground="White"><Run FontWeight="Bold" Text="Attack Range"/></TextBlock>
-                <TextBlock HorizontalAlignment="Left" Margin="71,287,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="17" Width="89" Foreground="White"><Run FontWeight="Bold" Text="Attack Damage"/></TextBlock>
-                <TextBlock HorizontalAlignment="Left" Margin="297,280,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="88" Foreground="White"><Run FontWeight="Bold" Text="Attack Damage"/></TextBlock>
-                <TextBlock HorizontalAlignment="Left" Margin="297,301,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="21" Width="80" Foreground="White"><Run FontWeight="Bold" Text="Attack Range"/></TextBlock>
-                <TextBlock HorizontalAlignment="Left" Margin="298,327,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="80" Foreground="White"><Run FontWeight="Bold" Text="Max Health"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="319,255,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="22" Width="116" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Cannoneer Options"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="335,93,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="27" Width="96" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Soldier Options"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="64,129,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="18" Width="93" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Attack Damage"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="64,157,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="18" Width="80" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Attack Range"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="103,95,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="27" Width="98" Foreground="#FFF9F4F4"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Archer Options"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="63,184,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="20" Width="80" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Max Health"/></TextBlock>
+                <TextBox x:Name="CatapultD" PreviewTextInput="NumberOnlyInput" HorizontalAlignment="Left" Margin="164,287,0,0" TextWrapping="Wrap" Text="10" VerticalAlignment="Top" Width="55" TextChanged="CatapultDamage_TextChanged"/>
+                <TextBox x:Name="CatapultR" PreviewTextInput="NumberOnlyInput" HorizontalAlignment="Left" Margin="163,311,0,0" TextWrapping="Wrap" Text="3" VerticalAlignment="Top" Width="55" TextChanged="CatapultRange_TextChanged"/>
+                <TextBox x:Name="CatapultH" PreviewTextInput="NumberOnlyInput" HorizontalAlignment="Left" Margin="163,335,0,0" TextWrapping="Wrap" Text="10" VerticalAlignment="Top" Width="55" TextChanged="CatapultHealth_TextChanged"/>
+                <TextBox x:Name="CavalierD" PreviewTextInput="NumberOnlyInput" HorizontalAlignment="Left" Margin="628,130,0,0" TextWrapping="Wrap" Text="3" VerticalAlignment="Top" Width="53" TextChanged="CavalierDamage_TextChanged"/>
+                <TextBox x:Name="CavalierR" PreviewTextInput="NumberOnlyInput" HorizontalAlignment="Left" Margin="628,157,0,0" TextWrapping="Wrap" Text="1" VerticalAlignment="Top" Width="53" TextChanged="CavalierRange_TextChanged"/>
+                <TextBlock HorizontalAlignment="Left" Margin="562,93,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="27" Width="98" Foreground="#FFF9F4F4"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Cavalier Options"/></TextBlock>
+                <TextBox x:Name="CavalierH" PreviewTextInput="NumberOnlyInput" HorizontalAlignment="Left" Margin="628,184,0,0" TextWrapping="Wrap" Text="8" VerticalAlignment="Top" Width="53" TextChanged="CavalierHealth_TextChanged"/>
+                <TextBox x:Name="CannonR" PreviewTextInput="NumberOnlyInput" HorizontalAlignment="Left" Margin="400,304,0,0" TextWrapping="Wrap" Text="5" VerticalAlignment="Top" Width="53" TextChanged="CannonRange_TextChanged"/>
+                <TextBox x:Name="CannonH" PreviewTextInput="NumberOnlyInput" HorizontalAlignment="Left" Margin="400,329,0,0" TextWrapping="Wrap" Text="8" VerticalAlignment="Top" Width="53" TextChanged="CannonHealth_TextChanged"/>
+                <TextBox x:Name="CannonD" PreviewTextInput="NumberOnlyInput" HorizontalAlignment="Left" Margin="400,281,0,0" TextWrapping="Wrap" Text="5" VerticalAlignment="Top" Width="53" TextChanged="CannonDamage_TextChanged"/>
+                <TextBlock HorizontalAlignment="Left" Margin="298,182,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="18" Width="80" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Max Health"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="297,157,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="18" Width="80" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Attack Range"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="298,130,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="98" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Attack Damage"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="531,130,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="17" Width="102" Foreground="White" ><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Attack Damage"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="531,157,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="18" Width="80" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Attack Range"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="532,184,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="18" Width="80" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Max Health"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="103,255,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="27" Width="106" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Catapult Options"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="72,334,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="18" Width="80" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Max Health"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="72,309,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="21" Width="80" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Attack Range"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="71,287,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="17" Width="89" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Attack Damage"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="297,280,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="88" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Attack Damage"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="297,301,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="21" Width="80" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Attack Range"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="298,327,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="80" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Max Health"/></TextBlock>
+                <TextBox x:Name="ArcherD" PreviewTextInput="NumberOnlyInput" HorizontalAlignment="Left" Margin="160,129,0,0" TextWrapping="Wrap" Text="1" VerticalAlignment="Top" Width="55" TextChanged="ArcherDamage_TextChanged"/>
+                <TextBox x:Name="ArcherR" PreviewTextInput="NumberOnlyInput" HorizontalAlignment="Left" Margin="160,156,0,0" TextWrapping="Wrap" Text="2" VerticalAlignment="Top" Width="55" TextChanged="ArcherRange_TextChanged"/>
+                <TextBox x:Name="ArcherH" PreviewTextInput="NumberOnlyInput" HorizontalAlignment="Left" Margin="160,183,0,0" TextWrapping="Wrap" Text="3" VerticalAlignment="Top" Width="55" TextChanged="ArcherHealth_TextChanged"/>
+                <TextBox x:Name="SoldierD" PreviewTextInput="NumberOnlyInput" HorizontalAlignment="Left" Margin="406,130,0,0" TextWrapping="Wrap" Text="1" VerticalAlignment="Top" Width="53" TextChanged="SoldierDamage_TextChanged"/>
+                <TextBox x:Name="SoldierR" PreviewTextInput="NumberOnlyInput" HorizontalAlignment="Left" Margin="406,157,0,0" TextWrapping="Wrap" Text="1" VerticalAlignment="Top" Width="53" TextChanged="SoldierRange_TextChanged"/>
+                <TextBox x:Name="SoldierH" PreviewTextInput="NumberOnlyInput" HorizontalAlignment="Left" Margin="406,183,0,0" TextWrapping="Wrap" Text="5" VerticalAlignment="Top" Width="53" TextChanged="SoldierHealth_TextChanged"/>
                 <Border x:Name="Border5_Copy3" BorderBrush="White" BorderThickness="1" Margin="47,445,532,1284"/>
-                <TextBlock HorizontalAlignment="Left" Margin="89,453,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="22" Width="116" Foreground="White"><Run FontWeight="Bold" Text="Capital Options"/></TextBlock>
-                <TextBox HorizontalAlignment="Left" Margin="170,479,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="53"/>
-                <TextBox HorizontalAlignment="Left" Margin="170,479,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="53"/>
-                <TextBlock HorizontalAlignment="Left" Margin="68,480,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="88" Foreground="White"><Run FontWeight="Bold" Text="Building Cost"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="89,453,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="22" Width="116" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Capital Options"/></TextBlock>
+                <TextBox x:Name="CapitialCost" PreviewTextInput="FloatOnlyInput" HorizontalAlignment="Left" Margin="170,479,0,0" TextWrapping="Wrap" Text="3.65" VerticalAlignment="Top" Width="53" TextChanged="CapitalBC_TextChanged"/>
+                <TextBlock HorizontalAlignment="Left" Margin="68,480,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="88" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Building Cost"/></TextBlock>
                 <Border x:Name="Border5_Copy1" BorderBrush="White" BorderThickness="1" Margin="279,445,296,1284"/>
-                <TextBlock HorizontalAlignment="Left" Margin="317,453,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="22" Width="116" Foreground="White"><Run FontWeight="Bold" Text="House Options"/></TextBlock>
-                <TextBox HorizontalAlignment="Left" Margin="398,479,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="53"/>
-                <TextBox HorizontalAlignment="Left" Margin="398,479,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="53"/>
-                <TextBlock HorizontalAlignment="Left" Margin="296,480,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="88" Foreground="White"><Run FontWeight="Bold" Text="Building Cost"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="317,453,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="22" Width="116" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="House Options"/></TextBlock>
+                <TextBox x:Name="HouseCost" PreviewTextInput="FloatOnlyInput" HorizontalAlignment="Left" Margin="398,479,0,0" TextWrapping="Wrap" Text="6.53" VerticalAlignment="Top" Width="53" TextChanged="HouseBC_TextChanged"/>
+                <TextBlock HorizontalAlignment="Left" Margin="296,480,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="88" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Building Cost"/></TextBlock>
                 <Border x:Name="Border5_Copy2" BorderBrush="White" BorderThickness="1" Margin="497,445,67,1284"/>
-                <TextBlock HorizontalAlignment="Left" Margin="541,453,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="22" Width="116" Foreground="White"><Run FontWeight="Bold" Text="Mine Options"/></TextBlock>
-                <TextBox HorizontalAlignment="Left" Margin="622,479,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="53"/>
-                <TextBox HorizontalAlignment="Left" Margin="622,479,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="53"/>
-                <TextBlock HorizontalAlignment="Left" Margin="520,480,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="88" Foreground="White"><Run FontWeight="Bold" Text="Building Cost"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="541,453,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="22" Width="116" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Mine Options"/></TextBlock>
+                <TextBox x:Name="MineCost" PreviewTextInput="FloatOnlyInput" HorizontalAlignment="Left" Margin="622,479,0,0" TextWrapping="Wrap" Text="5.65" VerticalAlignment="Top" Width="53" TextChanged="MineBC_TextChanged"/>
+                <TextBlock HorizontalAlignment="Left" Margin="520,480,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="88" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Building Cost"/></TextBlock>
                 <Border x:Name="Border5_Copy4" BorderBrush="White" BorderThickness="1" Margin="46,527,532,1202"/>
-                <TextBlock HorizontalAlignment="Left" Margin="91,535,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="22" Width="116" Foreground="White"><Run FontWeight="Bold" Text="Barracks Options"/></TextBlock>
-                <TextBox HorizontalAlignment="Left" Margin="171,561,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="53"/>
-                <TextBox HorizontalAlignment="Left" Margin="171,561,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="53"/>
-                <TextBlock HorizontalAlignment="Left" Margin="70,562,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="88" Foreground="White"><Run FontWeight="Bold" Text="Building Cost"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="91,535,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="22" Width="116" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Barracks Options"/></TextBlock>
+                <TextBox x:Name="BarrackCost" PreviewTextInput="FloatOnlyInput" HorizontalAlignment="Left" Margin="171,561,0,0" TextWrapping="Wrap" Text="5.65" VerticalAlignment="Top" Width="53" TextChanged="BarracksBC_TextChanged"/>
+                <TextBlock HorizontalAlignment="Left" Margin="70,562,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="88" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Building Cost"/></TextBlock>
                 <Border x:Name="Border5_Copy5" BorderBrush="White" BorderThickness="1" Margin="279,528,296,1201"/>
-                <TextBlock HorizontalAlignment="Left" Margin="317,536,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="22" Width="116" Foreground="White"><Run FontWeight="Bold" Text="Smith Options"/></TextBlock>
-                <TextBox HorizontalAlignment="Left" Margin="398,562,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="53"/>
-                <TextBox HorizontalAlignment="Left" Margin="398,562,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="53"/>
-                <TextBlock HorizontalAlignment="Left" Margin="296,563,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="88" Foreground="White"><Run FontWeight="Bold" Text="Building Cost"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="317,536,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="22" Width="116" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Smith Options"/></TextBlock>
+                <TextBox x:Name="SmithCost" PreviewTextInput="FloatOnlyInput" HorizontalAlignment="Left" Margin="398,562,0,0" TextWrapping="Wrap" Text="5.65" VerticalAlignment="Top" Width="53" TextChanged="SmithBC_TextChanged"/>
+                <TextBlock HorizontalAlignment="Left" Margin="296,563,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="88" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Building Cost"/></TextBlock>
                 <Border x:Name="Border5_Copy6" BorderBrush="White" BorderThickness="1" Margin="497,528,67,1201"/>
-                <TextBlock HorizontalAlignment="Left" Margin="541,536,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="22" Width="116" Foreground="White"><Run FontWeight="Bold" Text="Farm Options"/></TextBlock>
-                <TextBox HorizontalAlignment="Left" Margin="622,562,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="53"/>
-                <TextBox HorizontalAlignment="Left" Margin="622,562,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="53"/>
-                <TextBlock HorizontalAlignment="Left" Margin="520,563,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="88" Foreground="White"><Run FontWeight="Bold" Text="Building Cost"/></TextBlock>
-                <Label Content="Building Options" HorizontalAlignment="Left" Margin="312,408,0,0" VerticalAlignment="Top" Width="137" Foreground="White" FontWeight="Bold"/>
-                <Label Content="Unit Options" HorizontalAlignment="Left" Margin="324,50,0,0" VerticalAlignment="Top" Width="137" Foreground="White" FontWeight="Bold"/>
+                <TextBlock HorizontalAlignment="Left" Margin="541,536,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="22" Width="116" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Farm Options"/></TextBlock>
+                <TextBox x:Name="FarmCost" PreviewTextInput="FloatOnlyInput" HorizontalAlignment="Left" Margin="622,562,0,0" TextWrapping="Wrap" Text="666.6" VerticalAlignment="Top" Width="53" TextChanged="FarmBC_TextChanged"/>
+                <TextBlock HorizontalAlignment="Left" Margin="520,563,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="88" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Building Cost"/></TextBlock>
+                <Label Content="Building Options" HorizontalAlignment="Left" Margin="312,408,0,0" VerticalAlignment="Top" Width="137" Foreground="White" FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold"/>
+                <Label Content="Unit Options" HorizontalAlignment="Left" Margin="324,50,0,0" VerticalAlignment="Top" Width="137" Foreground="White" FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold"/>
                 <Border x:Name="Border7_Copy" BorderBrush="White" BorderThickness="1" Margin="154,879,413,742"/>
                 <Border x:Name="Border5_Copy7" BorderBrush="White" BorderThickness="1" Margin="383,879,177,742"/>
                 <Border x:Name="Border2_Copy1" BorderBrush="White" BorderThickness="1" Margin="385,668,177,939"/>
@@ -142,57 +156,85 @@
                         </TransformGroup>
                     </Border.RenderTransform>
                 </Border>
-                <TextBlock HorizontalAlignment="Left" Margin="409,887,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="22" Width="155" Foreground="White"><Run FontWeight="Bold" Text="Highlands Forest Options"/></TextBlock>
-                <TextBlock HorizontalAlignment="Left" Margin="432,677,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="27" Width="112" Foreground="White"><Run FontWeight="Bold" Text="Highlands Options"/></TextBlock>
-                <TextBox HorizontalAlignment="Left" Margin="268,713,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="55"/>
-                <TextBox HorizontalAlignment="Left" Margin="268,740,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="55"/>
-                <TextBlock HorizontalAlignment="Left" Margin="206,679,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="27" Width="112" Foreground="#FFF9F4F4"><Run FontWeight="Bold" Text="Grassland Options"/></TextBlock>
-                <TextBox HorizontalAlignment="Left" Margin="268,767,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="55"/>
-                <TextBox HorizontalAlignment="Left" Margin="271,45,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Center" Width="55"/>
-                <TextBox HorizontalAlignment="Left" Margin="271,970,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="55"/>
-                <TextBox HorizontalAlignment="Left" Margin="271,1021,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="55"/>
-                <TextBox HorizontalAlignment="Left" Margin="514,715,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="53"/>
-                <TextBox HorizontalAlignment="Left" Margin="514,741,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="53"/>
-                <TextBox HorizontalAlignment="Left" Margin="514,767,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="53"/>
-                <TextBox HorizontalAlignment="Left" Margin="508,943,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="53"/>
-                <TextBox HorizontalAlignment="Left" Margin="508,970,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="53"/>
-                <TextBox HorizontalAlignment="Left" Margin="508,916,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="53"/>
-                <TextBlock HorizontalAlignment="Left" Margin="211,887,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="27" Width="106" Foreground="White"><Run FontWeight="Bold" Text="Forest Options"/></TextBlock>
-                <TextBlock HorizontalAlignment="Left" Margin="180,1021,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="18" Width="80" Foreground="White"><Run FontWeight="Bold" Text="Gold"/></TextBlock>
-                <TextBlock HorizontalAlignment="Left" Margin="180,970,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="21" Width="80" Foreground="White"><Run FontWeight="Bold" Text="Stone"/></TextBlock>
-                <TextBlock HorizontalAlignment="Left" Margin="179,45,0,0" TextWrapping="Wrap" VerticalAlignment="Center" Height="18" Width="89" Foreground="White"><Run FontWeight="Bold" Text="Wood"/></TextBlock>
-                <TextBlock HorizontalAlignment="Left" Margin="405,916,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="88" Foreground="White" Text="Wood" FontWeight="Bold"/>
-                <TextBlock HorizontalAlignment="Left" Margin="405,943,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="18" Width="80" Foreground="White"><Run FontWeight="Bold" Text="Iron"/></TextBlock>
-                <TextBlock HorizontalAlignment="Left" Margin="406,970,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="80" Foreground="White"><Run FontWeight="Bold" Text="Stone"/></TextBlock>
-                <TextBox HorizontalAlignment="Left" Margin="268,713,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="55"/>
-                <TextBox HorizontalAlignment="Left" Margin="268,740,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="55"/>
-                <TextBox HorizontalAlignment="Left" Margin="268,767,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="55"/>
-                <Label Content="Binome Options" HorizontalAlignment="Left" Margin="323,631,0,0" VerticalAlignment="Top" Width="105" Foreground="White" FontWeight="Bold"/>
-                <TextBlock HorizontalAlignment="Left" Margin="406,997,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="80" Foreground="White"><Run FontWeight="Bold" Text="Food"/></TextBlock>
-                <TextBox HorizontalAlignment="Left" Margin="508,997,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="53"/>
-                <TextBlock HorizontalAlignment="Left" Margin="406,1021,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="80" Foreground="White"><Run FontWeight="Bold" Text="Gold"/></TextBlock>
-                <TextBox HorizontalAlignment="Left" Margin="508,1021,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="53"/>
-                <TextBox HorizontalAlignment="Left" Margin="514,821,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="53"/>
-                <TextBlock HorizontalAlignment="Left" Margin="412,715,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="88" Foreground="White" Text="Wood" FontWeight="Bold"/>
-                <TextBlock HorizontalAlignment="Left" Margin="412,742,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="18" Width="80" Foreground="White"><Run FontWeight="Bold" Text="Iron"/></TextBlock>
-                <TextBlock HorizontalAlignment="Left" Margin="411,768,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="80" Foreground="White"><Run FontWeight="Bold" Text="Stone"/></TextBlock>
-                <TextBlock HorizontalAlignment="Left" Margin="412,821,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="80" Foreground="White"><Run FontWeight="Bold" Text="Gold"/></TextBlock>
-                <TextBlock HorizontalAlignment="Left" Margin="175,715,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="75" Foreground="White" Text="Wood" FontWeight="Bold"/>
-                <TextBlock HorizontalAlignment="Left" Margin="176,742,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="18" Width="80" Foreground="White"><Run FontWeight="Bold" Text="Iron"/></TextBlock>
-                <TextBlock HorizontalAlignment="Left" Margin="174,768,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="80" Foreground="White"><Run FontWeight="Bold" Text="Stone"/></TextBlock>
-                <TextBlock HorizontalAlignment="Left" Margin="174,794,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="80" Foreground="White"><Run FontWeight="Bold" Text="Food"/></TextBlock>
-                <TextBox HorizontalAlignment="Left" Margin="268,794,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="55"/>
-                <TextBlock HorizontalAlignment="Left" Margin="180,943,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="21" Width="80" Foreground="White"><Run FontWeight="Bold" Text="Iron"/></TextBlock>
-                <TextBox HorizontalAlignment="Left" Margin="271,943,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="55"/>
-                <TextBox HorizontalAlignment="Left" Margin="271,997,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="55"/>
-                <TextBlock HorizontalAlignment="Left" Margin="180,997,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="21" Width="80" Foreground="White"><Run FontWeight="Bold" Text="Food"/></TextBlock>
-                <TextBlock HorizontalAlignment="Left" Margin="174,821,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="80" Foreground="White"><Run FontWeight="Bold" Text="Gold"/></TextBlock>
-                <TextBox HorizontalAlignment="Left" Margin="268,821,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="55"/>
-                <TextBox HorizontalAlignment="Left" Margin="514,794,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="55"/>
+                <TextBlock HorizontalAlignment="Left" Margin="409,887,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="22" Width="155" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Highlands Forest Options"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="432,677,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="27" Width="112" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Highlands Options"/></TextBlock>
+                <TextBox x:Name="WoodG" PreviewTextInput="NumberOnlyInput"  HorizontalAlignment="Left" Margin="268,713,0,0" TextWrapping="Wrap" Text="40" VerticalAlignment="Top" Width="55" TextChanged="GrasslandWood_TextChanged"/>
+                <TextBox x:Name="IronG" PreviewTextInput="NumberOnlyInput" HorizontalAlignment="Left" Margin="268,740,0,0" TextWrapping="Wrap" Text="10" VerticalAlignment="Top" Width="55" TextChanged="GrasslandIron_TextChanged"/>
+                <TextBlock HorizontalAlignment="Left" Margin="206,679,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="27" Width="112" Foreground="#FFF9F4F4"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Grassland Options"/></TextBlock>
+                <TextBox x:Name="StoneG" PreviewTextInput="NumberOnlyInput" HorizontalAlignment="Left" Margin="268,767,0,0" TextWrapping="Wrap" Text="20" VerticalAlignment="Top" Width="55" TextChanged="GrasslandStone_TextChanged"/>
+                <TextBox x:Name="WoodF" PreviewTextInput="NumberOnlyInput" HorizontalAlignment="Left" Margin="271,45,0,0" TextWrapping="Wrap" Text="70" VerticalAlignment="Center" Width="55" TextChanged="ForestWood_TextChanged"/>
+                <TextBox x:Name="StoneF" PreviewTextInput="NumberOnlyInput"  HorizontalAlignment="Left" Margin="271,970,0,0" TextWrapping="Wrap" Text="10" VerticalAlignment="Top" Width="55" TextChanged="ForestStone_TextChanged"/>
+                <TextBox x:Name="GoldF"  PreviewTextInput="NumberOnlyInput" HorizontalAlignment="Left" Margin="271,1021,0,0" TextWrapping="Wrap" Text="20" VerticalAlignment="Top" Width="55" TextChanged="ForestGold_TextChanged"/>
+                <TextBox x:Name="WoodH"  PreviewTextInput="NumberOnlyInput" HorizontalAlignment="Left" Margin="514,715,0,0" TextWrapping="Wrap" Text="70" VerticalAlignment="Top" Width="53" TextChanged="HighlandWood_TextChanged"/>
+                <TextBox x:Name="IronH"  PreviewTextInput="NumberOnlyInput" HorizontalAlignment="Left" Margin="514,741,0,0" TextWrapping="Wrap" Text="60" VerticalAlignment="Top" Width="53" TextChanged="HighlandIron_TextChanged"/>
+                <TextBox x:Name="StoneH" PreviewTextInput="NumberOnlyInput" HorizontalAlignment="Left" Margin="514,767,0,0" TextWrapping="Wrap" Text="10" VerticalAlignment="Top" Width="53" TextChanged="HighlandStone_TextChanged"/>
+                <TextBox x:Name="IronHF" PreviewTextInput="NumberOnlyInput" HorizontalAlignment="Left" Margin="508,943,0,0" TextWrapping="Wrap" Text="60" VerticalAlignment="Top" Width="53" TextChanged="HighlandFIron_TextChanged"/>
+                <TextBox x:Name="StoneHF" PreviewTextInput="NumberOnlyInput"  HorizontalAlignment="Left" Margin="508,970,0,0" TextWrapping="Wrap" Text="20" VerticalAlignment="Top" Width="53" TextChanged="HighlandFStone_TextChanged"/>
+                <TextBox x:Name="WoodHF" PreviewTextInput="NumberOnlyInput"  HorizontalAlignment="Left" Margin="508,916,0,0" TextWrapping="Wrap" Text="60" VerticalAlignment="Top" Width="53" TextChanged="HighlandFWood_TextChanged"/>
+                <TextBlock HorizontalAlignment="Left" Margin="211,887,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="27" Width="106" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Forest Options"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="180,1021,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="18" Width="80" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Gold"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="180,970,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="21" Width="80" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Stone"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="179,45,0,0" TextWrapping="Wrap" VerticalAlignment="Center" Height="18" Width="89" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Wood"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="405,916,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="88" Foreground="White" Text="Wood" FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold"/>
+                <TextBlock HorizontalAlignment="Left" Margin="405,943,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="18" Width="80" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Iron"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="406,970,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="80" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Stone"/></TextBlock>
+                <TextBox HorizontalAlignment="Left" Margin="268,767,0,0" TextWrapping="Wrap" Text="20" VerticalAlignment="Top" Width="55"/>
+                <Label Content="Binome Options" HorizontalAlignment="Left" Margin="323,631,0,0" VerticalAlignment="Top" Width="105" Foreground="White" FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold"/>
+                <TextBlock HorizontalAlignment="Left" Margin="406,997,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="80" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Food"/></TextBlock>
+                <TextBox x:Name="FoodHF" PreviewTextInput="NumberOnlyInput" HorizontalAlignment="Left" Margin="508,997,0,0" TextWrapping="Wrap" Text="55" VerticalAlignment="Top" Width="53" TextChanged="HighlandFFood_TextChanged"/>
+                <TextBlock HorizontalAlignment="Left" Margin="406,1021,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="80" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Gold"/></TextBlock>
+                <TextBox x:Name="GoldHF" PreviewTextInput="NumberOnlyInput"  HorizontalAlignment="Left" Margin="508,1021,0,0" TextWrapping="Wrap" Text="10" VerticalAlignment="Top" Width="53" TextChanged="HighlandFGold_TextChanged"/>
+                <TextBox x:Name="GoldH" PreviewTextInput="NumberOnlyInput" HorizontalAlignment="Left" Margin="514,821,0,0" TextWrapping="Wrap" Text="30" VerticalAlignment="Top" Width="53" TextChanged="HighlandGold_TextChanged"/>
+                <TextBlock HorizontalAlignment="Left" Margin="412,715,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="88" Foreground="White" Text="Wood" FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold"/>
+                <TextBlock HorizontalAlignment="Left" Margin="412,742,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="18" Width="80" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Iron"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="411,768,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="80" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Stone"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="412,821,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="80" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Gold"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="175,715,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="75" Foreground="White" Text="Wood" FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold"/>
+                <TextBlock HorizontalAlignment="Left" Margin="176,742,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="18" Width="80" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Iron"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="174,768,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="80" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Stone"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="174,794,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="80" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Food"/></TextBlock>
+                <TextBox x:Name="FoodG" PreviewTextInput="NumberOnlyInput"  HorizontalAlignment="Left" Margin="268,794,0,0" TextWrapping="Wrap" Text="75" VerticalAlignment="Top" Width="55" TextChanged="GrasslandFood_TextChanged"/>
+                <TextBlock HorizontalAlignment="Left" Margin="180,943,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="21" Width="80" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Iron"/></TextBlock>
+                <TextBox x:Name="IronF" PreviewTextInput="NumberOnlyInput"  HorizontalAlignment="Left" Margin="271,943,0,0" TextWrapping="Wrap" Text="90" VerticalAlignment="Top" Width="55" TextChanged="ForestIron_TextChanged"/>
+                <TextBox x:Name="FoodF" PreviewTextInput="NumberOnlyInput"  HorizontalAlignment="Left" Margin="271,997,0,0" TextWrapping="Wrap" Text="60" VerticalAlignment="Top" Width="55" TextChanged="ForestFood_TextChanged"/>
+                <TextBlock HorizontalAlignment="Left" Margin="180,997,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="21" Width="80" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Food"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="174,821,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="80" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Gold"/></TextBlock>
+                <TextBox x:Name="GoldG" PreviewTextInput="NumberOnlyInput" HorizontalAlignment="Left" Margin="268,821,0,0" TextWrapping="Wrap" Text="80" VerticalAlignment="Top" Width="55" TextChanged="GrasslandGold_TextChanged"/>
+                <TextBox x:Name="FoodH" PreviewTextInput="NumberOnlyInput" HorizontalAlignment="Left" Margin="514,794,0,0" TextWrapping="Wrap" Text="50" VerticalAlignment="Top" Width="55" TextChanged="HighlandFood_TextChanged"/>
                 <TextBlock HorizontalAlignment="Left" Margin="411,794,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="80" Foreground="White"><Run FontWeight="Bold" Text="Food"/></TextBlock>
             </Grid>
         </ScrollViewer>
-        <Button Content="Save" HorizontalAlignment="Left" Margin="696,302,0,0" VerticalAlignment="Top" Width="62" Grid.RowSpan="2" Click="SavedClicked"/>
-        <Button Content="Cancel" HorizontalAlignment="Left" Margin="696,328,0,0" VerticalAlignment="Top" Width="62" Grid.RowSpan="2" Click="CancelClicked"/>
+        <Button Template="{DynamicResource SaveTemplate}" BorderThickness="0" Margin="667,265,24,0" VerticalAlignment="Top" Height="40" Click="SavedClicked">
+            <Button.Style>
+                <Style TargetType ="Button">
+                    <Setter Property="Background">
+                        <Setter.Value>
+                            <ImageBrush x:Name="BackButtonBrush" ImageSource="/FrontEnd/gui/Buttons/SaveButton.png"/>
+                        </Setter.Value>
+                    </Setter>
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Opacity" Value="0.8"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+        </Button>
+        <Button Template="{DynamicResource CancelTemplate}" BorderThickness="0" Margin="667,301,24,59"  Height="40" Grid.RowSpan="1" Click="CancelClicked">
+            <Button.Style>
+                <Style TargetType ="Button">
+                    <Setter Property="Background">
+                        <Setter.Value>
+                            <ImageBrush x:Name="BackButtonBrush" ImageSource="/FrontEnd/gui/Buttons/CancelButton.png"/>
+                        </Setter.Value>
+                    </Setter>
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Opacity" Value="0.8"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+        </Button>
     </Grid>
 </Window>
