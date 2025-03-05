@@ -4,10 +4,12 @@ using JuniorProject.Backend.Helpers;
 using JuniorProject.Backend.WorldData;
 using System.Security.Policy;
 using System.Xml.Linq;
+using JuniorProject.Backend.Agents.Objectives;
+using JuniorProject.Frontend.Components;
 
 namespace JuniorProject.Backend.Agents
 {
-    public class Unit : Serializable
+    public class Unit : Mob
     {
         public class UnitTemplate //The template of the unit, the type if you will.
         {
@@ -18,23 +20,8 @@ namespace JuniorProject.Backend.Agents
             public int maxHealth;
             public string sprite;
             public int flags;
-
-            public UnitTemplate()
-            {
-                SQLiteDataReader results = DatabaseManager.ReadDB("SELECT * FROM Units;");
-                while (results.Read())
-                {
-                    name = results.GetString(0);
-                    description = results.GetString(1);
-                    attackDamage = results.GetInt32(2);
-                    attackRange = results.GetInt32(3);
-                    maxHealth = results.GetInt32(4);
-                    sprite = results.GetString(5);
-                    flags = results.GetInt32(6);
-                }
-            }
         }
-        static Dictionary<string, UnitTemplate> unitTemplates;
+        public static Dictionary<string, UnitTemplate> unitTemplates;
         public static void LoadUnitTemplates()
         {
             unitTemplates = new Dictionary<string, UnitTemplate>();
@@ -55,22 +42,19 @@ namespace JuniorProject.Backend.Agents
 
 
         public UnitTemplate unitType;
+
+        public string name;
         public int health;
-        public string team;
+        public bool embarked = false;
+        public Vector2Int followObjectivePosition;
 
-        IObjective? objective;
-
-        TileMap tileMap;
-        TileMap.Tile pos;
-        Vector2Int posV;
+        Objective? objective;
 
         public Unit() { }
-        public Unit(string type, string team, World world, Vector2Int posV)
+
+        public Unit(string type, string name, Nation? nation, TileMap tileMap, TileMap.Tile tile) : base(tileMap, tile, nation)
         {
-            this.posV = posV;
-            tileMap = world.map;
-            this.team = team;
-            pos = tileMap.getTile(posV);
+            this.name = name;
             if (!unitTemplates.Keys.Contains(type))
             {
                 Debug.Print($"Unit was attempted to be created with type {type}, but that type does not exist.");
@@ -79,41 +63,34 @@ namespace JuniorProject.Backend.Agents
             SetType(unitTemplates[type]);
         }
 
-        public string getSpriteName()
-        {
-            return String.Format("{0:S}{1:S}", team, unitType.name);
-        }
+		void SetType(UnitTemplate template)
+		{
+			unitType = template;
+            sprite = unitType.sprite;
 
-        public Vector2Int getPosition()
-        {
-            return posV;
-        }
+			health = unitType.maxHealth;
+		}
 
-        public void setPosition(Vector2Int newPos)
-        {
-            posV = newPos;
-        }
+		public override string GetSprite()
+		{
+			return $"{nation?.color}{(embarked ? "Ship" : base.GetSprite())}";
+		}
 
-        public void setPosition(TileMap.Tile newPos)
-        {
-            pos = newPos;
-            setPosition(newPos.pos);
-        }
-
-        void SetType(UnitTemplate template)
-        {
-            unitType = template;
-            health = template.maxHealth;
-        }
-
-        public void SetObjective(IObjective objective)
+        public void SetObjective(Objective objective)
         {
             this.objective = objective;
+            objective.Attach(this);
         }
 
-        public void TakeTurn()
-        {
+        public Objective? GetObjective() {  return objective; }
 
+        public override void TakeTurn(ulong tick)
+        {
+            base.TakeTurn(tick);
+            if(objective != null)
+            {
+                objective = objective.PerformTurn(tick);
+            }
         }
 
         public void TakeDamage(int damage)
@@ -121,39 +98,60 @@ namespace JuniorProject.Backend.Agents
 
         }
 
-        public void MoveTo(TileMap.Tile toPos)
-        {
-            List<TileMap.Tile> pathway = Astar.FindPath(tileMap, pos, toPos, (TileMap.Tile tile, TileMap.Tile target) =>
+
+		public override void EnterTile(TileMap.Tile tile)
+		{
+            if (!tile.impassible && tile.Owner != nation)
             {
-                return (target.pos - tile.pos).Magnitude;
-            });
+                nation.AddTerritory(tile);
+            }
+            foreach(Mob m in tile.Occupants)
+            {
+                if(m is Building b)
+                {
+                    if (m.nation == nation) continue;
+                    nation?.AddBuilding(b);
+                }
+            }
+			base.EnterTile(tile);
+		}
 
+		public void MoveTo(TileMap.Tile toPos, MoveAction.PostMoveAction? action = null)
+        {
+            SetObjective(new MoveAction(toPos, action));
         }
 
-        public void MoveTo(Vector2Int toPos)
-        {
-            MoveTo(tileMap.getTile(toPos));
+        public void Follow(Unit mob) { 
+            SetObjective(new FollowAction(mob));
         }
 
+        public override void populateDrawables(ref List<GenericDrawable> genericDrawables) {
+            genericDrawables.Add(new GenericDrawable(PosVector, GetSprite(), layer, name));
+        }
 
-        public override void SerializeFields()
+		public override void DestroyMob()
+		{
+			base.DestroyMob();
+            objective = null;
+		}
+
+		public override void SerializeFields()
         {
+            base.SerializeFields();
             SerializeField(unitType.name); //Save the type.
             SerializeField(health);
-            SerializeField(team);
-            SerializeField(posV);
+            SerializeField(name);
 
             //Eventually we need to save objective states.
         }
 
         public override void DeserializeFields()
         {
+            base.DeserializeFields();
             unitType = unitTemplates[DeserializeField<string>()]; //The templates need to be loaded first.
             health = DeserializeField<int>();
-            team = DeserializeField<string>();
-            posV = DeserializeField<Vector2Int>();
-
-            //pos will be set in a linking step after load.
+            name = DeserializeField<string>();
+            
         }
     }
 }
