@@ -29,6 +29,8 @@ namespace JuniorProject.Frontend.Components
         public int tileSize;
         Vector2Int mapPixelSize;
 
+        Boolean firstPass = true;
+
         Bitmap worldBitmap;
         Canvas Canvas;
 
@@ -43,8 +45,20 @@ namespace JuniorProject.Frontend.Components
         private Dictionary<(int, int), List<int>> drawableGridLocations;
 
         Dictionary<string, ImageSource> imageCache = new Dictionary<string, ImageSource>();
+        Dictionary<string, Controls.Image> controlsImageCache = new Dictionary<string, Controls.Image>();
         Dictionary<string, Bitmap> bitmapCache = new Dictionary<string, Bitmap>();
         Dictionary<(int, int), Bitmap> tileMapBitmapCache = new Dictionary<(int, int), Bitmap>();
+        Dictionary<string, ImageSource> preloadedSprites = new Dictionary<string, ImageSource>();
+        //Dictionary<string, Controls.Image> cachedTiles = new Dictionary<string, Controls.Image>();
+
+        Dictionary<string, CachedDrawable> cachedUnits = new Dictionary<string, CachedDrawable>();
+        Dictionary<(int, int), CachedDrawable> cachedTiles = new Dictionary<(int, int), CachedDrawable>();
+        Dictionary<(int, int), CachedDrawable> cachedBuildings = new Dictionary<(int, int), CachedDrawable>();
+
+        //Dictionary<(int, int), (string, Controls.Image)> cachedTiles = new Dictionary<(int, int), (string, Controls.Image)>();
+        //Dictionary<string, (Controls.Image, (int, int))> cachedUnits = new Dictionary<string, (Controls.Image, (int, int))> ();
+
+        int total = 0;
 
         Drawable map;
         Drawable grid;
@@ -56,13 +70,11 @@ namespace JuniorProject.Frontend.Components
             Canvas = mapCanvas;
             drawables = new Queue<Drawable>();
             drawableGridLocations = new Dictionary<(int, int), List<int>>();
-            string jsonData = File.ReadAllText(jsonPath);
-            sprites = JsonConvert.DeserializeObject<Dictionary<string, SpriteInfo>>(jsonData);
-            spriteSheet = new Bitmap(spriteSheetPath);
         }
 
         public void Initialize()
         {
+            preloadAllSprites();
             tileSize = ClientCommunicator.GetData<int>("tileSize");
             mapPixelSize = ClientCommunicator.GetData<Vector2Int>("mapPixelSize");
             worldBitmap = ClientCommunicator.GetData<Drawing.Bitmap>("WorldImage");
@@ -96,6 +108,36 @@ namespace JuniorProject.Frontend.Components
                 Source = TransferToWriteableBitmap(GetGridlines())
             };
             grid = new Drawable(gridImage, true, "Grid");
+        }
+
+        private void preloadAllSprites()
+        {
+            int amountOfImagesAdded = 0;
+            string jsonData = File.ReadAllText(jsonPath);
+            sprites = JsonConvert.DeserializeObject<Dictionary<string, SpriteInfo>>(jsonData);
+            spriteSheet = new Bitmap(spriteSheetPath);
+
+            string imageSource = "SpriteSheet";
+
+            foreach (var sprite in sprites) {
+                Rectangle section = new Rectangle(sprite.Value.x1, sprite.Value.y1, sprite.Value.width, sprite.Value.height);
+                Bitmap bitmap = spriteSheet.Clone(section, spriteSheet.PixelFormat);
+                ImageSource source = TransferToWriteableBitmap(bitmap);
+
+                if (!preloadedSprites.TryAdd(sprite.Key, source))
+                {
+                    Debug.Print($"!!!ERROR: COULD NOT ADD SPRITE TO 'preloadedSprites' {sprite.Key}");
+                }
+                else {
+                    amountOfImagesAdded += 1;
+                }
+            }
+            Debug.Print($"Total Images Preloaded: {amountOfImagesAdded}");
+        }
+
+        ImageSource getPreloadedSprite(string sprite)
+        {
+            return preloadedSprites[sprite];
         }
 
         private void OnTilesChange()
@@ -192,11 +234,12 @@ namespace JuniorProject.Frontend.Components
         {
             drawables.Clear();
             drawableGridLocations.Clear();
-            Canvas.Children.Clear();
+            //Canvas.Children.Clear();
         }
 
         public void PopulateCanvas()
         {
+            // DRAW NEW STUFF
             foreach (Drawable d in drawables)
             {
                 if (d != null && d.shouldDraw)
@@ -205,12 +248,19 @@ namespace JuniorProject.Frontend.Components
                     {
                         Canvas.SetLeft(d.image, d.pixelPosition.X);
                         Canvas.SetTop(d.image, d.pixelPosition.Y);
-                    }
+                    } 
                     Canvas.Children.Add(d.image);
                 }
             }
 
-            //Debug.Print("FINISHED DRAWING");
+            foreach (var d in cachedUnits)
+            {
+                if (d.Value.shouldMove) {
+                    Canvas.SetLeft(d.Value.image, d.Value.pixelPosition.X);
+                    Canvas.SetTop(d.Value.image, d.Value.pixelPosition.Y);
+                    d.Value.shouldMove = false;
+                }
+            }
         }
 
         public void SetGridlines()
@@ -221,26 +271,42 @@ namespace JuniorProject.Frontend.Components
 
         public void Draw()
         {
-            //Debug.Print("STARTING DRAWING");
+            Debug.Print("\n\n\n");
+            Debug.Print("----------------------------------------------------");
+            Debug.Print("STARTING DRAWING");
             List<GenericDrawable> genericDrawables = new List<GenericDrawable>();
             world.PopulateDrawablesList(ref genericDrawables);
+            //Debug.Print($"genericDrawables Size: {genericDrawables.Count}");
 
             ClearCanvas();
-            drawables.Enqueue(map);
-            drawables.Enqueue(grid);
+
+            if (firstPass) {
+                drawables.Enqueue(map);
+                drawables.Enqueue(grid);
+                firstPass = false;
+            }
+
+            int images = 0;
 
             for (int i = 0; i < 2; i++) {
                 foreach (GenericDrawable d in genericDrawables)
                 {
                     if (d.sprite == null || d.sprite == "") continue;
                     if (d.layer == i) {
-                        AddBitmapToCanvas($"{d.sprite} - {d.gridPosition.X}, {d.gridPosition.Y}", extractFromSprite(d.sprite), d.gridPosition);
+                        AddToDrawables(d.sprite, d.gridPosition, d.uniqueIdentifier);
+                        //AddBitmapToCanvas($"{d.sprite} - {d.gridPosition.X}, {d.gridPosition.Y}", extractFromSprite(d.sprite), d.gridPosition, ref images);
                     }
                 }
             }
 
+            Debug.Print($"Amount of new images added: {images}");
+
             //DebugImages();
             PopulateCanvas();
+            Debug.Print("FINISHED DRAWING");
+            total += 1;
+            Debug.Print($"Total Amount of Times Drawn: {total}");
+            Debug.Print("----------------------------------------------------");
         }
 
         public void DebugImages()
@@ -312,7 +378,120 @@ namespace JuniorProject.Frontend.Components
             //AddBitmapToCanvas("RedShip", extractFromSprite("RedShip"), 10, 4);
         }
 
-        public void AddBitmapToCanvas(string name, Bitmap bitmap, Vector2Int gridPos)
+        public void AddToDrawables(string name, Vector2Int gridPos, string uniqueIdentifier) {
+            string imageSource = "SpriteSheet";
+            Vector2Int pixelPosition = ConvertGridPositionToPixels(gridPos.X, gridPos.Y);
+
+            // UNITS
+            if (uniqueIdentifier != null) {
+                if (!cachedUnits.ContainsKey(uniqueIdentifier)) {
+                    Controls.Image newUnitImage = new Controls.Image
+                    {
+                        Source = getPreloadedSprite(name),
+                        Width = getPreloadedSprite(name).Width,
+                        Height = getPreloadedSprite(name).Height,
+                    };
+                    drawables.Enqueue(new Drawable(newUnitImage, true, name, imageSource, pixelPosition, gridPos));
+                    cachedUnits[uniqueIdentifier] = new CachedDrawable(newUnitImage, pixelPosition, gridPos);
+                    return;
+                }
+
+                if (cachedUnits[uniqueIdentifier].gridPosition.X != gridPos.X || cachedUnits[uniqueIdentifier].gridPosition.Y != gridPos.Y) {
+                    cachedUnits[uniqueIdentifier] = new CachedDrawable(cachedUnits[uniqueIdentifier].image, pixelPosition, gridPos);
+                    cachedUnits[uniqueIdentifier].shouldMove = true;
+                    return;
+                }
+                return;
+            }
+            //Dictionary<(int, int), CachedDrawable> cachedTiles = new Dictionary<(int, int), CachedDrawable>();
+            // TILES
+            if (name.Contains("Tile")) {
+                if (!cachedTiles.ContainsKey((gridPos.X, gridPos.Y)) || cachedTiles[(gridPos.X, gridPos.Y)].team != name)
+                {
+                    if (cachedTiles.ContainsKey((gridPos.X, gridPos.Y))) {
+                        Canvas.Children.Remove(cachedTiles[(gridPos.X, gridPos.Y)].image);
+                    }
+
+                    Controls.Image newTile = new Controls.Image
+                    {
+                        Source = getPreloadedSprite(name),
+                        Width = getPreloadedSprite(name).Width,
+                        Height = getPreloadedSprite(name).Height,
+                    };
+                    cachedTiles[(gridPos.X, gridPos.Y)] = new CachedDrawable(newTile, pixelPosition, gridPos, name);
+                    drawables.Enqueue(new Drawable(newTile, true, "Tile", "SpriteSheet", pixelPosition, gridPos));
+                    Debug.Print($"ADDED TILE: {name} [{gridPos.X}, {gridPos.Y}]");
+                }
+                return;
+            }
+
+            // BUILDINGS
+            if (!cachedBuildings.ContainsKey((gridPos.X, gridPos.Y))) {
+                Controls.Image newBuilding = new Controls.Image
+                {
+                    Source = getPreloadedSprite(name),
+                    Width = getPreloadedSprite(name).Width,
+                    Height = getPreloadedSprite(name).Height,
+                };
+                cachedBuildings[(gridPos.X, gridPos.Y)] = new CachedDrawable(newBuilding, pixelPosition, gridPos);
+                drawables.Enqueue(new Drawable(newBuilding, true, name, "SpriteSheet", pixelPosition, gridPos));
+                return;
+            }
+
+            //if (uniqueIdentifier != null)
+            //{
+            //    if (!cachedUnits.ContainsKey(uniqueIdentifier))
+            //    {
+            //        Controls.Image newUnitImage = new Controls.Image
+            //        {
+            //            Source = getPreloadedSprite(name),
+            //            Width = getPreloadedSprite(name).Width,
+            //            Height = getPreloadedSprite(name).Height,
+            //        };
+            //        drawables.Enqueue(new Drawable(newUnitImage, true, name, imageSource, pixelPosition, gridPos));
+            //        cachedUnits[uniqueIdentifier] = (newUnitImage, (gridPos.X, gridPos.Y));
+            //    }
+            //    cachedUnits[uniqueIdentifier] = (cachedUnits[uniqueIdentifier].Item1, (gridPos.X,gridPos.Y));
+            //    return;
+            //}
+
+            //if (name.Contains("Tile")) {
+            //string spriteNamePosition = $"{name}{gridPos.X}{gridPos.Y}";
+
+            //if (!cachedTiles.ContainsKey((gridPos.X, gridPos.Y)) || cachedTiles[(gridPos.X, gridPos.Y)].Item1 != name)
+            //{
+            //    Controls.Image newTile = new Controls.Image
+            //    {
+            //        Source = getPreloadedSprite(name),
+            //        Width = getPreloadedSprite(name).Width,
+            //        Height = getPreloadedSprite(name).Height,
+            //    };
+            //    cachedTiles[(gridPos.X, gridPos.Y)] = (name, newTile);
+
+            //}
+            //drawables.Enqueue(new Drawable(cachedTiles[(gridPos.X, gridPos.Y)].Item2, true, name, imageSource, pixelPosition, gridPos));
+            //return;
+        }
+
+        //Controls.Image newImg = new Controls.Image
+        //{
+        //    Source = getPreloadedSprite(name),
+        //    Width = getPreloadedSprite(name).Width,
+        //    Height = getPreloadedSprite(name).Height,
+        //};
+
+        //drawables.Enqueue(new Drawable(newImg, true, name, imageSource, pixelPosition, gridPos));
+
+        //if (!name.Contains("Tile"))
+        //{
+        //    if (!drawableGridLocations.ContainsKey((gridPos.X, gridPos.Y)))
+        //    {
+        //        drawableGridLocations.TryAdd((gridPos.X, gridPos.Y), new List<int>());
+        //    }
+        //    drawableGridLocations[(gridPos.X, gridPos.Y)].Add(drawables.Count);
+        //}
+
+        public void AddBitmapToCanvas(string name, Bitmap bitmap, Vector2Int gridPos, ref int amountOfImagesAdded)
         {
             string imageSource = "SpriteSheet";
             ImageSource source;
@@ -323,6 +502,7 @@ namespace JuniorProject.Frontend.Components
             {
                 source = TransferToWriteableBitmap(bitmap);
                 imageCache.Add(name, source);
+                amountOfImagesAdded += 1;
             }
             
             Controls.Image img = new Controls.Image
