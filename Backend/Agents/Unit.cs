@@ -5,6 +5,7 @@ using JuniorProject.Backend.WorldData;
 using System.Security.Policy;
 using System.Xml.Linq;
 using JuniorProject.Backend.Agents.Objectives;
+using JuniorProject.Frontend.Components;
 
 namespace JuniorProject.Backend.Agents
 {
@@ -122,6 +123,10 @@ namespace JuniorProject.Backend.Agents
 
         public void Follow(Unit mob) { 
             SetObjective(new FollowAction(mob));
+        }
+
+        public override void populateDrawables(ref List<GenericDrawable> genericDrawables) {
+            genericDrawables.Add(new GenericDrawable(PosVector, GetSprite(), layer, name));
         }
 
 		public override void DestroyMob()

@@ -52,7 +52,7 @@ namespace JuniorProject.Backend.Agents
 			tile?.Occupants.Remove(this);
 		}
 
-		public void populateDrawables(ref List<GenericDrawable> genericDrawables)
+		public virtual void populateDrawables(ref List<GenericDrawable> genericDrawables)
 		{
 			genericDrawables.Add(new GenericDrawable(PosVector, GetSprite(), layer));
 		}
