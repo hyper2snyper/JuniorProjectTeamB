@@ -10,7 +10,7 @@ using static JuniorProject.Backend.Agents.Building;
 
 namespace JuniorProject.Backend.Agents
 {
-    public class BiomeResources : Serializable
+    public class BiomeResources : Mob
     {
         public class BiomeResourcesTemplate
         {
