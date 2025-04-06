@@ -73,17 +73,17 @@ namespace JuniorProject.Backend.WorldData
 				{
 					biomeLinking.Add(terrain, results.GetString(10));
 				}
-				//Get Resource Data for Biome
-				SQLiteDataReader resourceResults = DatabaseManager.ReadDB("SELECT * FROM BiomeResource;");
-				while (resourceResults.Read())
-				{
-					if (resourceResults.GetString(0) == terrain.name)
-					{
-						terrain.resources.Add(resourceResults.GetString(1));
-						terrain.collectRate.Add(resourceResults.GetInt32(2));
-					}
-				}
-				biomeList.Add(terrain.name, terrain);
+                //Get Resource Data for Biome
+                SQLiteDataReader resourceResults = DatabaseManager.ReadDB("SELECT * FROM BiomeResource;");
+                while (resourceResults.Read())
+                {
+                    if (resourceResults.GetString(0) == terrain.name)
+                    {
+                        string dbResource = resourceResults.GetString(1);
+                        terrain.resourceData[dbResource] = resourceResults.GetInt32(2);
+                    }
+                }
+                biomeList.Add(terrain.name, terrain);
 				defaultBiome ??= terrain;
 			}
 			foreach (KeyValuePair<BiomeData, string> biomeLinkPair in biomeLinking)
@@ -237,6 +237,12 @@ namespace JuniorProject.Backend.WorldData
             }
 
         }
+
+        public int GetBiomeResources(string biomeName, string resourceName)
+        {
+            return biomeList[biomeName].resourceData[resourceName];
+        }
+
     }
 
 }
