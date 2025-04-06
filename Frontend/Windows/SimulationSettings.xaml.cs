@@ -4,6 +4,10 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Animation;
+using JuniorProject.Backend.Agents;
+using JuniorProject.Frontend.Windows;
+using System.Data.Entity.Core.Common.CommandTrees.ExpressionBuilder;
+using static JuniorProject.Backend.Agents.BiomeResources;
 namespace JuniorProject.Frontend.Windows
 {
     /// <summary>
@@ -11,14 +15,10 @@ namespace JuniorProject.Frontend.Windows
     /// </summary>
     public partial class SimulationSettings : Window
     {
-        int ADamage,SDamage,CavDamage,CatDamage,CanDamage;
-        int ARange,SRange,CavRange,CatRange,CanRange;
-        int AHealth,SHealth,CavHealth,CatHealth,CanHealth;
-        float CapBuildingCost, HouseBuildingCost, MineBuildingCost, BarracksBuildingCost, SmithBuildingCost, FarmBuildingCost;
-        int GrassGoldGatherRate, GrassWoodGatherRate, GrassStoneGatherRate, GrassFoodGatherRate, GrassIronGatherRate,
-            HighGoldGatherRate, HighWoodGatherRate, HighStoneGatherRate, HighFoodGatherRate, HighIronGatherRate,
-            ForestGoldGatherRate, ForestWoodGatherRate, ForestStoneGatherRate, ForestFoodGatherRate, ForestIronGatherRate,
-            HFGoldGatherRate, HFWoodGatherRate, HFStoneGatherRate, HFFoodGatherRate, HFIronGatherRate;
+        Dictionary<string, Unit.UnitTemplate> unitTemplates;
+        Dictionary<string, Building.BuildingTemplate> buildingTemplates; 
+        Dictionary<(string Biome, string Resource), BiomeResourcesTemplate> biomeResourcesTemplate;
+
 
         public static readonly Regex intOnly = new Regex("[0-9]+");
         public static readonly Regex correctFloat = new Regex("^[0-9]*\\.?[0-9]*$");
@@ -39,229 +39,147 @@ namespace JuniorProject.Frontend.Windows
         }
         private void SavedClicked(object sender, RoutedEventArgs e)
         {
-            Debug.Print("Saved!!!!!!");
+            // Units
+            SaveUnit("Archer", ArcherD, ArcherR, ArcherH);
+            SaveUnit("Soldier", SoldierD, SoldierR, SoldierH);
+            SaveUnit("Catapult", CatapultD, CatapultR, CatapultH);
+            SaveUnit("Cannon", CannonD, CannonR, CannonH);
+            SaveUnit("Cavalier", CavalierD, CavalierR, CavalierH);
+            SaveUnits();
+            
+            // Buildings
+            SaveBuilding("Capital", CapitialCost);
+            SaveBuilding("House", HouseCost);
+            SaveBuilding("Mine", MineCost);
+            SaveBuilding("Barracks", BarrackCost);
+            SaveBuilding("Smith", SmithCost);
+            SaveBuilding("Farm", FarmCost);
+
+            Building.SaveAllBuildingTemplates();
+
+            //Biome Resources
+            SaveBiome("Grassland", GoldG, WoodG, StoneG, FoodG, IronG);
+            SaveBiome("Highland", GoldH, WoodH, StoneH, FoodH, IronH);
+            SaveBiome("Forest", GoldF, WoodF, StoneF, FoodF, IronF);
+            SaveBiome("HighlandForest", GoldHF, WoodHF, StoneHF, FoodHF, IronHF);
+
+            BiomeResources.SaveBiomeResourcesTemplate();
+
+
+            Debug.Print("Saved!");
             this.Hide();
         }
+
+
+        private void SaveUnits()
+        {
+            Unit.SaveAllUnitTemplates();
+        }
+
 
         private void CancelClicked(object sender, RoutedEventArgs e)
         {
             this.Hide();
         }
 
-        //Archer
-        private void ArcherDamage_TextChanged(object sender, TextChangedEventArgs e)
+        private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            if (ArcherD.Text == "") return;
-            ADamage = int.Parse(ArcherD.Text);
+            Unit.LoadUnitTemplates();
+            unitTemplates = new Dictionary<string, Unit.UnitTemplate>(Unit.unitTemplates);
+
+            //Units
+            LoadUnit("Archer", ArcherD, ArcherR, ArcherH);
+            LoadUnit("Soldier", SoldierD, SoldierR, SoldierH);
+            LoadUnit("Catapult", CatapultD, CatapultR, CatapultH);
+            LoadUnit("Cannon", CannonD, CannonR, CannonH);
+            LoadUnit("Cavalier", CavalierD, CavalierR, CavalierH);
+
+            //Building
+            Building.LoadBuildingTemplates();
+            buildingTemplates = Building.buildingTemplates;
+
+            LoadBuilding("Capital", CapitialCost);
+            LoadBuilding("House", HouseCost);
+            LoadBuilding("Mine", MineCost);
+            LoadBuilding("Barracks", BarrackCost);
+            LoadBuilding("Smith", SmithCost);
+            LoadBuilding("Farm", FarmCost);
+
+            //Biome Resources
+            BiomeResources.LoadBiomeResourcesTemplate();
+
+            LoadBiome("Grassland", GoldG, WoodG, StoneG, FoodG, IronG);
+            LoadBiome("Highland", GoldH, WoodH, StoneH, FoodH, IronH);
+            LoadBiome("Forest", GoldF, WoodF, StoneF, FoodF, IronF);
+            LoadBiome("HighlandForest", GoldHF, WoodHF, StoneHF, FoodHF, IronHF);
+
+
         }
-        private void ArcherRange_TextChanged(object sender, TextChangedEventArgs e)
+
+        private void LoadUnit(string name, TextBox dmg, TextBox rng, TextBox hp)
         {
-            if (ArcherR.Text == "") return;
-            ARange = int.Parse(ArcherR.Text);
+            if (!unitTemplates.ContainsKey(name)) return;
+            var u = unitTemplates[name];
+            dmg.Text = u.attackDamage.ToString();
+            rng.Text = u.attackRange.ToString();
+            hp.Text = u.maxHealth.ToString();
         }
-        private void ArcherHealth_TextChanged(object sender, TextChangedEventArgs e)
+        private void SaveUnit(string name, TextBox dmg, TextBox rng, TextBox hp)
         {
-            if (ArcherH.Text == "") return;
-            AHealth = int.Parse(ArcherH.Text);
+            if (!unitTemplates.ContainsKey(name)) return;
+            var u = unitTemplates[name];
+            u.attackDamage = int.Parse(dmg.Text);
+            u.attackRange = int.Parse(rng.Text);
+            u.maxHealth = int.Parse(hp.Text);
         }
-        //Catapult
-        private void CatapultDamage_TextChanged(object sender, TextChangedEventArgs e)
+        private void LoadBuilding(string name, TextBox field)
         {
-            if (CatapultD.Text == "") return;
-            CatDamage = int.Parse(CatapultD.Text);
+            if (buildingTemplates.TryGetValue(name, out var template))
+                field.Text = template.cost.ToString();
         }
-        private void CatapultRange_TextChanged(object sender, TextChangedEventArgs e)
+
+        private void SaveBuilding(string name, TextBox costField)
         {
-            if (CatapultR.Text == "") return;
-            CatRange = int.Parse(CatapultR.Text);
+            if (buildingTemplates.TryGetValue(name, out var building) && int.TryParse(costField.Text, out int cost))
+            {
+                building.cost = cost;
+            }
         }
-        private void CatapultHealth_TextChanged(object sender, TextChangedEventArgs e)
+
+        private void SaveBiome(string biomeName, TextBox gold, TextBox wood, TextBox stone, TextBox food, TextBox iron)
         {
-            if (CatapultH.Text == "") return;
-            CatHealth = int.Parse(CatapultH.Text);
+            if (BiomeResources.biomeResourcesTemplate.TryGetValue((biomeName, "Gold"), out var goldT))
+                goldT.GatherRate = int.Parse(gold.Text);
+
+            if (BiomeResources.biomeResourcesTemplate.TryGetValue((biomeName, "Wood"), out var woodT))
+                woodT.GatherRate = int.Parse(wood.Text);
+
+            if (BiomeResources.biomeResourcesTemplate.TryGetValue((biomeName, "Stone"), out var stoneT))
+                stoneT.GatherRate = int.Parse(stone.Text);
+
+            if (BiomeResources.biomeResourcesTemplate.TryGetValue((biomeName, "Food"), out var foodT))
+                foodT.GatherRate = int.Parse(food.Text);
+
+            if (BiomeResources.biomeResourcesTemplate.TryGetValue((biomeName, "Iron"), out var ironT))
+                ironT.GatherRate = int.Parse(iron.Text);
         }
-        //Soldier
-        private void SoldierDamage_TextChanged(object sender, TextChangedEventArgs e)
+
+        private void LoadBiome(string biomeName, TextBox gold, TextBox wood, TextBox stone, TextBox food, TextBox iron)
         {
-            if (SoldierD.Text == "") return;
-            SDamage = int.Parse(SoldierD.Text);
-        }
-        private void SoldierRange_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (SoldierR.Text == "") return;
-            SRange = int.Parse(SoldierR.Text);
-        }
-        private void SoldierHealth_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (SoldierH.Text == "") return;
-            SHealth = int.Parse(SoldierH.Text);
-        }
-        //Cannon
-        private void CannonDamage_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (CannonD.Text == "") return;
-            CanDamage = int.Parse(CannonD.Text);
-        }
-        private void CannonRange_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (CannonR.Text == "") return;
-            CanRange = int.Parse(CannonR.Text);
-        }
-        private void CannonHealth_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (CannonH.Text == "") return;
-            CanHealth = int.Parse(CannonH.Text);
-        }
-        //Cavalier
-        private void CavalierDamage_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (CavalierD.Text == "") return;
-             CavDamage = int.Parse(CavalierD.Text);
-        }
-        private void CavalierRange_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (CavalierR.Text == "") return;
-            CavRange = int.Parse(CavalierR.Text);
-        }
-        private void CavalierHealth_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (CavalierH.Text == "") return;
-            CavHealth = int.Parse(CavalierH.Text);
-        }
-        //Grasslands
-        private void GrasslandWood_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (WoodG.Text == "") return;
-            GrassWoodGatherRate = int.Parse(WoodG.Text);
-        }
-        private void GrasslandIron_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (IronG.Text == "") return;
-            GrassIronGatherRate = int.Parse(IronG.Text);
-        }
-        private void GrasslandStone_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (StoneG.Text == "") return;
-            GrassStoneGatherRate = int.Parse(StoneG.Text);
-        }
-        private void GrasslandFood_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (FoodG.Text == "") return;
-            GrassFoodGatherRate = int.Parse(FoodG.Text);
-        }
-        private void GrasslandGold_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (GoldG.Text == "") return;
-            GrassGoldGatherRate = int.Parse(GoldG.Text);
-        }
-        //Highlands
-        private void HighlandWood_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (WoodH.Text == "") return;
-            HighWoodGatherRate = int.Parse(WoodH.Text);
-        }
-        private void HighlandIron_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (IronH.Text == "") return;
-            HighIronGatherRate = int.Parse(IronH.Text);
-        }
-        private void HighlandStone_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (StoneH.Text == "") return;
-            HighStoneGatherRate = int.Parse(StoneH.Text);
-        }
-        private void HighlandFood_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (FoodH.Text == "") return;
-            HighFoodGatherRate = int.Parse(FoodH.Text);
-        }
-        private void HighlandGold_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (GoldH.Text == "") return;
-            HighGoldGatherRate = int.Parse(GoldH.Text);
-        }
-        //Forest
-        private void ForestWood_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (WoodF.Text == "") return;
-            ForestWoodGatherRate = int.Parse(WoodF.Text);
-        }
-        private void ForestIron_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (IronF.Text == "") return;
-            ForestIronGatherRate = int.Parse(IronF.Text);
-        }
-        private void ForestStone_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (StoneF.Text == "") return;
-            ForestStoneGatherRate = int.Parse(StoneF.Text);
-        }
-        private void ForestFood_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (FoodF.Text == "") return;
-            ForestFoodGatherRate = int.Parse(FoodF.Text);
-        }
-        private void ForestGold_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (GoldF.Text == "") return;
-            ForestGoldGatherRate = int.Parse(GoldF.Text);
-        }
-        //Highlands Forest
-        private void HighlandFWood_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (WoodHF.Text == "") return;
-            HFWoodGatherRate = int.Parse(WoodHF.Text);
-        }
-        private void HighlandFIron_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (IronHF.Text == "") return;
-            HFIronGatherRate = int.Parse(IronHF.Text);
-        }
-        private void HighlandFStone_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (StoneHF.Text == "") return;
-            HFStoneGatherRate = int.Parse(StoneHF.Text);
-        }
-        private void HighlandFFood_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (FoodHF.Text == "") return;
-            HFFoodGatherRate = int.Parse(FoodHF.Text);
-        }
-        private void HighlandFGold_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (GoldHF.Text == "") return;
-            HFGoldGatherRate = int.Parse(GoldHF.Text);
-        }
-        //Buildings
-        private void CapitalBC_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (CapitialCost.Text == "" || CapitialCost.Text == ".") return;
-            CapBuildingCost = float.Parse(CapitialCost.Text);
-        }
-        private void HouseBC_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (HouseCost.Text == "" || HouseCost.Text == ".") return;
-            HouseBuildingCost = float.Parse(HouseCost.Text);
-        }
-        private void MineBC_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (MineCost.Text == "" || MineCost.Text == ".") return;
-            MineBuildingCost = float.Parse(MineCost.Text);
-        }
-        private void BarracksBC_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (BarrackCost.Text == "" || BarrackCost.Text == ".") return;
-            BarracksBuildingCost = float.Parse(BarrackCost.Text);
-        }
-        private void SmithBC_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (SmithCost.Text == "" || SmithCost.Text == ".") return;
-            SmithBuildingCost = float.Parse(SmithCost.Text);
-        }
-        private void FarmBC_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (FarmCost.Text == "" || FarmCost.Text == ".") return;
-            FarmBuildingCost = float.Parse(FarmCost.Text);
+            if (BiomeResources.biomeResourcesTemplate.TryGetValue((biomeName, "Gold"), out var goldT))
+                gold.Text = goldT.GatherRate.ToString();
+
+            if (BiomeResources.biomeResourcesTemplate.TryGetValue((biomeName, "Wood"), out var woodT))
+                wood.Text = woodT.GatherRate.ToString();
+
+            if (BiomeResources.biomeResourcesTemplate.TryGetValue((biomeName, "Stone"), out var stoneT))
+                stone.Text = stoneT.GatherRate.ToString();
+
+            if (BiomeResources.biomeResourcesTemplate.TryGetValue((biomeName, "Food"), out var foodT))
+                food.Text = foodT.GatherRate.ToString();
+
+            if (BiomeResources.biomeResourcesTemplate.TryGetValue((biomeName, "Iron"), out var ironT))
+                iron.Text = ironT.GatherRate.ToString();
         }
 
     }

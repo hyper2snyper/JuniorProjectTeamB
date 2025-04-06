@@ -58,14 +58,15 @@ namespace JuniorProject.Backend
         /// <param name="command"></param>
         public static void WriteDB(string commandText, Dictionary<string, object> parameters)
         {
-            using var cmd = Instance.connection.CreateCommand();
+            using var conn = new SQLiteConnection(Instance.connection.ConnectionString);
+            conn.Open();
+            using var cmd = conn.CreateCommand();
             cmd.CommandText = commandText;
             foreach (var pair in parameters)
-            {
                 cmd.Parameters.AddWithValue(pair.Key, pair.Value);
-            }
             cmd.ExecuteNonQuery();
         }
+
 
 
 

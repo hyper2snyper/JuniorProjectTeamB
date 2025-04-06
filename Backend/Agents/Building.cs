@@ -2,6 +2,7 @@
 using JuniorProject.Backend.WorldData;
 using System;
 using System.Data.SQLite;
+using static JuniorProject.Backend.Agents.Building;
 
 
 namespace JuniorProject.Backend.Agents
@@ -38,6 +39,20 @@ namespace JuniorProject.Backend.Agents
                 buildingTemplates.Add(template.name, template);
 			}
 		}
+        public static void SaveAllBuildingTemplates()
+        {
+            foreach (var template in buildingTemplates.Values)
+            {
+                DatabaseManager.WriteDB(
+                    "UPDATE Buildings SET BuildingCost=@cost WHERE BuildingName=@name",
+                    new Dictionary<string, object>
+                    {
+                { "@cost", template.cost },
+                { "@name", template.name }
+                    }
+                );
+            }
+        }
 
         public BuildingTemplate template;
 
