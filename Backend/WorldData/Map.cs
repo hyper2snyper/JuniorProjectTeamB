@@ -45,6 +45,7 @@ namespace JuniorProject.Backend.WorldData
         public static void LoadTerrain()
         {
             biomeList = new Dictionary<string, BiomeData>();
+
             Debug.Print("Loading Biome Data...");
             SQLiteDataReader results = DatabaseManager.ReadDB("SELECT * FROM Biomes;");
             Dictionary<BiomeData, string> biomeLinking = new Dictionary<BiomeData, string>();
@@ -73,6 +74,7 @@ namespace JuniorProject.Backend.WorldData
                 {
                     biomeLinking.Add(terrain, results.GetString(10));
                 }
+
                 //Get Resource Data for Biome
                 SQLiteDataReader resourceResults = DatabaseManager.ReadDB("SELECT * FROM BiomeResource;");
                 while (resourceResults.Read())
@@ -91,6 +93,7 @@ namespace JuniorProject.Backend.WorldData
                 biomeLinkPair.Key.requiredBiome = biomeList[biomeLinkPair.Value];
             }
         }
+
 
 
         BiomeData?[,] biomeMap;
@@ -239,12 +242,6 @@ namespace JuniorProject.Backend.WorldData
             }
 
         }
-
-        public void SaveImage()
-        {
-            worldImage.Save($"{Properties.Resources.ProjectDir}\\LocalData\\Map.png", System.Drawing.Imaging.ImageFormat.Png);
-        }
-
         public int GetBiomeResources(string biomeName, string resourceName)
         {
             return biomeList[biomeName].resourceData[resourceName];

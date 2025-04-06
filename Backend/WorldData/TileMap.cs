@@ -226,8 +226,7 @@ namespace JuniorProject.Backend.WorldData
             ClientCommunicator.RegisterData<int>("tileSize", tileSize);
             ClientCommunicator.RegisterData<TileMap>("TileMap", this);
         }
-
-        int GetTileResource(int xPos, int yPos, string resourceType)
+        public int GetTileResource(int xPos, int yPos, string resourceType)
         {
             string primaryBiome = "";
             foreach (var item1 in tiles[xPos, yPos].terrainPercentages)
