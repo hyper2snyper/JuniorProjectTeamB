@@ -23,7 +23,13 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Frontend\Components\InfoModal.xaml">
+    <Page Update="Frontend\Components\Modals\AccordionInfoModal.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Frontend\Components\Modals\InfoModal.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Frontend\Components\Modals\NationModal.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Frontend\Pages\Loading.xaml">

@@ -18,12 +18,14 @@ namespace JuniorProject.Frontend.Components
         public Vector2Int pixelPosition;
         public Vector2Int gridPosition;
         public string path;
-        public Drawable(Image image, Boolean shouldDraw, string title)
+        public int layer;
+        public Drawable(Image image, Boolean shouldDraw, string title, int layer)
         {
             this.image = image;
             this.shouldDraw = shouldDraw;
             this.isMapOrGridlines = true;
             this.title = title;
+            this.layer = layer;
 
             if (title == "Grid")
             {
@@ -32,7 +34,7 @@ namespace JuniorProject.Frontend.Components
             }
         }
 
-        public Drawable(Image image, Boolean shouldDraw, string title, string path, Vector2Int pixelPosition, Vector2Int gridPosition)
+        public Drawable(Image image, Boolean shouldDraw, string title, string path, Vector2Int pixelPosition, Vector2Int gridPosition, int layer)
         {
             this.image = image;
             this.shouldDraw = shouldDraw;
@@ -41,6 +43,7 @@ namespace JuniorProject.Frontend.Components
             this.gridPosition = gridPosition;
             this.title = title;
             this.path = path;
+            this.layer = layer;
         }
 
         public string getInformation()

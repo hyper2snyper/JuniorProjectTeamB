@@ -90,6 +90,14 @@ namespace JuniorProject
         {
             Debug.Print("Pause Clicked.");
             ClientCommunicator.CallAction("TogglePause");
+            //PauseButton.Content = ClientCommunicator.GetData<bool>("Paused") ? "Pause" : "Unpause";
+            
+        }
+
+        private void StepClicked(object sender, RoutedEventArgs e)
+        {
+            Debug.Print("Step Clicked");
+            ClientCommunicator.CallAction("Step");
         }
 
         private async void SaveClicked(object sender, RoutedEventArgs e)

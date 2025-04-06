@@ -12,8 +12,13 @@ namespace JuniorProject.Backend.WorldData
         Vector2Int mapPixelSize;
         public Bitmap worldImage;
 
-
+        uint seedInt;
         string seed;
+        public string Seed
+        {
+            get { return seed; }
+        }
+
         float amp, freq;
         int octaves;
         public float seaLevel;
@@ -36,33 +41,94 @@ namespace JuniorProject.Backend.WorldData
             public List<string> resources = new List<string>();
             public List<int> collectRate = new List<int>();
         }
-        Dictionary<string, BiomeData> biomeList = new Dictionary<string, BiomeData>(); //Loaded terrains from the DB
-        BiomeData defaultBiome;
+        static Dictionary<string, BiomeData> biomeList = new Dictionary<string, BiomeData>(); //Loaded terrains from the DB
+        static BiomeData defaultBiome;
+		public static void LoadTerrain()
+		{
+            biomeList = new Dictionary<string, BiomeData>();
+			Debug.Print("Loading Biome Data...");
+			SQLiteDataReader results = DatabaseManager.ReadDB("SELECT * FROM Biomes;");
+			Dictionary<BiomeData, string> biomeLinking = new Dictionary<BiomeData, string>();
+			while (results.Read())
+			{
+				BiomeData terrain = new BiomeData();
+				terrain.name = results.GetString(0);
+				string unparsedRGB = results.GetString(1);
+				int r = int.Parse(unparsedRGB[..3]);
+				int g = int.Parse(unparsedRGB[4..7]);
+				int b = int.Parse(unparsedRGB[8..11]);
+				terrain.tileColorLow = Color.FromArgb(255, r, g, b);
+				unparsedRGB = results.GetString(2);
+				r = int.Parse(unparsedRGB[..3]);
+				g = int.Parse(unparsedRGB[4..7]);
+				r = int.Parse(unparsedRGB[8..11]);
+				terrain.tileColorHigh = Color.FromArgb(255, r, g, b);
+				terrain.movementCost = results.GetInt32(3);
+				terrain.heightMin = results.GetFloat(4);
+				terrain.heightMax = results.GetFloat(5);
+				terrain.amp = results.GetFloat(6);
+				terrain.freq = results.GetFloat(7);
+				terrain.octaves = results.GetInt32(8);
+				terrain.ignoreNoise = results.GetBoolean(9);
+				if (!results.IsDBNull(10))
+				{
+					biomeLinking.Add(terrain, results.GetString(10));
+				}
+				//Get Resource Data for Biome
+				SQLiteDataReader resourceResults = DatabaseManager.ReadDB("SELECT * FROM BiomeResource;");
+				while (resourceResults.Read())
+				{
+					if (resourceResults.GetString(0) == terrain.name)
+					{
+						terrain.resources.Add(resourceResults.GetString(1));
+						terrain.collectRate.Add(resourceResults.GetInt32(2));
+					}
+				}
+				biomeList.Add(terrain.name, terrain);
+				defaultBiome ??= terrain;
+			}
+			foreach (KeyValuePair<BiomeData, string> biomeLinkPair in biomeLinking)
+			{
+				biomeLinkPair.Key.requiredBiome = biomeList[biomeLinkPair.Value];
+			}
+		}
 
 
-
-        BiomeData?[,] biomeMap;
+		BiomeData?[,] biomeMap;
         public BiomeData?[,] BiomeMap { get { return biomeMap; } }
-        float[,] heightMap;
+        public float[,] heightMap;
 
         public Map()
         {
-            Debug.Print("Loading Biome Data...");
-            LoadTerrain();
+            
         }
 
         public Map(Vector2Int mapPixelSize, string seed, float freq, float amp, int octaves, float seaLevel, float treeLine)
         {
             this.mapPixelSize = mapPixelSize;
-            this.seed = seed;
+            if(seed == null)
+            {
+				seedInt = (uint)DateTime.Now.Ticks;
+                this.seed = seedInt.ToString();
+			} else if(uint.TryParse(seed, out seedInt)) //See if the inputted seed is just a number
+            {
+                this.seed = seedInt.ToString(); //It is.
+            } else
+            {
+                this.seed = seed;
+				seedInt = 0;
+				foreach (char c in seed)
+				{
+					seedInt += c;
+				}
+			}
             this.freq = freq;
             this.amp = amp;
             this.octaves = octaves;
             this.seaLevel = seaLevel;
             this.treeLine = treeLine;
             worldImage = new Bitmap(mapPixelSize.X, mapPixelSize.Y);
-            Debug.Print("Loading Biome Data...");
-            LoadTerrain();
+            
             biomeMap = new BiomeData[mapPixelSize.X, mapPixelSize.Y];
             heightMap = new float[mapPixelSize.X, mapPixelSize.Y];
         }
@@ -82,54 +148,6 @@ namespace JuniorProject.Backend.WorldData
             ClientCommunicator.RegisterData<Bitmap>("WorldImage", worldImage);
         }
 
-        void LoadTerrain()
-        {
-            SQLiteDataReader results = DatabaseManager.ReadDB("SELECT * FROM Biomes;");
-            Dictionary<BiomeData, string> biomeLinking = new Dictionary<BiomeData, string>();
-            while (results.Read())
-            {
-                BiomeData terrain = new BiomeData();
-                terrain.name = results.GetString(0);
-                string unparsedRGB = results.GetString(1);
-                int r = int.Parse(unparsedRGB[..3]);
-                int g = int.Parse(unparsedRGB[4..7]);
-                int b = int.Parse(unparsedRGB[8..11]);
-                terrain.tileColorLow = Color.FromArgb(255, r, g, b);
-                unparsedRGB = results.GetString(2);
-                r = int.Parse(unparsedRGB[..3]);
-                g = int.Parse(unparsedRGB[4..7]);
-                r = int.Parse(unparsedRGB[8..11]);
-                terrain.tileColorHigh = Color.FromArgb(255, r, g, b);
-                terrain.movementCost = results.GetInt32(3);
-                terrain.heightMin = results.GetFloat(4);
-                terrain.heightMax = results.GetFloat(5);
-                terrain.amp = results.GetFloat(6);
-                terrain.freq = results.GetFloat(7);
-                terrain.octaves = results.GetInt32(8);
-                terrain.ignoreNoise = results.GetBoolean(9);
-                if (!results.IsDBNull(10))
-                {
-                    biomeLinking.Add(terrain, results.GetString(10));
-                }
-                //Get Resource Data for Biome
-                SQLiteDataReader resourceResults = DatabaseManager.ReadDB("SELECT * FROM BiomeResource;");
-                while (resourceResults.Read())
-                {
-                    if (resourceResults.GetString(0) == terrain.name)
-                    {
-                        terrain.resources.Add(resourceResults.GetString(1));
-                        terrain.collectRate.Add(resourceResults.GetInt32(2));
-                    }
-                }
-                biomeList.Add(terrain.name, terrain);
-                defaultBiome ??= terrain;
-            }
-            foreach (KeyValuePair<BiomeData, string> biomeLinkPair in biomeLinking)
-            {
-                biomeLinkPair.Key.requiredBiome = biomeList[biomeLinkPair.Value];
-            }
-        }
-
         public void GenerateMap()
         {
             Debug.Print("Generating Heightmap...");
@@ -142,17 +160,7 @@ namespace JuniorProject.Backend.WorldData
 
         public void GenerateHeightMap()
         {
-            int seedInt = (int)DateTime.Now.Ticks;
-            if (seed != null)
-            {
-                seedInt = 0;
-                foreach (char c in seed)
-                {
-                    seedInt += c;
-                }
-            }
-
-            heightMap = Perlin.GenerateNoise(new Vector2Int(mapPixelSize.X, mapPixelSize.Y), seedInt, amp, freq, octaves);
+            heightMap = Perlin.GenerateNoise(new Vector2Int(mapPixelSize.X, mapPixelSize.Y), (int)seedInt, amp, freq, octaves);
 
             Dictionary<BiomeData, float[,]> biomePainting = new Dictionary<BiomeData, float[,]>();
 
@@ -161,7 +169,7 @@ namespace JuniorProject.Backend.WorldData
                 biomePainting.Add(biome,
                     Perlin.GenerateNoise(
                         new Vector2Int(mapPixelSize.X, mapPixelSize.Y),
-                        seedInt,
+                        (int) seedInt,
                         biome.amp,
                         biome.freq,
                         biome.octaves));
