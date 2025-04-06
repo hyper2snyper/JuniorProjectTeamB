@@ -8,6 +8,7 @@ using JuniorProject.Backend.Agents;
 using JuniorProject.Frontend.Windows;
 using System.Data.Entity.Core.Common.CommandTrees.ExpressionBuilder;
 using static JuniorProject.Backend.Agents.BiomeResources;
+
 namespace JuniorProject.Frontend.Windows
 {
     /// <summary>
@@ -15,6 +16,7 @@ namespace JuniorProject.Frontend.Windows
     /// </summary>
     public partial class SimulationSettings : Window
     {
+
         Dictionary<string, Unit.UnitTemplate> unitTemplates;
         Dictionary<string, Building.BuildingTemplate> buildingTemplates; 
         Dictionary<(string Biome, string Resource), BiomeResourcesTemplate> biomeResourcesTemplate;
@@ -39,6 +41,7 @@ namespace JuniorProject.Frontend.Windows
         }
         private void SavedClicked(object sender, RoutedEventArgs e)
         {
+
             // Units
             SaveUnit("Archer", ArcherD, ArcherR, ArcherH);
             SaveUnit("Soldier", SoldierD, SoldierR, SoldierH);
