@@ -34,7 +34,7 @@ namespace JuniorProject.Backend.Agents
                 }
             }
         }
-        public static Dictionary<string, UnitTemplate> unitTemplates;
+        static Dictionary<string, UnitTemplate> unitTemplates;
         public static void LoadUnitTemplates()
         {
             unitTemplates = new Dictionary<string, UnitTemplate>();
@@ -134,24 +134,6 @@ namespace JuniorProject.Backend.Agents
         {
             MoveTo(tileMap.getTile(toPos));
         }
-
-        public static void SaveAllUnitTemplates()
-        {
-            foreach (var template in unitTemplates.Values)
-            {
-                DatabaseManager.WriteDB(
-                    "UPDATE Units SET AttackDamage=@dmg, AttackRange=@rng, MaxHealth=@hp WHERE UnitType=@name",
-                    new Dictionary<string, object>
-                    {
-                        {"@dmg", template.attackDamage},
-                        {"@rng", template.attackRange},
-                        {"@hp", template.maxHealth},
-                        {"@name", template.name}
-                    }
-                );
-            }
-        }
-
 
 
         public override void SerializeFields()
