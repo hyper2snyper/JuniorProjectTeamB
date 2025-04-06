@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace JuniorProject.Backend.Helpers
 {
-    class Vector2Int
+    [DebuggerDisplay("({X}, {Y})")]
+    public class Vector2Int
     {
         public static readonly Vector2Int Zero = new Vector2Int(0, 0);
         public static readonly Vector2Int Right = new Vector2Int(1, 0);
@@ -19,7 +21,19 @@ namespace JuniorProject.Backend.Helpers
         public int X { get { return x; } }
         public int Y { get { return y; } }
         public int Magnitude { get { return (int)MathF.Sqrt((x * x) + (y * y)); } }
+        public Vector2Int Normalize
+        {
+            get
+            {
+                return new Vector2Int(X/Magnitude, Y/Magnitude);
+            }
+        }
 
+        public Vector2Int((int, int) pos)
+        {
+            this.x = pos.Item1;
+            this.y = pos.Item2;
+        }
         public Vector2Int(int x = 0, int y = 0)
         {
             this.x = x;
@@ -44,5 +58,10 @@ namespace JuniorProject.Backend.Helpers
             return v1.x * v2.x + v1.y * v2.y;
         }
 
-    }
+		public override string ToString()
+		{
+            return $"({X}, {Y})";
+		}
+
+	}
 }

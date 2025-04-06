@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using JuniorProject.Backend.Helpers;
+using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -7,6 +8,8 @@ namespace JuniorProject.Backend
 {
     public abstract class Serializable
     {
+        public Serializable() { }
+
         public struct SField
         {
             public bool isString;
@@ -47,9 +50,31 @@ namespace JuniorProject.Backend
         public unsafe void SerializeField<T>(T objectToSerialize) where T : notnull
         {
             if (!OrderCheck()) return;
-            if (typeof(T) == typeof(string))
+            if (objectToSerialize is string str)
             {
-                _SerializeString((string)(object)objectToSerialize);
+                _SerializeString(str);
+                return;
+            }
+            if (objectToSerialize is Serializable ser)
+            {
+                _SerializeObject(ser);
+                return;
+            }
+            if (objectToSerialize is Vector2Int vi)
+            {
+                SerializeField(vi.X);
+                SerializeField(vi.Y);
+                return;
+            }
+            if (objectToSerialize is Vector2 v)
+            {
+                SerializeField(v.X);
+                SerializeField(v.Y);
+                return;
+            }
+            if(Nullable.GetUnderlyingType(typeof(T)) != null && objectToSerialize == null)
+            {
+                SerializeField(-1);
                 return;
             }
             byte[] field = new byte[sizeof(T)];
@@ -64,37 +89,43 @@ namespace JuniorProject.Backend
             fields.Add(f);
         }
 
-        public void _SerializeString(string stringToSerialize)
+        void _SerializeString(string stringToSerialize)
         {
             SField f = new SField();
             f.str = stringToSerialize;
             f.isString = true;
             fields.Add(f);
         }
+        void _SerializeObject(Serializable obj)
+        {
+            SerializeField(obj.GetType().ToString());
+            fields.AddRange(obj.Serialize());
+        }
 
-        public void SerializeList<T>(List<T> listToSerialize) where T : notnull
+        public void SerializeField<T>(List<T> listToSerialize, Delegate preSave = null) where T : notnull
         {
             if (!OrderCheck()) return;
             int listCount = listToSerialize.Count;
             SerializeField(listCount); //Prefix List saving with size.
             for (int i = 0; i < listCount; i++)
             {
-                SerializeField(listToSerialize[i]);
+				preSave?.DynamicInvoke(listToSerialize[i]);
+				SerializeField(listToSerialize[i]);
             }
         }
 
-        public void SerializeNestedList<T>(List<List<T>> listToSerialize) where T : notnull
+        public void SerializeField<T>(List<List<T>> listToSerialize, Delegate preSave = null) where T : notnull
         {
             if (!OrderCheck()) return;
             int listCount = listToSerialize.Count;
             SerializeField(listCount); //Prefix List saving with size.
             for (int i = 0; i < listCount; i++)
             {
-                SerializeList(listToSerialize[i]);
+                SerializeField(listToSerialize[i], preSave);
             }
         }
 
-        public void SerializeDictionary<K, V>(Dictionary<K, V> dictionaryToSerialize)
+        public void SerializeField<K, V>(Dictionary<K, V> dictionaryToSerialize, Delegate preSave = null)
             where K : notnull
             where V : notnull
         {
@@ -104,29 +135,51 @@ namespace JuniorProject.Backend
             foreach (KeyValuePair<K, V> pair in dictionaryToSerialize)
             {
                 SerializeField(pair.Key);
+                preSave?.DynamicInvoke(pair.Value);
                 SerializeField(pair.Value);
             }
         }
 
-        public void SerializeNestedDictionary<K, V>(Dictionary<K, List<V>> dictionaryToSerialize)
+        public void SerializeField<K, V>(Dictionary<K, List<V>> dictionaryToSerialize, Delegate preSave = null)
             where K : notnull
             where V : notnull
         {
             if (!OrderCheck()) return;
-            int keyCount = dictionaryToSerialize.Count;
-            SerializeField(keyCount);
+            SerializeField(dictionaryToSerialize.Count);
             foreach (KeyValuePair<K, List<V>> pair in dictionaryToSerialize)
             {
                 SerializeField(pair.Key);
-                SerializeList(pair.Value);
+                SerializeField(pair.Value, preSave);
             }
         }
 
-        public void SerializeObject(Serializable obj)
+        public void SerializeField<T>(T[] array, Delegate preSave = null) where T : notnull
         {
             if (!OrderCheck()) return;
-            SerializeField(obj.GetType().ToString());
-            fields.AddRange(obj.Serialize());
+            SerializeField(array.Length);
+            foreach (T item in array)
+            {
+                preSave?.DynamicInvoke(item);
+                SerializeField(item);
+            }
+
+        }
+        public void SerializeField<T>(T[,] array, Delegate preSave = null) where T : notnull
+        {
+            if (!OrderCheck()) return;
+            int width = array.GetLength(0);
+            int length = array.GetLength(1);
+            SerializeField(width);
+            SerializeField(length);
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < length; y++)
+                {
+                    preSave?.DynamicInvoke(array[x,y]);
+                    SerializeField(array[x, y]);
+                }
+            }
+
         }
 
         public void Deserialize(BinaryReader reader, List<string> stringCache)
@@ -140,17 +193,7 @@ namespace JuniorProject.Backend
 
         public abstract void DeserializeFields();
 
-        public bool DOrderCheck()
-        {
-            if (fields == null || stringCache == null)
-            {
-                Debug.Print($"DeserializeField() was called outside of a Deserialize() call.");
-                return false;
-            }
-            return true;
-        }
-
-        public T DeserializeField<T>()
+        public T DeserializeField<T>(Delegate preLoad = null)
         {
             dynamic? v = null;
             switch (Type.GetTypeCode(typeof(T)))
@@ -175,34 +218,59 @@ namespace JuniorProject.Backend
                         return v;
                     }
             }
+            if (Type.GetTypeCode(typeof(T)) == TypeCode.Object)
+            {
+                if(Nullable.GetUnderlyingType(typeof(T)) != null)
+                {
+                    int nextChar = reader.PeekChar();
+                    if(nextChar == -1)
+                    {
+                        v = null;
+                        return v;
+                    }
+                }
+                if (typeof(T) == typeof(Vector2Int))
+                {
+                    v = new Vector2Int(reader.ReadInt32(), reader.ReadInt32());
+                    return v;
+                }
+                if (typeof(T) == typeof(Vector2))
+                {
+                    v = new Vector2(reader.ReadSingle(), reader.ReadSingle());
+                    return v;
+                }
+                v = DeserializeObject(preLoad);
+                return v;
+            }
             Debug.Print($"The non-base type [{typeof(T).Name}] was attempted to be deserialized. Only base types and strings should be serialized.");
             return v;
         }
 
 
-        public List<T> DeserializeList<T>() where T : notnull
+        public List<T> DeserializeList<T>(Delegate preLoad = null) where T : notnull
         {
             List<T> returnList = new List<T>();
             int listCount = DeserializeField<int>();
             for (int i = 0; i < listCount; i++)
             {
-                returnList.Add(DeserializeField<T>());
+                T field = DeserializeField<T>(preLoad);
+                returnList.Add(field);
             }
             return returnList;
         }
 
-        public List<List<T>> DeserializeNestedList<T>() where T : notnull
+        public List<List<T>> DeserializeNestedList<T>(Delegate preLoad = null) where T : notnull
         {
             List<List<T>> returnList = new List<List<T>>();
             int listCount = DeserializeField<int>();
             for (int i = 0; i < listCount; i++)
             {
-                returnList.Add(DeserializeList<T>());
+                returnList.Add(DeserializeList<T>(preLoad));
             }
             return returnList;
         }
 
-        public Dictionary<K, V> DeserializeDictionary<K, V>()
+        public Dictionary<K, V> DeserializeDictionary<K, V>(Delegate preLoad = null)
             where K : notnull
             where V : notnull
         {
@@ -210,12 +278,14 @@ namespace JuniorProject.Backend
             int listCount = DeserializeField<int>();
             for (int i = 0; i < listCount; i++)
             {
-                returnDictionary.Add(DeserializeField<K>(), DeserializeField<V>());
+                K key = DeserializeField<K>();
+                V field = DeserializeField<V>(preLoad);
+                returnDictionary.Add(key, field);
             }
             return returnDictionary;
         }
 
-        public Dictionary<K, List<V>> DeserializeNestedDictionary<K, V>()
+        public Dictionary<K, List<V>> DeserializeNestedDictionary<K, V>(Delegate preLoad = null)
             where K : notnull
             where V : notnull
         {
@@ -223,26 +293,58 @@ namespace JuniorProject.Backend
             int listCount = DeserializeField<int>();
             for (int i = 0; i < listCount; i++)
             {
-                returnDictionary.Add(DeserializeField<K>(), DeserializeList<V>());
+                returnDictionary.Add(DeserializeField<K>(), DeserializeList<V>(preLoad));
             }
             return returnDictionary;
         }
 
-        public Serializable DeserializeObject()
+        public T[] DeserializeArray<T>(Delegate preLoad = null) where T : notnull
+        {
+            int len = reader.ReadInt32();
+            T[] returnArray = new T[len];
+            for (int x = 0; x < len; x++)
+            {
+                T field = DeserializeField<T>(preLoad);
+                returnArray[x] = field;
+            }
+            return returnArray;
+        }
+
+        public T[,] Deserialize2DArray<T>(Delegate preLoad = null) where T : notnull
+        {
+            int width = reader.ReadInt32();
+            int length = reader.ReadInt32();
+            T[,] returnArray = new T[width, length];
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < length; y++)
+                {
+                    T field = DeserializeField<T>(preLoad);
+					returnArray[x, y] = field;
+                }
+            }
+            return returnArray;
+        }
+
+        public Serializable DeserializeObject(Delegate preLoad = null)
         {
             string typeString = DeserializeField<string>();
             Type type = Type.GetType(typeString);
             Serializable objToReturn = (Serializable)Activator.CreateInstance(type);
+            preLoad?.DynamicInvoke(objToReturn);
             objToReturn.Deserialize(reader, stringCache);
             return objToReturn;
         }
 
     }
 
-    class Serializer
+    public class Serializer
     {
         Dictionary<Type, List<Serializable>> objectList = new Dictionary<Type, List<Serializable>>();
         string file_location;
+        public delegate void postAction(ref FileStream f);
+        public postAction arbitraryPostWrite;
+        public postAction arbitraryPostRead;
 
         public Serializer(string file_location)
         {
@@ -316,6 +418,7 @@ namespace JuniorProject.Backend
             }
             buffer.Seek(0, SeekOrigin.Begin);
             buffer.CopyTo(fileStream);
+            arbitraryPostWrite?.Invoke(ref fileStream);
             fileStream.Close();
         }
 
@@ -370,6 +473,7 @@ namespace JuniorProject.Backend
                     objectList[type].Add(serializable);
                 }
             }
+            arbitraryPostRead?.Invoke(ref fileStream);
             return objectList;
 
         }

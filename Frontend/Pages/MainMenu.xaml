@@ -5,7 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:JuniorProject"
         mc:Ignorable="d"
-        Height="600" Width="800" Background="#FF424242">
+        MinWidth="1100"
+        MinHeight="800"
+        VerticalAlignment="Stretch"
+        HorizontalAlignment="Stretch" Background="#FF424242">
     <Page.Resources>
         <SolidColorBrush x:Key="Button.MouseOver.Background" Color="#FFBEE6FD"/>
         <SolidColorBrush x:Key="Button.MouseOver.Border" Color="#FF3C7FB1"/>
@@ -25,13 +28,46 @@
                 <Trigger Property="IsMouseOver" Value="true">
                     <Setter TargetName="border" Property="Background">
                         <Setter.Value>
-                            <ImageBrush ImageSource="/Frontend/Images/gui/StartSimulationButtonHover.png"/>
+                            <ImageBrush ImageSource="/Frontend/GUI/Buttons/StartSimulationButtonHover.png"/>
                         </Setter.Value>
                     </Setter>
                 </Trigger>
             </ControlTemplate.Triggers>
         </ControlTemplate>
         <Style x:Key="FocusVisual">
+            <Setter Property="Control.Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Rectangle Margin="2" StrokeDashArray="1 2" Stroke="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" SnapsToDevicePixels="true" StrokeThickness="1"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <SolidColorBrush x:Key="Button.MouseOver.Background4" Color="#FFBEE6FD"/>
+        <SolidColorBrush x:Key="Button.MouseOver.Border4" Color="#FF3C7FB1"/>
+        <SolidColorBrush x:Key="Button.Pressed.Background4" Color="#FFC4E5F6"/>
+        <SolidColorBrush x:Key="Button.Pressed.Border4" Color="#FF2C628B"/>
+        <SolidColorBrush x:Key="Button.Disabled.Background4" Color="#FFF4F4F4"/>
+        <SolidColorBrush x:Key="Button.Disabled.Border4" Color="#FFADB2B5"/>
+        <SolidColorBrush x:Key="Button.Disabled.Foreground4" Color="#FF838383"/>
+        <ControlTemplate x:Key="LoadSimulationTemplate" TargetType="{x:Type ButtonBase}">
+            <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" SnapsToDevicePixels="true">
+                <ContentPresenter x:Name="contentPresenter" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="Button.IsDefaulted" Value="true">
+                    <Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="true">
+                    <Setter TargetName="border" Property="Background">
+                        <Setter.Value>
+                            <ImageBrush ImageSource="/Frontend/GUI/Buttons/LoadSimulationButtonHover.png"/>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+        <Style x:Key="FocusVisual4">
             <Setter Property="Control.Template">
                 <Setter.Value>
                     <ControlTemplate>
@@ -71,7 +107,7 @@
                             <Trigger Property="IsMouseOver" Value="true">
                                 <Setter TargetName="border" Property="Background">
                                     <Setter.Value>
-                                        <ImageBrush ImageSource="/Frontend/Images/gui/CatalogButtonHover.png"/>
+                                        <ImageBrush ImageSource="/Frontend/GUI/Buttons/CatalogButtonHover.png"/>
                                     </Setter.Value>
                                 </Setter>
                             </Trigger>
@@ -120,7 +156,7 @@
                             <Trigger Property="IsMouseOver" Value="true">
                                 <Setter TargetName="border" Property="Background">
                                     <Setter.Value>
-                                        <ImageBrush ImageSource="/Frontend/Images/gui/SettingsButtonHover.png"/>
+                                        <ImageBrush ImageSource="/Frontend/GUI/Buttons/SettingsButtonHover.png"/>
                                     </Setter.Value>
                                 </Setter>
                             </Trigger>
@@ -132,8 +168,19 @@
     </Page.Resources>
 
     <Grid>
+
         <Grid>
-            <TextBlock HorizontalAlignment="Center" Foreground="White" FontSize="50" Text="Cry Havoc" Margin="0,111,0,267" Width="230"/>
+            <Grid>
+                <TextBlock HorizontalAlignment="Center" 
+               Foreground="White" 
+               FontSize="50" 
+               FontWeight="Bold"
+               Text="Cry Havoc" 
+               Margin="0,111,0,267" 
+               Width="230" 
+               FontFamily="pack://application:,,,/Frontend/GUI/Fonts/#Alagard"/>
+            </Grid>
+
         </Grid>
         <StackPanel HorizontalAlignment="Center" Margin="0,211,0,96">
             <Button Template="{DynamicResource StartSimulationTemplate}" x:Name="startSimButton" Height="54" Width="284" Click="StartSimulation" Margin="0, 5" BorderThickness="0">
@@ -141,7 +188,23 @@
                     <Style TargetType="Button">
                         <Setter Property="Background">
                             <Setter.Value>
-                                <ImageBrush x:Name="SimulationButtonImageBrush"  ImageSource="/Frontend/Images/gui/StartSimulationButton.png" />
+                                <ImageBrush x:Name="SimulationButtonImageBrush"  ImageSource="/Frontend/GUI/Buttons/StartSimulationButton.png" />
+                            </Setter.Value>
+                        </Setter>
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Opacity" Value="0.8"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+            <Button Template="{DynamicResource LoadSimulationTemplate}" x:Name="loadSimButton" Height="54" Width="284" Click = "LoadSimulation" Margin="0, 5" BorderThickness="0">
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="Background">
+                            <Setter.Value>
+                                <ImageBrush x:Name="SimulationButtonImageBrush"  ImageSource="/Frontend/gui/Buttons/LoadSimulationButton.png" />
                             </Setter.Value>
                         </Setter>
                         <Style.Triggers>
@@ -154,12 +217,12 @@
             </Button>
             <Button Style="{DynamicResource CatalogTemplate}" x:Name="catalogButton" Height="54" Width="284" Click="Catalog" Margin="0, 5" BorderThickness="0">
                 <Button.Background>
-                    <ImageBrush ImageSource="/Frontend/Images/gui/CatalogButton.png" />
+                    <ImageBrush ImageSource="/Frontend/gui/Buttons/CatalogButton.png" />
                 </Button.Background>
             </Button>
             <Button Style="{DynamicResource SettingsTemplate}" x:Name="settingsButton" Height="54" Width="284" Click="Settings" Margin="0, 5" BorderThickness="0">
                 <Button.Background>
-                    <ImageBrush ImageSource="/Frontend/Images/gui/SettingsButton.png" />
+                    <ImageBrush ImageSource="/Frontend/gui/Buttons/SettingsButton.png" />
                 </Button.Background>
             </Button>
         </StackPanel>
