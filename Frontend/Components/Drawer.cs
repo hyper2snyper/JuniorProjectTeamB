@@ -41,7 +41,6 @@ namespace JuniorProject.Frontend.Components
 
         private TileMap tileMap;
 
-        public Queue<Drawable> drawables;
         private Dictionary<(int, int), List<int>> drawableGridLocations;
 
         Dictionary<string, Bitmap> bitmapCache = new Dictionary<string, Bitmap>();
@@ -54,16 +53,11 @@ namespace JuniorProject.Frontend.Components
 
         int total = 0;
 
-        Drawable map;
-        Drawable grid;
-
         World world;
 
         public Drawer(ref Canvas mapCanvas)
         {
             Canvas = mapCanvas;
-            drawables = new Queue<Drawable>();
-            drawableGridLocations = new Dictionary<(int, int), List<int>>();
         }
 
         public void Initialize()
@@ -212,12 +206,6 @@ namespace JuniorProject.Frontend.Components
             return worldBitmap.Clone(section, spriteSheet.PixelFormat);
         }
 
-        public void ClearCanvas()
-        {
-            drawables.Clear();
-            drawableGridLocations.Clear();
-        }
-
         private void addImageToCanvas(CachedDrawable c) {
             Canvas.SetLeft(c.image, c.pixelPosition.X);
             Canvas.SetTop(c.image, c.pixelPosition.Y);
@@ -265,8 +253,6 @@ namespace JuniorProject.Frontend.Components
         {
             List<GenericDrawable> genericDrawables = new List<GenericDrawable>();
             world.PopulateDrawablesList(ref genericDrawables);
-
-            ClearCanvas();
 
             foreach (GenericDrawable gd in genericDrawables) {
                 if (gd.sprite == null || gd.sprite == "") continue;
