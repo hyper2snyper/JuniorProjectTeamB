@@ -41,8 +41,6 @@ namespace JuniorProject.Frontend.Components
 
         private TileMap tileMap;
 
-        private Dictionary<(int, int), List<int>> drawableGridLocations;
-
         Dictionary<string, Bitmap> bitmapCache = new Dictionary<string, Bitmap>();
         Dictionary<(int, int), Bitmap> tileMapBitmapCache = new Dictionary<(int, int), Bitmap>();
         Dictionary<string, ImageSource> preloadedSprites = new Dictionary<string, ImageSource>();
@@ -162,7 +160,7 @@ namespace JuniorProject.Frontend.Components
 
                 images.Add(mobImage);
                 titles.Add(m.GetSprite());
-                information.Add($"Health -> 100\nPosition -> [{tile.pos.X}, {tile.pos.Y}]"); // this is cap for now but it's ok
+                information.Add($"Position -> [{tile.pos.X}, {tile.pos.Y}]");
             }
 
             string color = tile.Owner != null ? tile.Owner.color : null;
@@ -291,24 +289,30 @@ namespace JuniorProject.Frontend.Components
             }
         }
 
+        private bool checkIfUnitMoved(string uniqueIdentifier, Vector2Int newPosition) {
+            return cachedUnits[uniqueIdentifier].gridPosition.X != newPosition.X || cachedUnits[uniqueIdentifier].gridPosition.Y != newPosition.Y;
+        }
+
         public void addToCachedDrawings(GenericDrawable gd)
         {
             Vector2Int pixelPosition = ConvertGridPositionToPixels(gd.gridPosition.X, gd.gridPosition.Y);
             switch (gd.type) {
                 case GenericDrawable.DrawableType.Unit:
-                    if (!cachedUnits.ContainsKey(gd.uniqueIdentifier) || (cachedUnits[gd.uniqueIdentifier].sprite != gd.sprite))
+                    if (cachedUnits.ContainsKey(gd.uniqueIdentifier) && (cachedUnits[gd.uniqueIdentifier].sprite != gd.sprite))
                     {
-                        if (cachedUnits.ContainsKey(gd.uniqueIdentifier)) {
-                            Canvas.Children.Remove(cachedUnits[gd.uniqueIdentifier].image);
-                        }
+                        Canvas.Children.Remove(cachedUnits[gd.uniqueIdentifier].image);
+                        cachedUnits.Remove(gd.uniqueIdentifier);
+                    }
 
+                    if (!cachedUnits.ContainsKey(gd.uniqueIdentifier))
+                    {
                         Controls.Image newUnitImage = getImage(gd.sprite);
 
                         cachedUnits[gd.uniqueIdentifier] = new CachedDrawable(newUnitImage, pixelPosition, gd.gridPosition, 3);
                         break;
                     }
 
-                    if (cachedUnits[gd.uniqueIdentifier].gridPosition.X != gd.gridPosition.X || cachedUnits[gd.uniqueIdentifier].gridPosition.Y != gd.gridPosition.Y)
+                    if (checkIfUnitMoved(gd.uniqueIdentifier, gd.gridPosition))
                     {
                         cachedUnits[gd.uniqueIdentifier] = new CachedDrawable(cachedUnits[gd.uniqueIdentifier].image, pixelPosition, gd.gridPosition, 3);
                         cachedUnits[gd.uniqueIdentifier].shouldMove = true;
@@ -319,33 +323,36 @@ namespace JuniorProject.Frontend.Components
                     cachedUnits[gd.uniqueIdentifier].shouldDelete = false;
                     break;
                 case GenericDrawable.DrawableType.Tile:
-                    if (!cachedTiles.ContainsKey((gd.gridPosition.X, gd.gridPosition.Y)) || cachedTiles[(gd.gridPosition.X, gd.gridPosition.Y)].team != gd.sprite)
-                    {
-                        if (cachedTiles.ContainsKey((gd.gridPosition.X, gd.gridPosition.Y)))
-                        {
-                            Canvas.Children.Remove(cachedTiles[(gd.gridPosition.X, gd.gridPosition.Y)].image);
-                        }
+                    if (cachedTiles.ContainsKey((gd.gridPosition.X, gd.gridPosition.Y)) && (cachedTiles[(gd.gridPosition.X, gd.gridPosition.Y)].sprite != gd.sprite)) {
+                        Canvas.Children.Remove(cachedTiles[(gd.gridPosition.X, gd.gridPosition.Y)].image);
+                        cachedTiles.Remove((gd.gridPosition.X, gd.gridPosition.Y));
+                    }
 
+                    if (!cachedTiles.ContainsKey((gd.gridPosition.X, gd.gridPosition.Y)))
+                    {
                         Controls.Image newTile = getImage(gd.sprite);
 
                         cachedTiles[(gd.gridPosition.X, gd.gridPosition.Y)] = new CachedDrawable(newTile, pixelPosition, gd.gridPosition, 1, gd.sprite);
                         break;
                     }
+
                     cachedTiles[(gd.gridPosition.X, gd.gridPosition.Y)].shouldDelete = false;
                     break;
                 case GenericDrawable.DrawableType.Building:
-                    if (!cachedBuildings.ContainsKey((gd.gridPosition.X, gd.gridPosition.Y)) || cachedBuildings[(gd.gridPosition.X, gd.gridPosition.Y)].team != gd.sprite)
+                    if (cachedBuildings.ContainsKey((gd.gridPosition.X, gd.gridPosition.Y)) && cachedBuildings[(gd.gridPosition.X, gd.gridPosition.Y)].sprite != gd.sprite) 
                     {
-                        if (cachedBuildings.ContainsKey((gd.gridPosition.X, gd.gridPosition.Y)))
-                        {
-                            Canvas.Children.Remove(cachedBuildings[(gd.gridPosition.X, gd.gridPosition.Y)].image);
-                        }
+                        Canvas.Children.Remove(cachedBuildings[(gd.gridPosition.X, gd.gridPosition.Y)].image);
+                        cachedBuildings.Remove((gd.gridPosition.X, gd.gridPosition.Y));
+                    }
 
+                    if (!cachedBuildings.ContainsKey((gd.gridPosition.X, gd.gridPosition.Y)))
+                    {
                         Controls.Image newBuilding = getImage(gd.sprite);
 
                         cachedBuildings[(gd.gridPosition.X, gd.gridPosition.Y)] = new CachedDrawable(newBuilding, pixelPosition, gd.gridPosition, 2, gd.sprite);
                         break;
                     }
+
                     cachedBuildings[(gd.gridPosition.X, gd.gridPosition.Y)].shouldDelete = false;
                     break;
                 default:

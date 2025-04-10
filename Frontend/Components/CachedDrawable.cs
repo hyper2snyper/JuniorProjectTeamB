@@ -19,17 +19,15 @@ namespace JuniorProject.Frontend.Components
         public Boolean shouldDraw;
 
         public int layer;
-        public string team;
         public string sprite;
 
-        public CachedDrawable(Image image, Vector2Int pixelPos, Vector2Int gridPos, int layer, string team = "", string sprite = "") {
+        public CachedDrawable(Image image, Vector2Int pixelPos, Vector2Int gridPos, int layer, string sprite = "") {
             this.image = image;
             this.pixelPosition = pixelPos;
             this.gridPosition = gridPos;
             this.shouldDelete = false;
             this.shouldMove = false;
             this.shouldDraw = true;
-            this.team = team;
             this.sprite = sprite;
             this.layer = layer;
         }
