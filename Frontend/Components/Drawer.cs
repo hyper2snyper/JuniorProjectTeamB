@@ -299,6 +299,8 @@ namespace JuniorProject.Frontend.Components
             if (cache.ContainsKey(gd.uniqueIdentifier) && (cache[gd.uniqueIdentifier].sprite != gd.sprite))
             {
                 Debug.Print($"{cache[gd.uniqueIdentifier].sprite} - {gd.sprite}");
+                Debug.Print($"{gd.type}");
+                Debug.Print($"-----");
                 Canvas.Children.Remove(cache[gd.uniqueIdentifier].image);
                 cache.Remove(gd.uniqueIdentifier);
             }
