@@ -11,10 +11,10 @@ namespace JuniorProject.Frontend.Components
     {
         public enum DrawableType
         {
-            Unit,
-            Tile,
-            Building,
-            Mob
+            Tile = 0,
+            Building = 1,
+            Unit = 2,
+            Mob = 3
         }
 
         public GenericDrawable(Vector2Int gridPosition, string sprite, DrawableType type, string uniqueIdentifier = null) {

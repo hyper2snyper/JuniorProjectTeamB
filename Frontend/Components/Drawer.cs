@@ -46,8 +46,8 @@ namespace JuniorProject.Frontend.Components
         Dictionary<string, ImageSource> preloadedSprites = new Dictionary<string, ImageSource>();
 
         Dictionary<string, CachedDrawable> cachedUnits = new Dictionary<string, CachedDrawable>();
-        Dictionary<(int, int), CachedDrawable> cachedTiles = new Dictionary<(int, int), CachedDrawable>();
-        Dictionary<(int, int), CachedDrawable> cachedBuildings = new Dictionary<(int, int), CachedDrawable>();
+        Dictionary<string, CachedDrawable> cachedTiles = new Dictionary<string, CachedDrawable>();
+        Dictionary<string, CachedDrawable> cachedBuildings = new Dictionary<string, CachedDrawable>();
 
         int total = 0;
 
@@ -216,7 +216,7 @@ namespace JuniorProject.Frontend.Components
         {
             foreach (var u in cachedUnits)
             {
-                if (u.Value.shouldDraw)
+                if (!Canvas.Children.Contains(u.Value.image))
                 {
                     addImageToCanvas(u.Value);
                 }
@@ -228,14 +228,14 @@ namespace JuniorProject.Frontend.Components
             }
             foreach (var u in cachedTiles)
             {
-                if (u.Value.shouldDraw)
+                if (!Canvas.Children.Contains(u.Value.image))
                 {
                     addImageToCanvas(u.Value);
                 }
             }
             foreach (var u in cachedBuildings)
             {
-                if (u.Value.shouldDraw)
+                if (!Canvas.Children.Contains(u.Value.image))
                 {
                     addImageToCanvas(u.Value);
                 }
@@ -253,11 +253,11 @@ namespace JuniorProject.Frontend.Components
             world.PopulateDrawablesList(ref genericDrawables);
 
             foreach (GenericDrawable gd in genericDrawables) {
-                if (gd.sprite == null || gd.sprite == "") continue;
+                //if (gd.sprite == null || gd.sprite == "") continue;
                 addToCachedDrawings(gd);
             }
 
-            checkCachedDrawingsToDelete();
+            //checkCachedDrawingsToDelete();
 
             //DebugImages();
             PopulateCanvas();
@@ -293,67 +293,47 @@ namespace JuniorProject.Frontend.Components
             return cachedUnits[uniqueIdentifier].gridPosition.X != newPosition.X || cachedUnits[uniqueIdentifier].gridPosition.Y != newPosition.Y;
         }
 
-        public void addToCachedDrawings(GenericDrawable gd)
+        private bool checkToCacheData(ref Dictionary<string, CachedDrawable> cache, GenericDrawable gd)
         {
             Vector2Int pixelPosition = ConvertGridPositionToPixels(gd.gridPosition.X, gd.gridPosition.Y);
+            if (cache.ContainsKey(gd.uniqueIdentifier) && (cache[gd.uniqueIdentifier].sprite != gd.sprite))
+            {
+                Debug.Print($"{cache[gd.uniqueIdentifier].sprite} - {gd.sprite}");
+                Canvas.Children.Remove(cache[gd.uniqueIdentifier].image);
+                cache.Remove(gd.uniqueIdentifier);
+            }
+
+            if (!cache.ContainsKey(gd.uniqueIdentifier))
+            {
+                Controls.Image newUnitImage = getImage(gd.sprite);
+
+                cache[gd.uniqueIdentifier] = new CachedDrawable(newUnitImage, pixelPosition, gd.gridPosition, (int)gd.type, gd.sprite);
+                return true;
+            }
+            return false;
+        }
+
+        public void addToCachedDrawings(GenericDrawable gd)
+        {
             switch (gd.type) {
                 case GenericDrawable.DrawableType.Unit:
-                    if (cachedUnits.ContainsKey(gd.uniqueIdentifier) && (cachedUnits[gd.uniqueIdentifier].sprite != gd.sprite))
-                    {
-                        Canvas.Children.Remove(cachedUnits[gd.uniqueIdentifier].image);
-                        cachedUnits.Remove(gd.uniqueIdentifier);
-                    }
-
-                    if (!cachedUnits.ContainsKey(gd.uniqueIdentifier))
-                    {
-                        Controls.Image newUnitImage = getImage(gd.sprite);
-
-                        cachedUnits[gd.uniqueIdentifier] = new CachedDrawable(newUnitImage, pixelPosition, gd.gridPosition, 3);
-                        break;
-                    }
-
+                    if (checkToCacheData(ref cachedUnits, gd)) break;
                     if (checkIfUnitMoved(gd.uniqueIdentifier, gd.gridPosition))
                     {
-                        cachedUnits[gd.uniqueIdentifier] = new CachedDrawable(cachedUnits[gd.uniqueIdentifier].image, pixelPosition, gd.gridPosition, 3);
+                        cachedUnits[gd.uniqueIdentifier] = new CachedDrawable(cachedUnits[gd.uniqueIdentifier].image, ConvertGridPositionToPixels(gd.gridPosition.X, gd.gridPosition.Y), gd.gridPosition, 3, gd.sprite);
                         cachedUnits[gd.uniqueIdentifier].shouldMove = true;
                         cachedUnits[gd.uniqueIdentifier].shouldDelete = false;
                         break;
                     }
-
                     cachedUnits[gd.uniqueIdentifier].shouldDelete = false;
                     break;
                 case GenericDrawable.DrawableType.Tile:
-                    if (cachedTiles.ContainsKey((gd.gridPosition.X, gd.gridPosition.Y)) && (cachedTiles[(gd.gridPosition.X, gd.gridPosition.Y)].sprite != gd.sprite)) {
-                        Canvas.Children.Remove(cachedTiles[(gd.gridPosition.X, gd.gridPosition.Y)].image);
-                        cachedTiles.Remove((gd.gridPosition.X, gd.gridPosition.Y));
-                    }
-
-                    if (!cachedTiles.ContainsKey((gd.gridPosition.X, gd.gridPosition.Y)))
-                    {
-                        Controls.Image newTile = getImage(gd.sprite);
-
-                        cachedTiles[(gd.gridPosition.X, gd.gridPosition.Y)] = new CachedDrawable(newTile, pixelPosition, gd.gridPosition, 1, gd.sprite);
-                        break;
-                    }
-
-                    cachedTiles[(gd.gridPosition.X, gd.gridPosition.Y)].shouldDelete = false;
+                    if (checkToCacheData(ref cachedTiles, gd)) break;
+                    cachedTiles[gd.uniqueIdentifier].shouldDelete = false;
                     break;
                 case GenericDrawable.DrawableType.Building:
-                    if (cachedBuildings.ContainsKey((gd.gridPosition.X, gd.gridPosition.Y)) && cachedBuildings[(gd.gridPosition.X, gd.gridPosition.Y)].sprite != gd.sprite) 
-                    {
-                        Canvas.Children.Remove(cachedBuildings[(gd.gridPosition.X, gd.gridPosition.Y)].image);
-                        cachedBuildings.Remove((gd.gridPosition.X, gd.gridPosition.Y));
-                    }
-
-                    if (!cachedBuildings.ContainsKey((gd.gridPosition.X, gd.gridPosition.Y)))
-                    {
-                        Controls.Image newBuilding = getImage(gd.sprite);
-
-                        cachedBuildings[(gd.gridPosition.X, gd.gridPosition.Y)] = new CachedDrawable(newBuilding, pixelPosition, gd.gridPosition, 2, gd.sprite);
-                        break;
-                    }
-
-                    cachedBuildings[(gd.gridPosition.X, gd.gridPosition.Y)].shouldDelete = false;
+                    if (checkToCacheData(ref cachedBuildings, gd)) break;
+                    cachedBuildings[gd.uniqueIdentifier].shouldDelete = false;
                     break;
                 default:
                     Debug.Print(String.Format("ERROR! Cannot find cache GenericDrawable"));

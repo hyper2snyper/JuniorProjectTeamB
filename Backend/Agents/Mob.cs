@@ -55,7 +55,7 @@ namespace JuniorProject.Backend.Agents
 
 		public virtual void populateDrawables(ref List<GenericDrawable> genericDrawables)
 		{
-			genericDrawables.Add(new GenericDrawable(PosVector, GetSprite(), drawableType));
+			genericDrawables.Add(new GenericDrawable(PosVector, GetSprite(), drawableType, $"{PosVector.X}{PosVector.Y}"));
 		}
 
 		public virtual string GetSprite()
