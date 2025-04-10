@@ -218,29 +218,40 @@ namespace JuniorProject.Frontend.Components
             drawableGridLocations.Clear();
         }
 
+        private void addImageToCanvas(CachedDrawable c) {
+            Canvas.SetLeft(c.image, c.pixelPosition.X);
+            Canvas.SetTop(c.image, c.pixelPosition.Y);
+            Panel.SetZIndex(c.image, c.layer);
+            Canvas.Children.Add(c.image);
+            c.shouldDraw = false;
+        }
+
         public void PopulateCanvas()
         {
-            // DRAW NEW STUFF
-            foreach (Drawable d in drawables)
+            foreach (var u in cachedUnits)
             {
-                if (d != null && d.shouldDraw)
+                if (u.Value.shouldDraw)
                 {
-                    if (!d.isMapOrGridlines)
-                    {
-                        Canvas.SetLeft(d.image, d.pixelPosition.X);
-                        Canvas.SetTop(d.image, d.pixelPosition.Y);
-                    }
-                    Panel.SetZIndex(d.image, d.layer);
-                    Canvas.Children.Add(d.image);
+                    addImageToCanvas(u.Value);
+                }
+                if (u.Value.shouldMove) {
+                    Canvas.SetLeft(u.Value.image, u.Value.pixelPosition.X);
+                    Canvas.SetTop(u.Value.image, u.Value.pixelPosition.Y);
+                    u.Value.shouldMove = false;
                 }
             }
-
-            foreach (var d in cachedUnits)
+            foreach (var u in cachedTiles)
             {
-                if (d.Value.shouldMove) {
-                    Canvas.SetLeft(d.Value.image, d.Value.pixelPosition.X);
-                    Canvas.SetTop(d.Value.image, d.Value.pixelPosition.Y);
-                    d.Value.shouldMove = false;
+                if (u.Value.shouldDraw)
+                {
+                    addImageToCanvas(u.Value);
+                }
+            }
+            foreach (var u in cachedBuildings)
+            {
+                if (u.Value.shouldDraw)
+                {
+                    addImageToCanvas(u.Value);
                 }
             }
         }
@@ -307,9 +318,18 @@ namespace JuniorProject.Frontend.Components
 
                         Controls.Image newUnitImage = getImage(gd.sprite);
 
-                        drawables.Enqueue(new Drawable(newUnitImage, true, gd.sprite, IMAGE_SOURCE, pixelPosition, gd.gridPosition, 4));
-                        cachedUnits[gd.uniqueIdentifier] = new CachedDrawable(newUnitImage, pixelPosition, gd.gridPosition);
+                        cachedUnits[gd.uniqueIdentifier] = new CachedDrawable(newUnitImage, pixelPosition, gd.gridPosition, 3);
+                        break;
                     }
+
+                    if (cachedUnits[gd.uniqueIdentifier].gridPosition.X != gd.gridPosition.X || cachedUnits[gd.uniqueIdentifier].gridPosition.Y != gd.gridPosition.Y)
+                    {
+                        cachedUnits[gd.uniqueIdentifier] = new CachedDrawable(cachedUnits[gd.uniqueIdentifier].image, pixelPosition, gd.gridPosition, 3);
+                        cachedUnits[gd.uniqueIdentifier].shouldMove = true;
+                        cachedUnits[gd.uniqueIdentifier].shouldDelete = false;
+                        break;
+                    }
+
                     cachedUnits[gd.uniqueIdentifier].shouldDelete = false;
                     break;
                 case GenericDrawable.DrawableType.Tile:
@@ -322,9 +342,8 @@ namespace JuniorProject.Frontend.Components
 
                         Controls.Image newTile = getImage(gd.sprite);
 
-                        cachedTiles[(gd.gridPosition.X, gd.gridPosition.Y)] = new CachedDrawable(newTile, pixelPosition, gd.gridPosition, gd.sprite);
-                        drawables.Enqueue(new Drawable(newTile, true, "Tile", "SpriteSheet", pixelPosition, gd.gridPosition, 2));
-                        Debug.Print($"ADDED TILE: {gd.sprite} [{gd.gridPosition.X}, {gd.gridPosition.Y}]");
+                        cachedTiles[(gd.gridPosition.X, gd.gridPosition.Y)] = new CachedDrawable(newTile, pixelPosition, gd.gridPosition, 1, gd.sprite);
+                        break;
                     }
                     cachedTiles[(gd.gridPosition.X, gd.gridPosition.Y)].shouldDelete = false;
                     break;
@@ -338,9 +357,8 @@ namespace JuniorProject.Frontend.Components
 
                         Controls.Image newBuilding = getImage(gd.sprite);
 
-                        cachedBuildings[(gd.gridPosition.X, gd.gridPosition.Y)] = new CachedDrawable(newBuilding, pixelPosition, gd.gridPosition, gd.sprite);
-                        drawables.Enqueue(new Drawable(newBuilding, true, gd.sprite, "SpriteSheet", pixelPosition, gd.gridPosition, 3));
-                        return;
+                        cachedBuildings[(gd.gridPosition.X, gd.gridPosition.Y)] = new CachedDrawable(newBuilding, pixelPosition, gd.gridPosition, 2, gd.sprite);
+                        break;
                     }
                     cachedBuildings[(gd.gridPosition.X, gd.gridPosition.Y)].shouldDelete = false;
                     break;
