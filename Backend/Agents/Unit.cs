@@ -64,18 +64,18 @@ namespace JuniorProject.Backend.Agents
             drawableType = GenericDrawable.DrawableType.Unit;
         }
 
-		void SetType(UnitTemplate template)
-		{
-			unitType = template;
+        void SetType(UnitTemplate template)
+        {
+            unitType = template;
             sprite = unitType.sprite;
 
-			health = unitType.maxHealth;
-		}
+            health = unitType.maxHealth;
+        }
 
-		public override string GetSprite()
-		{
-			return $"{nation?.color}{(embarked ? "Ship" : base.GetSprite())}";
-		}
+        public override string GetSprite()
+        {
+            return $"{nation?.color}{(embarked ? "Ship" : base.GetSprite())}";
+        }
 
         public void SetObjective(Objective objective)
         {
@@ -83,12 +83,12 @@ namespace JuniorProject.Backend.Agents
             objective.Attach(this);
         }
 
-        public Objective? GetObjective() {  return objective; }
+        public Objective? GetObjective() { return objective; }
 
         public override void TakeTurn(ulong tick)
         {
             base.TakeTurn(tick);
-            if(objective != null)
+            if (objective != null)
             {
                 objective = objective.PerformTurn(tick);
             }
@@ -100,43 +100,45 @@ namespace JuniorProject.Backend.Agents
         }
 
 
-		public override void EnterTile(TileMap.Tile tile)
-		{
+        public override void EnterTile(TileMap.Tile tile)
+        {
             if (!tile.impassible && tile.Owner != nation)
             {
                 nation.AddTerritory(tile);
             }
-            foreach(Mob m in tile.Occupants)
+            foreach (Mob m in tile.Occupants)
             {
-                if(m is Building b)
+                if (m is Building b)
                 {
                     if (m.nation == nation) continue;
                     nation?.AddBuilding(b);
                 }
             }
-			base.EnterTile(tile);
-		}
+            base.EnterTile(tile);
+        }
 
-		public void MoveTo(TileMap.Tile toPos, MoveAction.PostMoveAction? action = null)
+        public void MoveTo(TileMap.Tile toPos, MoveAction.PostMoveAction? action = null)
         {
             SetObjective(new MoveAction(toPos, action));
         }
 
-        public void Follow(Unit mob) { 
+        public void Follow(Unit mob)
+        {
             SetObjective(new FollowAction(mob));
         }
 
-        public override void populateDrawables(ref List<GenericDrawable> genericDrawables) {
+        public override void populateDrawables(ref List<GenericDrawable> genericDrawables)
+        {
             genericDrawables.Add(new GenericDrawable(PosVector, GetSprite(), GenericDrawable.DrawableType.Unit, name));
         }
 
-		public override void DestroyMob()
-		{
-			base.DestroyMob();
+        public override void DestroyMob()
+        {
+            base.DestroyMob();
             objective = null;
-		}
+        }
 
-		public override void SerializeFields()
+        public override void SerializeFields()
         {
             base.SerializeFields();
             SerializeField(unitType.name); //Save the type.
@@ -152,7 +154,7 @@ namespace JuniorProject.Backend.Agents
             unitType = unitTemplates[DeserializeField<string>()]; //The templates need to be loaded first.
             health = DeserializeField<int>();
             name = DeserializeField<string>();
-            
+
         }
     }
 }

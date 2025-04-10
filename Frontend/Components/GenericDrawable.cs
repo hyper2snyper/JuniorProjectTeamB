@@ -17,7 +17,8 @@ namespace JuniorProject.Frontend.Components
             Mob = 3
         }
 
-        public GenericDrawable(Vector2Int gridPosition, string sprite, DrawableType type, string uniqueIdentifier = null) {
+        public GenericDrawable(Vector2Int gridPosition, string sprite, DrawableType type, string uniqueIdentifier = null)
+        {
             this.gridPosition = gridPosition;
             this.sprite = sprite;
             this.type = type;
@@ -25,7 +26,7 @@ namespace JuniorProject.Frontend.Components
         }
 
         public Vector2Int gridPosition;
-        public string sprite; 
+        public string sprite;
         public int layer;
         public DrawableType type;
         public string uniqueIdentifier;

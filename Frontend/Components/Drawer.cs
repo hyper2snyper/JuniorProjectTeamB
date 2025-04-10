@@ -101,7 +101,8 @@ namespace JuniorProject.Frontend.Components
             sprites = JsonConvert.DeserializeObject<Dictionary<string, SpriteInfo>>(jsonData);
             spriteSheet = new Bitmap(spriteSheetPath);
 
-            foreach (var sprite in sprites) {
+            foreach (var sprite in sprites)
+            {
                 Rectangle section = new Rectangle(sprite.Value.x1, sprite.Value.y1, sprite.Value.width, sprite.Value.height);
                 Bitmap bitmap = spriteSheet.Clone(section, spriteSheet.PixelFormat);
                 ImageSource source = TransferToWriteableBitmap(bitmap);
@@ -110,7 +111,8 @@ namespace JuniorProject.Frontend.Components
                 {
                     Debug.Print($"!!!ERROR: COULD NOT ADD SPRITE TO 'preloadedSprites' {sprite.Key}");
                 }
-                else {
+                else
+                {
                     amountOfImagesAdded += 1;
                 }
             }
@@ -150,7 +152,8 @@ namespace JuniorProject.Frontend.Components
             titles.Add("Tile");
             information.Add(getTileInformation(ref tile));
 
-            foreach (Mob m in tile.Occupants) {
+            foreach (Mob m in tile.Occupants)
+            {
                 Controls.Image mobImage = new Controls.Image
                 {
                     Width = getPreloadedSprite(m.GetSprite()).Width,
@@ -184,7 +187,7 @@ namespace JuniorProject.Frontend.Components
             {
                 Rectangle section = new Rectangle(targetSprite.x1, targetSprite.y1, targetSprite.width, targetSprite.height);
                 Bitmap bitmap = spriteSheet.Clone(section, spriteSheet.PixelFormat);
-                bitmapCache.Add(name, bitmap); 
+                bitmapCache.Add(name, bitmap);
                 return bitmap;
             }
             else
@@ -196,20 +199,20 @@ namespace JuniorProject.Frontend.Components
 
         public Bitmap extractTileFromMap(int x1, int y1, int width, int height)
         {
-            if(tileMapBitmapCache.ContainsKey((x1,y1)))
+            if (tileMapBitmapCache.ContainsKey((x1, y1)))
             {
-                return tileMapBitmapCache[(x1,y1)];
+                return tileMapBitmapCache[(x1, y1)];
             }
             Rectangle section = new Rectangle(x1, y1, width, height);
             return worldBitmap.Clone(section, spriteSheet.PixelFormat);
         }
 
-        private void addImageToCanvas(CachedDrawable c) {
+        private void addImageToCanvas(CachedDrawable c)
+        {
             Canvas.SetLeft(c.image, c.pixelPosition.X);
             Canvas.SetTop(c.image, c.pixelPosition.Y);
             Panel.SetZIndex(c.image, c.layer);
             Canvas.Children.Add(c.image);
-            c.shouldDraw = false;
         }
 
         public void PopulateCanvas()
@@ -220,7 +223,8 @@ namespace JuniorProject.Frontend.Components
                 {
                     addImageToCanvas(u.Value);
                 }
-                if (u.Value.shouldMove) {
+                if (u.Value.shouldMove)
+                {
                     Canvas.SetLeft(u.Value.image, u.Value.pixelPosition.X);
                     Canvas.SetTop(u.Value.image, u.Value.pixelPosition.Y);
                     u.Value.shouldMove = false;
@@ -252,89 +256,72 @@ namespace JuniorProject.Frontend.Components
             List<GenericDrawable> genericDrawables = new List<GenericDrawable>();
             world.PopulateDrawablesList(ref genericDrawables);
 
-            foreach (GenericDrawable gd in genericDrawables) {
-                //if (gd.sprite == null || gd.sprite == "") continue;
+            foreach (GenericDrawable gd in genericDrawables)
+            {
                 addToCachedDrawings(gd);
             }
 
-            //checkCachedDrawingsToDelete();
+            checkCachedDrawingsToDelete(ref cachedUnits);
+            checkCachedDrawingsToDelete(ref cachedTiles);
+            checkCachedDrawingsToDelete(ref cachedBuildings);
 
             //DebugImages();
             PopulateCanvas();
         }
 
-        public void checkCachedDrawingsToDelete() {
-            foreach (var u in cachedUnits)
-            {
-                if (u.Value.shouldDelete) {
-                    Canvas.Children.Remove(u.Value.image);
-                }
-                u.Value.shouldDelete = true;
-            }
-            foreach (var u in cachedTiles)
+        public void checkCachedDrawingsToDelete(ref Dictionary<string, CachedDrawable> cache)
+        {
+
+            foreach (var u in cache.ToList())
             {
                 if (u.Value.shouldDelete)
                 {
                     Canvas.Children.Remove(u.Value.image);
-                }
-                u.Value.shouldDelete = true;
-            }
-            foreach (var u in cachedBuildings)
-            {
-                if (u.Value.shouldDelete)
-                {
-                    Canvas.Children.Remove(u.Value.image);
+                    cache.Remove(u.Key);
                 }
                 u.Value.shouldDelete = true;
             }
         }
 
-        private bool checkIfUnitMoved(string uniqueIdentifier, Vector2Int newPosition) {
+        private bool checkIfUnitMoved(string uniqueIdentifier, Vector2Int newPosition)
+        {
             return cachedUnits[uniqueIdentifier].gridPosition.X != newPosition.X || cachedUnits[uniqueIdentifier].gridPosition.Y != newPosition.Y;
         }
 
-        private bool checkToCacheData(ref Dictionary<string, CachedDrawable> cache, GenericDrawable gd)
+        private void checkToCacheData(ref Dictionary<string, CachedDrawable> cache, GenericDrawable gd)
         {
             Vector2Int pixelPosition = ConvertGridPositionToPixels(gd.gridPosition.X, gd.gridPosition.Y);
             if (cache.ContainsKey(gd.uniqueIdentifier) && (cache[gd.uniqueIdentifier].sprite != gd.sprite))
             {
-                Debug.Print($"{cache[gd.uniqueIdentifier].sprite} - {gd.sprite}");
-                Debug.Print($"{gd.type}");
-                Debug.Print($"-----");
                 Canvas.Children.Remove(cache[gd.uniqueIdentifier].image);
                 cache.Remove(gd.uniqueIdentifier);
             }
 
             if (!cache.ContainsKey(gd.uniqueIdentifier))
             {
-                Controls.Image newUnitImage = getImage(gd.sprite);
-
-                cache[gd.uniqueIdentifier] = new CachedDrawable(newUnitImage, pixelPosition, gd.gridPosition, (int)gd.type, gd.sprite);
-                return true;
+                cache[gd.uniqueIdentifier] = new CachedDrawable(getImage(gd.sprite), pixelPosition, gd.gridPosition, (int)gd.type, gd.sprite);
             }
-            return false;
         }
 
         public void addToCachedDrawings(GenericDrawable gd)
         {
-            switch (gd.type) {
+            switch (gd.type)
+            {
                 case GenericDrawable.DrawableType.Unit:
-                    if (checkToCacheData(ref cachedUnits, gd)) break;
+                    checkToCacheData(ref cachedUnits, gd);
                     if (checkIfUnitMoved(gd.uniqueIdentifier, gd.gridPosition))
                     {
                         cachedUnits[gd.uniqueIdentifier] = new CachedDrawable(cachedUnits[gd.uniqueIdentifier].image, ConvertGridPositionToPixels(gd.gridPosition.X, gd.gridPosition.Y), gd.gridPosition, 3, gd.sprite);
                         cachedUnits[gd.uniqueIdentifier].shouldMove = true;
-                        cachedUnits[gd.uniqueIdentifier].shouldDelete = false;
-                        break;
                     }
                     cachedUnits[gd.uniqueIdentifier].shouldDelete = false;
                     break;
                 case GenericDrawable.DrawableType.Tile:
-                    if (checkToCacheData(ref cachedTiles, gd)) break;
+                    checkToCacheData(ref cachedTiles, gd);
                     cachedTiles[gd.uniqueIdentifier].shouldDelete = false;
                     break;
                 case GenericDrawable.DrawableType.Building:
-                    if (checkToCacheData(ref cachedBuildings, gd)) break;
+                    checkToCacheData(ref cachedBuildings, gd);
                     cachedBuildings[gd.uniqueIdentifier].shouldDelete = false;
                     break;
                 default:
@@ -343,7 +330,8 @@ namespace JuniorProject.Frontend.Components
             }
         }
 
-        private Controls.Image getImage(string sprite) {
+        private Controls.Image getImage(string sprite)
+        {
             Controls.Image image = new Controls.Image
             {
                 Source = getPreloadedSprite(sprite),

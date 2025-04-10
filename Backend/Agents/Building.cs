@@ -23,22 +23,22 @@ namespace JuniorProject.Backend.Agents
         public static void LoadBuildingTemplates()
         {
             buildingTemplates = new Dictionary<string, BuildingTemplate>();
-			SQLiteDataReader results = DatabaseManager.ReadDB("SELECT * FROM Buildings;");
-			while (results.Read())
-			{
+            SQLiteDataReader results = DatabaseManager.ReadDB("SELECT * FROM Buildings;");
+            while (results.Read())
+            {
                 BuildingTemplate template = new BuildingTemplate();
-				template.name = results.GetString(0);
-				template.cost = results.GetInt32(1);
+                template.name = results.GetString(0);
+                template.cost = results.GetInt32(1);
                 template.maxHealth = results.GetInt32(2);
-				template.sprite = results.GetString(3);
+                template.sprite = results.GetString(3);
                 template.hasColor = results.GetBoolean(4);
-				if (results.GetInt32(5) != 0)
+                if (results.GetInt32(5) != 0)
                 {
                     capitalTemplate = template;
                 }
                 buildingTemplates.Add(template.name, template);
-			}
-		}
+            }
+        }
 
         public BuildingTemplate template;
 
@@ -47,7 +47,7 @@ namespace JuniorProject.Backend.Agents
         public Building() { }
         public Building(string type, TileMap map, TileMap.Tile tile, Nation? nation) : base(map, tile, nation)
         {
-            if(!buildingTemplates.ContainsKey(type))
+            if (!buildingTemplates.ContainsKey(type))
             {
                 Debug.Print($"Building was initialized with nonexistant type. {type}");
                 return;
@@ -63,41 +63,41 @@ namespace JuniorProject.Backend.Agents
             sprite = template.sprite;
         }
 
-		public override void TakeTurn(ulong tick)
-		{
-			base.TakeTurn(tick);
-            if(template.name == "Farm" && nation != null)
+        public override void TakeTurn(ulong tick)
+        {
+            base.TakeTurn(tick);
+            if (template.name == "Farm" && nation != null)
             {
                 nation.money++;
             }
-		}
+        }
 
-		public override string GetSprite()
-		{
-			return $"{(template.hasColor ? (nation?.color) : "")}{base.GetSprite()}";
-		}
+        public override string GetSprite()
+        {
+            return $"{(template.hasColor ? (nation?.color) : "")}{base.GetSprite()}";
+        }
 
         public override void SerializeFields()
         {
-			base.SerializeFields();
-			SerializeField(template.name);
+            base.SerializeFields();
+            SerializeField(template.name);
 
             SerializeField(health);
             SerializeField(sprite);
-            
+
         }
 
-		public override void DeserializeFields()
-		{
+        public override void DeserializeFields()
+        {
             base.DeserializeFields();
             template = buildingTemplates[DeserializeField<string>()];
 
-            health = DeserializeField<int>();  
+            health = DeserializeField<int>();
             sprite = DeserializeField<string>();
-		}
+        }
 
 
 
 
-	}
+    }
 }

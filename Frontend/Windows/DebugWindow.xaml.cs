@@ -72,34 +72,34 @@ namespace JuniorProject.Frontend.Windows
         public static readonly Regex identifier = new Regex("^[a-zA-z]+.");
         public static readonly Regex function = new Regex("\\.[a-zA-Z]+\\(");
 
-		private void Input_PreviewKeyDown(object sender, KeyEventArgs e)
-		{
-            if(e.Key == Key.Up && usedCommands.Count != 0)
+        private void Input_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Up && usedCommands.Count != 0)
             {
-				current_command--;
-				if (current_command < 0) return;
-				Input.Text = usedCommands[current_command];
+                current_command--;
+                if (current_command < 0) return;
+                Input.Text = usedCommands[current_command];
                 return;
-			}
-            if(e.Key == Key.Down && usedCommands.Count != 0)
+            }
+            if (e.Key == Key.Down && usedCommands.Count != 0)
             {
-				current_command++;
-				if (current_command >= usedCommands.Count)
-				{
-					current_command = usedCommands.Count;
-					Input.Text = "";
-					return;
-				}
-				Input.Text = usedCommands[current_command];
+                current_command++;
+                if (current_command >= usedCommands.Count)
+                {
+                    current_command = usedCommands.Count;
+                    Input.Text = "";
+                    return;
+                }
+                Input.Text = usedCommands[current_command];
                 return;
-			}
-		}
+            }
+        }
 
-		void KeyPressed(object sender, KeyEventArgs e)
+        void KeyPressed(object sender, KeyEventArgs e)
         {
             if (e.Key != Key.Enter)
             {
-				current_command = usedCommands.Count;
+                current_command = usedCommands.Count;
                 return;
             }
 
@@ -120,8 +120,8 @@ namespace JuniorProject.Frontend.Windows
                 w.nations[unitTeam].AddUnit(u);
                 total_units.Add(unitName, u);
                 Console.Text += $"Unit spawned at {x},{y} of type [{unitType}] with name [{unitName}]\n";
-				finishCommand();
-				return;
+                finishCommand();
+                return;
             }
 
             if (printPossibleSpritesRegex.IsMatch(Input.Text))
@@ -134,8 +134,8 @@ namespace JuniorProject.Frontend.Windows
                 Console.Text += "\n";
                 Console.Text += "Unit Types: 'Soldier', 'Archer'\n\n";
 
-				finishCommand();
-				return;
+                finishCommand();
+                return;
             }
 
             if (deleteUnitRegex.IsMatch(Input.Text))
@@ -148,8 +148,8 @@ namespace JuniorProject.Frontend.Windows
                 total_units.Remove(unitName);
                 Console.Text += $"Attempted to remove unit with name {unitName}\n";
 
-				finishCommand();
-				return;
+                finishCommand();
+                return;
             }
 
             if (modifyTileCover.IsMatch(Input.Text))
@@ -164,10 +164,10 @@ namespace JuniorProject.Frontend.Windows
                 int y = int.Parse(intInstance.Match(matches[1].Value).Value);
 
                 World w = ClientCommunicator.GetData<World>("World");
-				w.nations[team].AddTerritory(w.map.getTile(new Vector2Int(x,y)));
+                w.nations[team].AddTerritory(w.map.getTile(new Vector2Int(x, y)));
 
-				finishCommand();
-				return;
+                finishCommand();
+                return;
             }
 
             if (deleteTileCover.IsMatch(Input.Text))
@@ -179,10 +179,10 @@ namespace JuniorProject.Frontend.Windows
                 int x = int.Parse(intInstance.Match(matches[0].Value).Value);
                 int y = int.Parse(intInstance.Match(matches[1].Value).Value);
 
-				World w = ClientCommunicator.GetData<World>("World");
+                World w = ClientCommunicator.GetData<World>("World");
                 w.map.getTile(new Vector2Int(x, y)).Owner = null;
-				finishCommand();
-				return;
+                finishCommand();
+                return;
             }
 
             if (expandTerritory.IsMatch(Input.Text))
@@ -193,7 +193,8 @@ namespace JuniorProject.Frontend.Windows
                 string team = stringInstance.Match(matches[0].Value).Value;
 
                 World w = ClientCommunicator.GetData<World>("World");
-                foreach (TileMap.Tile t in w.nations[team].GetBorderingTiles()) {
+                foreach (TileMap.Tile t in w.nations[team].GetBorderingTiles())
+                {
                     w.nations[team].AddTerritory(t);
                 }
 
@@ -204,8 +205,8 @@ namespace JuniorProject.Frontend.Windows
             if (clearRegex.IsMatch(Input.Text))
             {
                 Console.Text = "";
-				finishCommand();
-				return;
+                finishCommand();
+                return;
             }
 
             if (helpRegex.IsMatch(Input.Text))
@@ -225,11 +226,11 @@ namespace JuniorProject.Frontend.Windows
                 Console.Text += "\n";
                 Console.Text += "clear -> clears console\n\n";
 
-				finishCommand();
-				return;
+                finishCommand();
+                return;
             }
 
-            if(getSeed.IsMatch(Input.Text))
+            if (getSeed.IsMatch(Input.Text))
             {
                 Console.Text += $"World Seed: {ClientCommunicator.GetData<World>("World").map.seed}\n";
                 finishCommand();
@@ -245,8 +246,8 @@ namespace JuniorProject.Frontend.Windows
                     Console.Text += $"{u.name}\t\t{u.unitType.name}\t\t{u.nation.name}\t\t[{u.PosVector.X}, {u.PosVector.Y}]\n";
                 }
 
-				finishCommand();
-				return;
+                finishCommand();
+                return;
             }
 
             if (identifier.IsMatch(Input.Text))
@@ -255,12 +256,12 @@ namespace JuniorProject.Frontend.Windows
 
                 string unit = identifier.Match(Input.Text).Value;
                 unit = unit.TrimEnd('.');
-                
+
                 if (!total_units.ContainsKey(unit))
                 {
                     Console.Text += $"No unit created with name {unit}\n";
-					finishCommand();
-					return;
+                    finishCommand();
+                    return;
                 }
                 string command = function.Match(Input.Text).Value;
                 command = command.TrimStart('.');
@@ -273,15 +274,16 @@ namespace JuniorProject.Frontend.Windows
                             int x = int.Parse(intInstance.Match(parameters[0].Value).Value);
                             int y = int.Parse(intInstance.Match(parameters[1].Value).Value);
                             World w = ClientCommunicator.GetData<World>("World");
-                            total_units[unit].MoveTo(w.map.getTile(new Vector2Int(x,y)));
+                            total_units[unit].MoveTo(w.map.getTile(new Vector2Int(x, y)));
                             break;
                         }
                     case "Follow":
                         {
                             List<Match> parameters = stringParam.Matches(Input.Text).ToList();
                             string mob = stringInstance.Match(parameters[0].Value).Value;
-                            
-                            if (!total_units.ContainsKey(mob)) {
+
+                            if (!total_units.ContainsKey(mob))
+                            {
                                 Console.Text += $"No mob found with name {mob} to follow\n";
                                 finishCommand();
                                 return;
@@ -301,7 +303,7 @@ namespace JuniorProject.Frontend.Windows
             ClientCommunicator.GetData<World>("World").RedrawAction?.Invoke(); // Need this to see changes after calling command, otherwise you need to press 'step'
             usedCommands.Add(Input.Text);
             current_command = usedCommands.Count;
-			Input.Text = "";
-		}
-	}
+            Input.Text = "";
+        }
+    }
 }

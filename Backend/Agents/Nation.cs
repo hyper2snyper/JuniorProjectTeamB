@@ -15,9 +15,9 @@ namespace JuniorProject.Backend.Agents
         public string name = "";
         public string color = "";
 
-		World world;
+        World world;
         public World World { set { world = value; } }
-		
+
         public List<Unit> units = new List<Unit>();
 
         public Building? capital;
@@ -33,7 +33,7 @@ namespace JuniorProject.Backend.Agents
 
         public List<Mob> mobsToRemove = new List<Mob>();
 
-		public Nation() { }
+        public Nation() { }
         public Nation(string name, string color, World world)
         {
             this.name = name;
@@ -43,36 +43,36 @@ namespace JuniorProject.Backend.Agents
 
         public Nation(string name, string color, int quadrant, World world) : this(name, color, world)
         {
-            PlaceStart(quadrant);   
+            PlaceStart(quadrant);
         }
 
         public void PlaceStart(int quadrant)
         {
             Vector2Int startingPos = new Vector2Int();
-            switch(quadrant)
+            switch (quadrant)
             {
-                case 0: startingPos = new Vector2Int((world.map.mapSize.X / 4), (world.map.mapSize.Y/ 4)); break;
-                case 1: startingPos = new Vector2Int((world.map.mapSize.X/2) + (world.map.mapSize.X/4), (world.map.mapSize.Y / 4)); break;
+                case 0: startingPos = new Vector2Int((world.map.mapSize.X / 4), (world.map.mapSize.Y / 4)); break;
+                case 1: startingPos = new Vector2Int((world.map.mapSize.X / 2) + (world.map.mapSize.X / 4), (world.map.mapSize.Y / 4)); break;
                 case 2: startingPos = new Vector2Int((world.map.mapSize.X / 4), (world.map.mapSize.Y / 2) + (world.map.mapSize.Y / 4)); break;
                 case 3: startingPos = new Vector2Int((world.map.mapSize.X / 2) + (world.map.mapSize.X / 4), (world.map.mapSize.Y / 2) + (world.map.mapSize.Y / 4)); break;
             }
-            
+
             TileMap.Tile tile = world.map.getTile(startingPos);
-            for(int x = -1; x < 1; x++)
+            for (int x = -1; x < 1; x++)
             {
-                for(int y = -1; y < 1; y++)
+                for (int y = -1; y < 1; y++)
                 {
                     if (x == 0 && y == 0) continue;
-                    for(int i = 1; tile == null || tile.impassible; i++)
+                    for (int i = 1; tile == null || tile.impassible; i++)
                     {
                         if (startingPos.X + (x * i) > world.map.mapSize.X || startingPos.X + (x * i) < 0) break;
-						if (startingPos.Y + (y * i) > world.map.mapSize.Y || startingPos.Y + (y * i) < 0) break;
-						tile = world.map.getTile(new Vector2Int(startingPos.X + (x*i), startingPos.Y + (y*i)));
+                        if (startingPos.Y + (y * i) > world.map.mapSize.Y || startingPos.Y + (y * i) < 0) break;
+                        tile = world.map.getTile(new Vector2Int(startingPos.X + (x * i), startingPos.Y + (y * i)));
                     }
                     if (tile != null && tile.impassible == false) break;
                 }
-				if (tile != null && tile.impassible == false) break;
-			}
+                if (tile != null && tile.impassible == false) break;
+            }
             AddTerritory(tile);
             Building castle = new Building("Capital", world.map, tile, this);
             AddBuilding(castle);
@@ -83,10 +83,10 @@ namespace JuniorProject.Backend.Agents
 
         public Objective? UnitPostMove(TileMap.Tile tile, Unit unit)
         {
-			Debug.Print($"{tile} has been claimed for team {name}");
+            Debug.Print($"{tile} has been claimed for team {name}");
             if (desiredLand.Count == 0) return null;
 
-            if(tile.Occupants.Count <= 1)
+            if (tile.Occupants.Count <= 1)
             {
                 if (tile.terrainPercentages.ContainsKey("Grassland") && tile.terrainPercentages["Grassland"] >= 0.8f)
                 {
@@ -98,12 +98,12 @@ namespace JuniorProject.Backend.Agents
             desiredLand.Remove(desiredLand[0]);
             moveAction.Attach(unit);
             return moveAction;
-		}
+        }
 
         public void CalculateObjectives()
         {
             List<Unit> unassignedUnits = new List<Unit>();
-            foreach(Unit unit in units)
+            foreach (Unit unit in units)
             {
                 if (unit.GetObjective() != null) continue;
                 unassignedUnits.Add(unit);
@@ -115,7 +115,7 @@ namespace JuniorProject.Backend.Agents
                     if (x.Occupants.Count > y.Occupants.Count) return 10;
                     if (x.terrainPercentages.ContainsKey("Grassland"))
                     {
-                        if(y.terrainPercentages.ContainsKey("Grassland"))
+                        if (y.terrainPercentages.ContainsKey("Grassland"))
                         {
                             return (x.terrainPercentages["Grassland"] > y.terrainPercentages["Grassland"]) ? 50 : -50;
                         }
@@ -124,26 +124,26 @@ namespace JuniorProject.Backend.Agents
                     if (x.movementCost == y.movementCost) return 0;
                     return (x.movementCost > y.movementCost ? 1 : -1);
                 });
-            if(desiredLand.Count == 0)
+            if (desiredLand.Count == 0)
             {
                 Building? port = null;
-                foreach(Building building in buildings)
+                foreach (Building building in buildings)
                 {
                     if (building.template.name != "Port") continue;
                     port = building;
                     break;
                 }
-                if(port == null)
+                if (port == null)
                 {
                     TileMap.Tile? shoreTile = null;
-                    foreach(TileMap.Tile tile in territory)
+                    foreach (TileMap.Tile tile in territory)
                     {
                         if (!tile.coast || tile.Occupants.Count >= 1) continue;
                         shoreTile = tile;
                         break;
                     }
                     if (shoreTile == null) return; //Sucks to suck i guess.
-                    if(unassignedUnits.Count == 0) return;
+                    if (unassignedUnits.Count == 0) return;
                     unassignedUnits[0].MoveTo(shoreTile,
                         (TileMap.Tile tile, Unit unit) =>
                         {
@@ -152,7 +152,7 @@ namespace JuniorProject.Backend.Agents
                         });
                     return;
                 }
-                foreach(Unit unit in unassignedUnits)
+                foreach (Unit unit in unassignedUnits)
                 {
                     unit.MoveTo(port.pos,
                         (TileMap.Tile tile, Unit u) =>
@@ -166,25 +166,25 @@ namespace JuniorProject.Backend.Agents
                             {
                                 nearestOcean = neighbor;
                                 if (nearestOcean == null) continue;
-								Vector2Int dir = (nearestOcean.pos - tile.pos).Normalize;
-								TileMap.Tile? currentTile = nearestOcean;
-								while (nearestOcean.impassible)
-								{
-									currentTile = world.map.getTile(currentTile.pos + dir);
+                                Vector2Int dir = (nearestOcean.pos - tile.pos).Normalize;
+                                TileMap.Tile? currentTile = nearestOcean;
+                                while (nearestOcean.impassible)
+                                {
+                                    currentTile = world.map.getTile(currentTile.pos + dir);
                                     if (currentTile == null) break;
-									if (!currentTile.impassible) break;
-								}
+                                    if (!currentTile.impassible) break;
+                                }
                                 if (currentTile == null) continue;
-								Sail sail = new Sail(currentTile);
-								sail.Attach(u);
+                                Sail sail = new Sail(currentTile);
+                                sail.Attach(u);
                                 return sail;
-							}
+                            }
                             return null;
                         });
                 }
                 return;
             }
-            foreach(Unit unit in unassignedUnits)
+            foreach (Unit unit in unassignedUnits)
             {
                 unit.MoveTo(desiredLand[0], UnitPostMove);
                 desiredLand.Remove(desiredLand[0]);
@@ -194,33 +194,33 @@ namespace JuniorProject.Backend.Agents
 
         public void TakeTurn(ulong tick)
         {
-            if(calculationTimer.Tick(tick))
+            if (calculationTimer.Tick(tick))
             {
                 Debug.Print("Calculating Objectives");
                 CalculateObjectives();
-                if(money >= 50 && units.Count < maxUnits)
+                if (money >= 50 && units.Count < maxUnits)
                 {
                     money -= 50;
                     AddUnit(new Unit("Soldier", "", this, world.map, capital.pos));
                 }
             }
-            foreach(Building building in buildings)
+            foreach (Building building in buildings)
             {
                 building.TakeTurn(tick);
             }
 
-            foreach(Unit unit in units)
+            foreach (Unit unit in units)
             {
                 unit.TakeTurn(tick);
             }
 
-            foreach(Mob mob in mobsToRemove)
+            foreach (Mob mob in mobsToRemove)
             {
-                if(mob is Unit u)
+                if (mob is Unit u)
                 {
                     units.Remove(u);
                 }
-                if(mob is Building b)
+                if (mob is Building b)
                 {
                     buildings.Remove(b);
                 }
@@ -228,59 +228,61 @@ namespace JuniorProject.Backend.Agents
             mobsToRemove.Clear();
         }
 
-		public void PopulateDrawablesList(ref List<GenericDrawable> genericDrawables)
+        public void PopulateDrawablesList(ref List<GenericDrawable> genericDrawables)
         {
-			foreach (TileMap.Tile tile in territory)
-			{
-                genericDrawables.Add(new GenericDrawable(tile.pos, $"{color}TileCover", GenericDrawable.DrawableType.Tile, $"{tile.pos.X}{tile.pos.Y}"));
-			}
-			foreach (Building building in buildings)
-			{
+            foreach (TileMap.Tile tile in territory)
+            {
+                genericDrawables.Add(new GenericDrawable(tile.pos, $"{color}TileCover", GenericDrawable.DrawableType.Tile, $"{tile.pos.X}-{tile.pos.Y}"));
+            }
+            foreach (Building building in buildings)
+            {
                 building.populateDrawables(ref genericDrawables);
-			}
-			foreach (Unit unit in units)
+            }
+            foreach (Unit unit in units)
             {
                 unit.populateDrawables(ref genericDrawables);
             }
         }
 
         public delegate int appraisalDelegate(TileMap.Tile t1, TileMap.Tile t2);
-        public List<TileMap.Tile> GetBorderingTiles(appraisalDelegate? appraisal = null) 
+        public List<TileMap.Tile> GetBorderingTiles(appraisalDelegate? appraisal = null)
         {
             List<TileMap.Tile> borderingTiles = new List<TileMap.Tile>();
 
-            foreach (TileMap.Tile tile in territory) {
-                foreach (TileMap.Tile? possibleTile in world.map.getPassableTileNeighbors(tile)) {
+            foreach (TileMap.Tile tile in territory)
+            {
+                foreach (TileMap.Tile? possibleTile in world.map.getPassableTileNeighbors(tile))
+                {
                     if (possibleTile == null) continue;
                     if (possibleTile.Owner == this) continue;
                     if (borderingTiles.Contains(possibleTile)) continue;
                     borderingTiles.Add(possibleTile);
                 }
             }
-            if(appraisal != null)
+            if (appraisal != null)
             {
                 borderingTiles.Sort(new Comparison<TileMap.Tile>(appraisal));
             }
             return borderingTiles;
         }
 
-		public void AddTerritory(TileMap.Tile tile)
+        public void AddTerritory(TileMap.Tile tile)
         {
             tile.Owner = this;
             territory.Add(tile);
-            if(desiredLand.Contains(tile)) 
+            if (desiredLand.Contains(tile))
                 desiredLand.Remove(tile);
-		}
+        }
 
         public void RemoveTerritory(TileMap.Tile tile)
         {
             territory.Remove(tile);
-		}
+        }
 
         public void AddBuilding(Building building)
         {
-            if(building.nation != null)
-            { 
+            if (building.nation != null)
+            {
                 building.nation.RemoveBuilding(building);
             }
             buildings.Add(building);
@@ -290,7 +292,7 @@ namespace JuniorProject.Backend.Agents
         public void RemoveBuilding(Building building)
         {
             buildings.Remove(building);
-            if(building == capital)
+            if (building == capital)
             {
                 DeleteNation();
             }
@@ -312,7 +314,7 @@ namespace JuniorProject.Backend.Agents
 
         public void DeleteNation()
         {
-            foreach(Unit unit in units)
+            foreach (Unit unit in units)
             {
                 unit.DestroyMob();
             }
@@ -322,24 +324,24 @@ namespace JuniorProject.Backend.Agents
             world.nations.Remove(color);
         }
 
-		public override void SerializeFields()
-		{
+        public override void SerializeFields()
+        {
             SerializeField(name);
             SerializeField(color);
 
             SerializeField<Unit>(units);
             SerializeField<Building>(buildings);
             SerializeField(territory.Count); //Save only the coords.
-            foreach(TileMap.Tile tile in territory)
+            foreach (TileMap.Tile tile in territory)
             {
                 SerializeField(tile.pos);
             }
-             
-		}
 
-		public override void DeserializeFields()
-		{
-            name = DeserializeField<string>(); 
+        }
+
+        public override void DeserializeFields()
+        {
+            name = DeserializeField<string>();
             color = DeserializeField<string>();
 
             units = DeserializeList<Unit>((Unit u) =>
@@ -348,17 +350,17 @@ namespace JuniorProject.Backend.Agents
                 u.nation = this;
             });
             buildings = DeserializeList<Building>((Building b) =>
-			{
-				b.tileMap = world.map;
+            {
+                b.tileMap = world.map;
                 b.nation = this;
-			});
+            });
             capital = buildings[0];
             int territoryCount = DeserializeField<int>();
-            for(int i = 0; i < territoryCount; i++)
+            for (int i = 0; i < territoryCount; i++)
             {
                 AddTerritory(world.map.getTile(DeserializeField<Vector2Int>()));
             }
-            
-		}
-	}
+
+        }
+    }
 }
