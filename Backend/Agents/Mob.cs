@@ -23,7 +23,7 @@ namespace JuniorProject.Backend.Agents
 		}
 		public Nation? nation;
 		public string sprite;
-		public int layer = 1;
+		public GenericDrawable.DrawableType drawableType;
 
 		public Mob() { }
 
@@ -31,6 +31,7 @@ namespace JuniorProject.Backend.Agents
 		{
 			this.nation = nation;
 			this.tileMap = tileMap;
+            drawableType = GenericDrawable.DrawableType.Mob;
 			EnterTile(pos);
 		}
 
@@ -54,7 +55,7 @@ namespace JuniorProject.Backend.Agents
 
 		public virtual void populateDrawables(ref List<GenericDrawable> genericDrawables)
 		{
-			genericDrawables.Add(new GenericDrawable(PosVector, GetSprite(), layer));
+			genericDrawables.Add(new GenericDrawable(PosVector, GetSprite(), drawableType));
 		}
 
 		public virtual string GetSprite()

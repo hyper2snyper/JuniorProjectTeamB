@@ -16,6 +16,7 @@ using JuniorProject.Backend.Agents;
 using System.Xml.Linq;
 using JuniorProject.Backend.WorldData;
 using System.Collections.Generic;
+using System.Security.Policy;
 
 namespace JuniorProject.Frontend.Components
 {
@@ -28,8 +29,7 @@ namespace JuniorProject.Frontend.Components
     {
         public int tileSize;
         Vector2Int mapPixelSize;
-
-        Boolean firstPass = true;
+        const string IMAGE_SOURCE = "SpriteSheet";
 
         Bitmap worldBitmap;
         Canvas Canvas;
@@ -74,11 +74,8 @@ namespace JuniorProject.Frontend.Components
             worldBitmap = ClientCommunicator.GetData<Drawing.Bitmap>("WorldImage");
             world = ClientCommunicator.GetData<World>("World");
 
-
-
             tileMap = ClientCommunicator.GetData<TileMap>("TileMap");
             tileMap.TilesChanged += OnTilesChange;
-
             world.RedrawAction += OnTilesChange;
 
             Debug.Print(String.Format("{0:N}", tileSize));
@@ -93,15 +90,16 @@ namespace JuniorProject.Frontend.Components
                 Height = worldBitmap.Height,
                 Source = TransferToWriteableBitmap(worldBitmap),
             };
-            map = new Drawable(mapImage, true, "WorldMap", 0);
 
             Controls.Image gridImage = new Controls.Image
             {
                 Width = worldBitmap.Width,
                 Height = worldBitmap.Height,
-                Source = TransferToWriteableBitmap(GetGridlines())
+                Source = TransferToWriteableBitmap(GetGridlines()),
+                Opacity = 0.3
             };
-            grid = new Drawable(gridImage, true, "Grid", 1);
+            Canvas.Children.Add(mapImage);
+            Canvas.Children.Add(gridImage);
         }
 
         private void preloadAllSprites()
@@ -110,8 +108,6 @@ namespace JuniorProject.Frontend.Components
             string jsonData = File.ReadAllText(jsonPath);
             sprites = JsonConvert.DeserializeObject<Dictionary<string, SpriteInfo>>(jsonData);
             spriteSheet = new Bitmap(spriteSheetPath);
-
-            string imageSource = "SpriteSheet";
 
             foreach (var sprite in sprites) {
                 Rectangle section = new Rectangle(sprite.Value.x1, sprite.Value.y1, sprite.Value.width, sprite.Value.height);
@@ -251,8 +247,7 @@ namespace JuniorProject.Frontend.Components
 
         public void SetGridlines()
         {
-            grid.shouldDraw = !grid.shouldDraw;
-            Draw();
+            Canvas.Children[1].Opacity = Canvas.Children[1].Opacity == 0 ? 0.3 : 0;
         }
 
         public void Draw()
@@ -262,26 +257,168 @@ namespace JuniorProject.Frontend.Components
 
             ClearCanvas();
 
-            if (firstPass) {
-                drawables.Enqueue(map);
-                drawables.Enqueue(grid);
-                firstPass = false;
-            }
-
-            for (int i = 0; i < 2; i++) {
-                foreach (GenericDrawable d in genericDrawables)
-                {
-                    if (d.sprite == null || d.sprite == "") continue;
-                    if (d.layer == i) {
-                        AddToDrawables(d.sprite, d.gridPosition, d.uniqueIdentifier, d.sprite);
-                    }
-                }
+            foreach (GenericDrawable gd in genericDrawables) {
+                if (gd.sprite == null || gd.sprite == "") continue;
+                addToCachedDrawings(gd);
             }
 
             checkCachedDrawingsToDelete();
 
             //DebugImages();
             PopulateCanvas();
+        }
+
+        public void checkCachedDrawingsToDelete() {
+            foreach (var u in cachedUnits)
+            {
+                if (u.Value.shouldDelete) {
+                    Canvas.Children.Remove(u.Value.image);
+                }
+                u.Value.shouldDelete = true;
+            }
+            foreach (var u in cachedTiles)
+            {
+                if (u.Value.shouldDelete)
+                {
+                    Canvas.Children.Remove(u.Value.image);
+                }
+                u.Value.shouldDelete = true;
+            }
+            foreach (var u in cachedBuildings)
+            {
+                if (u.Value.shouldDelete)
+                {
+                    Canvas.Children.Remove(u.Value.image);
+                }
+                u.Value.shouldDelete = true;
+            }
+        }
+
+        public void addToCachedDrawings(GenericDrawable gd)
+        {
+            Vector2Int pixelPosition = ConvertGridPositionToPixels(gd.gridPosition.X, gd.gridPosition.Y);
+            switch (gd.type) {
+                case GenericDrawable.DrawableType.Unit:
+                    if (!cachedUnits.ContainsKey(gd.uniqueIdentifier) || (cachedUnits[gd.uniqueIdentifier].sprite != gd.sprite))
+                    {
+                        if (cachedUnits.ContainsKey(gd.uniqueIdentifier)) {
+                            Canvas.Children.Remove(cachedUnits[gd.uniqueIdentifier].image);
+                        }
+
+                        Controls.Image newUnitImage = getImage(gd.sprite);
+
+                        drawables.Enqueue(new Drawable(newUnitImage, true, gd.sprite, IMAGE_SOURCE, pixelPosition, gd.gridPosition, 4));
+                        cachedUnits[gd.uniqueIdentifier] = new CachedDrawable(newUnitImage, pixelPosition, gd.gridPosition);
+                    }
+                    cachedUnits[gd.uniqueIdentifier].shouldDelete = false;
+                    break;
+                case GenericDrawable.DrawableType.Tile:
+                    if (!cachedTiles.ContainsKey((gd.gridPosition.X, gd.gridPosition.Y)) || cachedTiles[(gd.gridPosition.X, gd.gridPosition.Y)].team != gd.sprite)
+                    {
+                        if (cachedTiles.ContainsKey((gd.gridPosition.X, gd.gridPosition.Y)))
+                        {
+                            Canvas.Children.Remove(cachedTiles[(gd.gridPosition.X, gd.gridPosition.Y)].image);
+                        }
+
+                        Controls.Image newTile = getImage(gd.sprite);
+
+                        cachedTiles[(gd.gridPosition.X, gd.gridPosition.Y)] = new CachedDrawable(newTile, pixelPosition, gd.gridPosition, gd.sprite);
+                        drawables.Enqueue(new Drawable(newTile, true, "Tile", "SpriteSheet", pixelPosition, gd.gridPosition, 2));
+                        Debug.Print($"ADDED TILE: {gd.sprite} [{gd.gridPosition.X}, {gd.gridPosition.Y}]");
+                    }
+                    cachedTiles[(gd.gridPosition.X, gd.gridPosition.Y)].shouldDelete = false;
+                    break;
+                case GenericDrawable.DrawableType.Building:
+                    if (!cachedBuildings.ContainsKey((gd.gridPosition.X, gd.gridPosition.Y)) || cachedBuildings[(gd.gridPosition.X, gd.gridPosition.Y)].team != gd.sprite)
+                    {
+                        if (cachedBuildings.ContainsKey((gd.gridPosition.X, gd.gridPosition.Y)))
+                        {
+                            Canvas.Children.Remove(cachedBuildings[(gd.gridPosition.X, gd.gridPosition.Y)].image);
+                        }
+
+                        Controls.Image newBuilding = getImage(gd.sprite);
+
+                        cachedBuildings[(gd.gridPosition.X, gd.gridPosition.Y)] = new CachedDrawable(newBuilding, pixelPosition, gd.gridPosition, gd.sprite);
+                        drawables.Enqueue(new Drawable(newBuilding, true, gd.sprite, "SpriteSheet", pixelPosition, gd.gridPosition, 3));
+                        return;
+                    }
+                    cachedBuildings[(gd.gridPosition.X, gd.gridPosition.Y)].shouldDelete = false;
+                    break;
+                default:
+                    Debug.Print(String.Format("ERROR! Cannot find cache GenericDrawable"));
+                    break;
+            }
+        }
+
+        private Controls.Image getImage(string sprite) {
+            Controls.Image image = new Controls.Image
+            {
+                Source = getPreloadedSprite(sprite),
+                Width = getPreloadedSprite(sprite).Width,
+                Height = getPreloadedSprite(sprite).Height,
+            };
+            return image;
+        }
+
+        public Vector2Int ConvertGridPositionToPixels(int x, int y)
+        {
+            // based on current Sprite being 20x20 sprites
+            int xPixelWidth = x * tileSize;
+            int yPixelWidth = y * tileSize;
+            return new Vector2Int(xPixelWidth, yPixelWidth);
+        }
+
+        public Vector2Int ConvertPixelsToGridPosition(int x, int y)
+        {
+            int xGrid = x / tileSize;
+            int yGrid = y / tileSize;
+            return new Vector2Int(xGrid, yGrid);
+        }
+        public WriteableBitmap TransferToWriteableBitmap(Bitmap worldBitmap)
+        {
+            WriteableBitmap map = new WriteableBitmap(worldBitmap.Width, worldBitmap.Height, 96, 96, PixelFormats.Bgra32, null);
+            byte[] pixels = new byte[4 * (worldBitmap.Width * worldBitmap.Height)]; //pixel color buffer. each color is four bytes.
+            for (int y = 0; y < worldBitmap.Width; y++)
+            {
+                for (int x = 0; x < worldBitmap.Height; x++)
+                {
+                    Drawing.Color c = worldBitmap.GetPixel(x, y);
+                    int pos = ((y * worldBitmap.Width) + x) * 4;
+                    pixels[pos] = c.B;
+                    pixels[pos + 1] = c.G;
+                    pixels[pos + 2] = c.R;
+                    pixels[pos + 3] = c.A;
+                }
+            }
+            map.WritePixels(new Int32Rect(0, 0, worldBitmap.Width, worldBitmap.Height), pixels, (worldBitmap.Width * 4), 0); //Update the bitmap
+            return map;
+        }
+
+        public Bitmap GetGridlines()
+        {
+            Bitmap gridBitmap = new Bitmap(mapPixelSize.X, mapPixelSize.Y);
+
+            using (Graphics g = Graphics.FromImage(gridBitmap))
+            {
+                g.Clear(Colors.Color.Transparent);
+                g.SmoothingMode = SmoothingMode.None;
+                g.PixelOffsetMode = PixelOffsetMode.None;
+                using (Colors.Pen gridPen = new Colors.Pen(Colors.Color.Black, 2))
+                {
+                    gridPen.Alignment = PenAlignment.Inset;
+                    for (int y = tileSize; y < gridBitmap.Width; y += tileSize)
+                    {
+                        g.DrawLine(gridPen, 0, y, mapPixelSize.X, y);
+                    }
+
+                    for (int x = tileSize; x < gridBitmap.Height; x += tileSize)
+                    {
+                        g.DrawLine(gridPen, x, 0, x, mapPixelSize.Y);
+                    }
+                }
+            }
+
+            return gridBitmap;
         }
 
         public void DebugImages()
@@ -351,178 +488,6 @@ namespace JuniorProject.Frontend.Components
 
             //AddBitmapToCanvas("RedDock", extractFromSprite("RedDock"), 10, 3);
             //AddBitmapToCanvas("RedShip", extractFromSprite("RedShip"), 10, 4);
-        }
-
-        public void checkCachedDrawingsToDelete() {
-            foreach (var u in cachedUnits)
-            {
-                if (u.Value.shouldDelete) {
-                    Canvas.Children.Remove(u.Value.image);
-                }
-                u.Value.shouldDelete = true;
-            }
-            foreach (var u in cachedTiles)
-            {
-                if (u.Value.shouldDelete)
-                {
-                    Canvas.Children.Remove(u.Value.image);
-                }
-                u.Value.shouldDelete = true;
-            }
-            foreach (var u in cachedBuildings)
-            {
-                if (u.Value.shouldDelete)
-                {
-                    Canvas.Children.Remove(u.Value.image);
-                }
-                u.Value.shouldDelete = true;
-            }
-        }
-
-        public void AddToDrawables(string name, Vector2Int gridPos, string uniqueIdentifier, string sprite)
-        {
-            string imageSource = "SpriteSheet";
-            Vector2Int pixelPosition = ConvertGridPositionToPixels(gridPos.X, gridPos.Y);
-
-            // UNITS
-            if (uniqueIdentifier != null)
-            {
-                if (!cachedUnits.ContainsKey(uniqueIdentifier) || (cachedUnits[uniqueIdentifier].sprite != sprite))
-                {
-                    if (cachedUnits.ContainsKey(uniqueIdentifier)) { 
-                        Canvas.Children.Remove(cachedUnits[uniqueIdentifier].image);
-                    }
-
-                    Controls.Image newUnitImage = new Controls.Image
-                    {
-                        Source = getPreloadedSprite(name),
-                        Width = getPreloadedSprite(name).Width,
-                        Height = getPreloadedSprite(name).Height,
-                    };
-                    drawables.Enqueue(new Drawable(newUnitImage, true, name, imageSource, pixelPosition, gridPos, 4));
-                    cachedUnits[uniqueIdentifier] = new CachedDrawable(newUnitImage, pixelPosition, gridPos);
-                    return;
-                }
-
-                if (cachedUnits[uniqueIdentifier].gridPosition.X != gridPos.X || cachedUnits[uniqueIdentifier].gridPosition.Y != gridPos.Y)
-                {
-                    cachedUnits[uniqueIdentifier] = new CachedDrawable(cachedUnits[uniqueIdentifier].image, pixelPosition, gridPos);
-                    cachedUnits[uniqueIdentifier].shouldMove = true;
-                    cachedUnits[uniqueIdentifier].shouldDelete = false;
-                    return;
-                }
-
-                cachedUnits[uniqueIdentifier].shouldDelete = false;
-                return;
-            }
-            //Dictionary<(int, int), CachedDrawable> cachedTiles = new Dictionary<(int, int), CachedDrawable>();
-            // TILES
-            if (name.Contains("Tile"))
-            {
-                if (!cachedTiles.ContainsKey((gridPos.X, gridPos.Y)) || cachedTiles[(gridPos.X, gridPos.Y)].team != name)
-                {
-                    if (cachedTiles.ContainsKey((gridPos.X, gridPos.Y)))
-                    {
-                        Canvas.Children.Remove(cachedTiles[(gridPos.X, gridPos.Y)].image);
-                    }
-
-                    Controls.Image newTile = new Controls.Image
-                    {
-                        Source = getPreloadedSprite(name),
-                        Width = getPreloadedSprite(name).Width,
-                        Height = getPreloadedSprite(name).Height,
-                    };
-                    cachedTiles[(gridPos.X, gridPos.Y)] = new CachedDrawable(newTile, pixelPosition, gridPos, name);
-                    drawables.Enqueue(new Drawable(newTile, true, "Tile", "SpriteSheet", pixelPosition, gridPos, 2));
-                    Debug.Print($"ADDED TILE: {name} [{gridPos.X}, {gridPos.Y}]");
-                }
-                cachedTiles[(gridPos.X, gridPos.Y)].shouldDelete = false;
-                return;
-            }
-
-            // BUILDINGS
-            if (!cachedBuildings.ContainsKey((gridPos.X, gridPos.Y)) || cachedBuildings[(gridPos.X, gridPos.Y)].team != name)
-            {
-                if (cachedBuildings.ContainsKey((gridPos.X, gridPos.Y)))
-                {
-                    Canvas.Children.Remove(cachedBuildings[(gridPos.X, gridPos.Y)].image);
-                }
-
-                Controls.Image newBuilding = new Controls.Image
-                {
-                    Source = getPreloadedSprite(name),
-                    Width = getPreloadedSprite(name).Width,
-                    Height = getPreloadedSprite(name).Height,
-                };
-                cachedBuildings[(gridPos.X, gridPos.Y)] = new CachedDrawable(newBuilding, pixelPosition, gridPos, name);
-                drawables.Enqueue(new Drawable(newBuilding, true, name, "SpriteSheet", pixelPosition, gridPos, 3));
-                return;
-            }
-            else
-            {
-                cachedBuildings[(gridPos.X, gridPos.Y)].shouldDelete = false;
-            }
-        }
-
-        public Vector2Int ConvertGridPositionToPixels(int x, int y)
-        {
-            // based on current Sprite being 20x20 sprites
-            int xPixelWidth = x * tileSize;
-            int yPixelWidth = y * tileSize;
-            return new Vector2Int(xPixelWidth, yPixelWidth);
-        }
-
-        public Vector2Int ConvertPixelsToGridPosition(int x, int y)
-        {
-            int xGrid = x / tileSize;
-            int yGrid = y / tileSize;
-            return new Vector2Int(xGrid, yGrid);
-        }
-        public WriteableBitmap TransferToWriteableBitmap(Bitmap worldBitmap)
-        {
-            WriteableBitmap map = new WriteableBitmap(worldBitmap.Width, worldBitmap.Height, 96, 96, PixelFormats.Bgra32, null);
-            byte[] pixels = new byte[4 * (worldBitmap.Width * worldBitmap.Height)]; //pixel color buffer. each color is four bytes.
-            for (int y = 0; y < worldBitmap.Width; y++)
-            {
-                for (int x = 0; x < worldBitmap.Height; x++)
-                {
-                    Drawing.Color c = worldBitmap.GetPixel(x, y);
-                    int pos = ((y * worldBitmap.Width) + x) * 4;
-                    pixels[pos] = c.B;
-                    pixels[pos + 1] = c.G;
-                    pixels[pos + 2] = c.R;
-                    pixels[pos + 3] = c.A;
-                }
-            }
-            map.WritePixels(new Int32Rect(0, 0, worldBitmap.Width, worldBitmap.Height), pixels, (worldBitmap.Width * 4), 0); //Update the bitmap
-            return map;
-        }
-
-        public Bitmap GetGridlines()
-        {
-            Bitmap gridBitmap = new Bitmap(mapPixelSize.X, mapPixelSize.Y);
-
-            using (Graphics g = Graphics.FromImage(gridBitmap))
-            {
-                g.Clear(Colors.Color.Transparent);
-                g.SmoothingMode = SmoothingMode.None;
-                g.PixelOffsetMode = PixelOffsetMode.None;
-                using (Colors.Pen gridPen = new Colors.Pen(Colors.Color.Black, 2))
-                {
-                    gridPen.Alignment = PenAlignment.Inset;
-                    for (int y = tileSize; y < gridBitmap.Width; y += tileSize)
-                    {
-                        g.DrawLine(gridPen, 0, y, mapPixelSize.X, y);
-                    }
-
-                    for (int x = tileSize; x < gridBitmap.Height; x += tileSize)
-                    {
-                        g.DrawLine(gridPen, x, 0, x, mapPixelSize.Y);
-                    }
-                }
-            }
-
-            return gridBitmap;
         }
     }
 }

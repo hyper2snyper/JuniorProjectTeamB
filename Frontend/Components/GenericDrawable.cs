@@ -9,16 +9,25 @@ namespace JuniorProject.Frontend.Components
 {
     public struct GenericDrawable
     {
-        public GenericDrawable(Vector2Int gridPosition, string sprite, int layer, string uniqueIdentifier = null) {
+        public enum DrawableType
+        {
+            Unit,
+            Tile,
+            Building,
+            Mob
+        }
+
+        public GenericDrawable(Vector2Int gridPosition, string sprite, DrawableType type, string uniqueIdentifier = null) {
             this.gridPosition = gridPosition;
             this.sprite = sprite;
-            this.layer = layer;
+            this.type = type;
             this.uniqueIdentifier = uniqueIdentifier;
         }
 
         public Vector2Int gridPosition;
         public string sprite; 
         public int layer;
+        public DrawableType type;
         public string uniqueIdentifier;
     }
 }

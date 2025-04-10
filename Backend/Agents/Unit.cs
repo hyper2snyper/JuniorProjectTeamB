@@ -61,6 +61,7 @@ namespace JuniorProject.Backend.Agents
                 return;
             }
             SetType(unitTemplates[type]);
+            drawableType = GenericDrawable.DrawableType.Unit;
         }
 
 		void SetType(UnitTemplate template)
@@ -126,7 +127,7 @@ namespace JuniorProject.Backend.Agents
         }
 
         public override void populateDrawables(ref List<GenericDrawable> genericDrawables) {
-            genericDrawables.Add(new GenericDrawable(PosVector, GetSprite(), layer, name));
+            genericDrawables.Add(new GenericDrawable(PosVector, GetSprite(), GenericDrawable.DrawableType.Unit, name));
         }
 
 		public override void DestroyMob()

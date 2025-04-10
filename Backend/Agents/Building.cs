@@ -1,5 +1,6 @@
 ﻿using JuniorProject.Backend.Helpers;
 using JuniorProject.Backend.WorldData;
+using JuniorProject.Frontend.Components;
 using System;
 using System.Data.SQLite;
 
@@ -52,6 +53,7 @@ namespace JuniorProject.Backend.Agents
                 return;
             }
             SetType(buildingTemplates[type]);
+            drawableType = GenericDrawable.DrawableType.Building;
         }
 
         void SetType(BuildingTemplate template)

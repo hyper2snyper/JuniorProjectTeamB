@@ -232,7 +232,7 @@ namespace JuniorProject.Backend.Agents
         {
 			foreach (TileMap.Tile tile in territory)
 			{
-                genericDrawables.Add(new GenericDrawable(tile.pos, $"{color}TileCover", 0));
+                genericDrawables.Add(new GenericDrawable(tile.pos, $"{color}TileCover", GenericDrawable.DrawableType.Tile));
 			}
 			foreach (Building building in buildings)
 			{
