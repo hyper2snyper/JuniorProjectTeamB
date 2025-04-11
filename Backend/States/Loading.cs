@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace JuniorProject.Backend.States
 {
-    internal class Loading : IState
+    class Loading : IState
     {
         Simulation simulation = new Simulation();
         public delegate void loadingTask(Simulation simulation, ref bool loadingDone);
