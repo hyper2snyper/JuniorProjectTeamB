@@ -20,7 +20,8 @@ namespace JuniorProject.Frontend.Components
             InitializeComponent();
             this.TileTitle.Text = TileTitle;
 
-            if (!String.IsNullOrEmpty(teamColor)) {
+            if (!String.IsNullOrEmpty(teamColor))
+            {
                 switch (teamColor)
                 {
                     case "Yellow":
@@ -37,15 +38,17 @@ namespace JuniorProject.Frontend.Components
                 }
             }
 
-            for (int i = 0; i < images.Count; i++) {
+            for (int i = 0; i < images.Count; i++)
+            {
                 AddExander(images[i], titles[i], information[i], i);
             }
 
         }
 
-        void AddExander(Image image, string title, string information, int index) { 
+        void AddExander(Image image, string title, string information, int index)
+        {
             Expander expander = new Expander
-            { 
+            {
                 Header = title,
                 IsExpanded = false,
                 Margin = new Thickness(5),
@@ -70,7 +73,7 @@ namespace JuniorProject.Frontend.Components
             TextBlock textBlock = new TextBlock
             {
                 Text = information,
-                Margin = new Thickness (5),
+                Margin = new Thickness(5),
                 HorizontalAlignment = HorizontalAlignment.Center,
                 Foreground = new SolidColorBrush(Colors.White)
             };

@@ -31,7 +31,8 @@ namespace JuniorProject.Backend.WorldData
                 get { return _owner; }
                 set
                 {
-                    if (_owner == null) {
+                    if (_owner == null)
+                    {
                         _owner = value;
                         return;
                     }
@@ -43,12 +44,12 @@ namespace JuniorProject.Backend.WorldData
                 }
             }
 
-			public override string ToString()
-			{
+            public override string ToString()
+            {
                 return pos.ToString();
-			}
+            }
 
-			public override void SerializeFields()
+            public override void SerializeFields()
             {
                 SerializeField(pos);
                 SerializeField<string, float>(terrainPercentages);
@@ -79,8 +80,8 @@ namespace JuniorProject.Backend.WorldData
             return tiles[v.X, v.Y];
         }
 
-		public delegate bool neighborFilter(Tile tile);
-		public Tile?[,] getTileNeighbors(Tile tile, neighborFilter? filter = null)
+        public delegate bool neighborFilter(Tile tile);
+        public Tile?[,] getTileNeighbors(Tile tile, neighborFilter? filter = null)
         {
             Tile?[,] neighbors = new Tile?[3, 3];
             for (int x = -1; x <= 1; x++)
@@ -89,7 +90,7 @@ namespace JuniorProject.Backend.WorldData
                 {
                     if (x == 0 && y == 0) continue;
                     Tile? t = getTile(new Vector2Int(tile.pos.X + x, tile.pos.Y + y));
-					if (filter != null && t != null)
+                    if (filter != null && t != null)
                     {
                         if (filter(t)) continue;
                     }
@@ -98,12 +99,12 @@ namespace JuniorProject.Backend.WorldData
             }
             return neighbors;
         }
-		public Tile?[,] getPassableTileNeighbors(Tile tile)
-		{
+        public Tile?[,] getPassableTileNeighbors(Tile tile)
+        {
             return getTileNeighbors(tile, (Tile t) => { return t.impassible; });
-		}
+        }
 
-		public void TilesUpdated()
+        public void TilesUpdated()
         {
             TilesChanged?.Invoke();
         }

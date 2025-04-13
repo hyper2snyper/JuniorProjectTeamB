@@ -11,9 +11,9 @@ namespace JuniorProject.Frontend.Windows
     /// </summary>
     public partial class SimulationSettings : Window
     {
-        int ADamage,SDamage,CavDamage,CatDamage,CanDamage;
-        int ARange,SRange,CavRange,CatRange,CanRange;
-        int AHealth,SHealth,CavHealth,CatHealth,CanHealth;
+        int ADamage, SDamage, CavDamage, CatDamage, CanDamage;
+        int ARange, SRange, CavRange, CatRange, CanRange;
+        int AHealth, SHealth, CavHealth, CatHealth, CanHealth;
         float CapBuildingCost, HouseBuildingCost, MineBuildingCost, BarracksBuildingCost, SmithBuildingCost, FarmBuildingCost;
         int GrassGoldGatherRate, GrassWoodGatherRate, GrassStoneGatherRate, GrassFoodGatherRate, GrassIronGatherRate,
             HighGoldGatherRate, HighWoodGatherRate, HighStoneGatherRate, HighFoodGatherRate, HighIronGatherRate,
@@ -116,7 +116,7 @@ namespace JuniorProject.Frontend.Windows
         private void CavalierDamage_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (CavalierD.Text == "") return;
-             CavDamage = int.Parse(CavalierD.Text);
+            CavDamage = int.Parse(CavalierD.Text);
         }
         private void CavalierRange_TextChanged(object sender, TextChangedEventArgs e)
         {

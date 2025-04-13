@@ -63,7 +63,7 @@ namespace JuniorProject.Backend.States
             ClientCommunicator.RegisterAction("TogglePause", TogglePause);
             ClientCommunicator.RegisterAction("Step", Step);
             ClientCommunicator.RegisterData<bool>("Paused", paused);
-            
+
         }
 
         public void TogglePause()

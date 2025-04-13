@@ -72,7 +72,7 @@ namespace JuniorProject.Backend
                 SerializeField(v.Y);
                 return;
             }
-            if(Nullable.GetUnderlyingType(typeof(T)) != null && objectToSerialize == null)
+            if (Nullable.GetUnderlyingType(typeof(T)) != null && objectToSerialize == null)
             {
                 SerializeField(-1);
                 return;
@@ -109,8 +109,8 @@ namespace JuniorProject.Backend
             SerializeField(listCount); //Prefix List saving with size.
             for (int i = 0; i < listCount; i++)
             {
-				preSave?.DynamicInvoke(listToSerialize[i]);
-				SerializeField(listToSerialize[i]);
+                preSave?.DynamicInvoke(listToSerialize[i]);
+                SerializeField(listToSerialize[i]);
             }
         }
 
@@ -175,7 +175,7 @@ namespace JuniorProject.Backend
             {
                 for (int y = 0; y < length; y++)
                 {
-                    preSave?.DynamicInvoke(array[x,y]);
+                    preSave?.DynamicInvoke(array[x, y]);
                     SerializeField(array[x, y]);
                 }
             }
@@ -220,10 +220,10 @@ namespace JuniorProject.Backend
             }
             if (Type.GetTypeCode(typeof(T)) == TypeCode.Object)
             {
-                if(Nullable.GetUnderlyingType(typeof(T)) != null)
+                if (Nullable.GetUnderlyingType(typeof(T)) != null)
                 {
                     int nextChar = reader.PeekChar();
-                    if(nextChar == -1)
+                    if (nextChar == -1)
                     {
                         v = null;
                         return v;
@@ -320,7 +320,7 @@ namespace JuniorProject.Backend
                 for (int y = 0; y < length; y++)
                 {
                     T field = DeserializeField<T>(preLoad);
-					returnArray[x, y] = field;
+                    returnArray[x, y] = field;
                 }
             }
             return returnArray;
