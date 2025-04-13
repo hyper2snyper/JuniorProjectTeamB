@@ -14,7 +14,8 @@ namespace JuniorProject.Frontend.Components
             Tile = 0,
             Building = 1,
             Unit = 2,
-            Mob = 3
+            Mob = 3,
+            Debug = 4
         }
 
         public GenericDrawable(Vector2Int gridPosition, string sprite, DrawableType type, string uniqueIdentifier = null)

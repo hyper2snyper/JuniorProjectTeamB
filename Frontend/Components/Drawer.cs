@@ -320,6 +320,7 @@ namespace JuniorProject.Frontend.Components
                     checkToCacheData(ref cachedTiles, gd);
                     cachedTiles[gd.uniqueIdentifier].shouldDelete = false;
                     break;
+                case GenericDrawable.DrawableType.Debug:
                 case GenericDrawable.DrawableType.Building:
                     checkToCacheData(ref cachedBuildings, gd);
                     cachedBuildings[gd.uniqueIdentifier].shouldDelete = false;

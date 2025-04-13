@@ -5,6 +5,7 @@ using System.Windows.Input;
 using JuniorProject.Backend;
 using JuniorProject.Backend.Helpers;
 using JuniorProject.Backend.WorldData;
+using JuniorProject.Frontend.Components;
 
 namespace JuniorProject.Frontend.Windows
 {
@@ -61,6 +62,10 @@ namespace JuniorProject.Frontend.Windows
         public static readonly Regex deleteTileCover = new Regex("^deleteTileCover\\ *\\([0-9]+,\\ *[0-9]+\\)\\ *$");
         public static readonly Regex modifyTileCover = new Regex("^modifyTileCover\\ *\\([a-zA-z]+,\\ *[0-9]+,\\ *[0-9]+\\)\\ *$");
         public static readonly Regex expandTerritory = new Regex("^expandTerritory\\ *\\([a-zA-z]+\\)\\ *$");
+
+        public static readonly Regex spawnDebugCircle = new Regex("^spawnDebugCircle\\ *\\([a-zA-z]+,\\ *[0-9]+,\\ *[0-9]+\\)\\ *$");
+        public static readonly Regex clearDebug = new Regex("^clearDebug\\(\\)\\ *$");
+
 
         public static readonly Regex getSeed = new Regex("^seed$");
 
@@ -134,6 +139,33 @@ namespace JuniorProject.Frontend.Windows
                 Console.Text += "\n";
                 Console.Text += "Unit Types: 'Soldier', 'Archer'\n\n";
 
+                finishCommand();
+                return;
+            }
+
+            if (spawnDebugCircle.IsMatch(Input.Text))
+            {
+                Console.Text += $"---> {Input.Text}\n";
+
+                List<Match> matches = stringParam.Matches(Input.Text).ToList();
+                string color = stringInstance.Match(matches[0].Value).Value;
+                matches = intParam.Matches(Input.Text).ToList();
+                int x = int.Parse(intInstance.Match(matches[0].Value).Value);
+                int y = int.Parse(intInstance.Match(matches[1].Value).Value);
+
+                Console.Text += $"\nSpawning debug circle at {x}, {y}\n";
+
+                Debug.AddDebugCircle(color, x, y);
+
+                finishCommand();
+                return;
+            }
+
+            if (clearDebug.IsMatch(Input.Text))
+            {
+                Console.Text += $"---> {Input.Text}\n";
+                Console.Text += $"\nRemoving all debug circles\n";
+                ClientCommunicator.GetData<World>("World").debugCircles.Clear();
                 finishCommand();
                 return;
             }

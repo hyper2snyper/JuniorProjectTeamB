@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Drawing;
 using JuniorProject.Backend.Agents;
 using JuniorProject.Backend.Helpers;
@@ -9,7 +10,7 @@ namespace JuniorProject.Backend.WorldData
     {
         public TileMap map;
         public Dictionary<string, Nation> nations = new Dictionary<string, Nation>();
-
+        public List<GenericDrawable> debugCircles = new List<GenericDrawable>();
 
         public Action RedrawAction;
 
@@ -69,6 +70,10 @@ namespace JuniorProject.Backend.WorldData
             foreach (Nation currentNation in nations.Values)
             {
                 currentNation.PopulateDrawablesList(ref genericDrawables);
+            }
+            foreach (var gd in debugCircles)
+            {
+                genericDrawables.Add(gd);
             }
         }
 
