@@ -1,8 +1,7 @@
-﻿using JuniorProject.Backend.Helpers;
-using JuniorProject.Backend.WorldData;
-using System;
+﻿using JuniorProject.Backend.WorldData;
 using System.Data.SQLite;
-using static JuniorProject.Backend.Agents.Building;
+using System.IO;
+using System.Text.Json;
 
 
 namespace JuniorProject.Backend.Agents
@@ -22,23 +21,29 @@ namespace JuniorProject.Backend.Agents
         public static BuildingTemplate capitalTemplate;
         public static void LoadBuildingTemplates()
         {
+            if (buildingTemplates != null && buildingTemplates.Count > 0)
+                return; 
+
             buildingTemplates = new Dictionary<string, BuildingTemplate>();
-			SQLiteDataReader results = DatabaseManager.ReadDB("SELECT * FROM Buildings;");
-			while (results.Read())
-			{
-                BuildingTemplate template = new BuildingTemplate();
-				template.name = results.GetString(0);
-				template.cost = results.GetInt32(1);
-                template.maxHealth = results.GetInt32(2);
-				template.sprite = results.GetString(3);
-                template.hasColor = results.GetBoolean(4);
-				if (results.GetInt32(5) != 0)
+            SQLiteDataReader results = DatabaseManager.ReadDB("SELECT * FROM Buildings;");
+            while (results.Read())
+            {
+                BuildingTemplate template = new BuildingTemplate
+                {
+                    name = results.GetString(0),
+                    cost = results.GetInt32(1),
+                    maxHealth = results.GetInt32(2),
+                    sprite = results.GetString(3),
+                    hasColor = results.GetBoolean(4)
+                };
+                if (results.GetInt32(5) != 0)
                 {
                     capitalTemplate = template;
                 }
                 buildingTemplates.Add(template.name, template);
-			}
-		}
+            }
+        }
+
         public static void SaveAllBuildingTemplates()
         {
             foreach (var template in buildingTemplates.Values)
@@ -67,6 +72,39 @@ namespace JuniorProject.Backend.Agents
                 return;
             }
             SetType(buildingTemplates[type]);
+        }
+
+        public static void ResetBuildingTemplatesFromJson(string jsonFilePath)
+        {
+            if (!File.Exists(jsonFilePath))
+                throw new FileNotFoundException($"Default data JSON not found: {jsonFilePath}");
+
+            string json = File.ReadAllText(jsonFilePath);
+            var jsonData = JsonSerializer.Deserialize<Dictionary<string, List<BuildingTemplate>>>(json);
+
+            if (jsonData != null && jsonData.ContainsKey("Buildings"))
+            {
+                DatabaseManager.WriteDB("DELETE FROM Buildings;", null);
+
+                foreach (var template in jsonData["Buildings"])
+                {
+                    DatabaseManager.WriteDB(
+                        "INSERT INTO Buildings (BuildingName, BuildingCost, BuildingMaxHealth, Sprite, HasColor, IsCapital) " +
+                        "VALUES (@name, @cost, @maxHealth, @sprite, @hasColor, @isCapital)",
+                        new Dictionary<string, object>
+                        {
+                    { "@name", template.name },
+                    { "@cost", template.cost },
+                    { "@maxHealth", template.maxHealth },
+                    { "@sprite", template.sprite },
+                    { "@hasColor", template.hasColor },
+                    { "@isCapital", template.name == "Capital" ? 1 : 0 }
+                        });
+                }
+
+                buildingTemplates = null;
+                LoadBuildingTemplates();
+            }
         }
 
         void SetType(BuildingTemplate template)

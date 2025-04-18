@@ -62,9 +62,13 @@ namespace JuniorProject.Backend
             conn.Open();
             using var cmd = conn.CreateCommand();
             cmd.CommandText = commandText;
-            foreach (var pair in parameters)
-                cmd.Parameters.AddWithValue(pair.Key, pair.Value);
-            cmd.ExecuteNonQuery();
+            if (parameters != null)
+            {
+                foreach (var pair in parameters)
+                {
+                    cmd.Parameters.AddWithValue(pair.Key, pair.Value);
+                }
+            }
         }
 
 

@@ -120,27 +120,27 @@
                 <TextBox x:Name="SoldierH" PreviewTextInput="NumberOnlyInput" HorizontalAlignment="Left" Margin="406,183,0,0" TextWrapping="Wrap" Text="5" VerticalAlignment="Top" Width="53" />
                 <Border x:Name="Border5_Copy3" BorderBrush="White" BorderThickness="1" Margin="47,445,532,1284"/>
                 <TextBlock HorizontalAlignment="Left" Margin="89,453,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="22" Width="116" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Capital Options"/></TextBlock>
-                <TextBox x:Name="CapitialCost" PreviewTextInput="FloatOnlyInput" HorizontalAlignment="Left" Margin="170,479,0,0" TextWrapping="Wrap" Text="3.65" VerticalAlignment="Top" Width="53" />
+                <TextBox x:Name="CapitialCost" PreviewTextInput="FloatOnlyInput" HorizontalAlignment="Left" Margin="170,479,0,0" TextWrapping="Wrap" Text="3" VerticalAlignment="Top" Width="53" />
                 <TextBlock HorizontalAlignment="Left" Margin="68,480,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="88" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Building Cost"/></TextBlock>
                 <Border x:Name="Border5_Copy1" BorderBrush="White" BorderThickness="1" Margin="279,445,296,1284"/>
                 <TextBlock HorizontalAlignment="Left" Margin="317,453,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="22" Width="116" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="House Options"/></TextBlock>
-                <TextBox x:Name="HouseCost" PreviewTextInput="FloatOnlyInput" HorizontalAlignment="Left" Margin="398,479,0,0" TextWrapping="Wrap" Text="6.53" VerticalAlignment="Top" Width="53" />
+                <TextBox x:Name="HouseCost" PreviewTextInput="FloatOnlyInput" HorizontalAlignment="Left" Margin="398,479,0,0" TextWrapping="Wrap" Text="6" VerticalAlignment="Top" Width="53" />
                 <TextBlock HorizontalAlignment="Left" Margin="296,480,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="88" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Building Cost"/></TextBlock>
                 <Border x:Name="Border5_Copy2" BorderBrush="White" BorderThickness="1" Margin="497,445,67,1284"/>
                 <TextBlock HorizontalAlignment="Left" Margin="541,453,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="22" Width="116" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Mine Options"/></TextBlock>
-                <TextBox x:Name="MineCost" PreviewTextInput="FloatOnlyInput" HorizontalAlignment="Left" Margin="622,479,0,0" TextWrapping="Wrap" Text="5.65" VerticalAlignment="Top" Width="53" />
+                <TextBox x:Name="MineCost" PreviewTextInput="FloatOnlyInput" HorizontalAlignment="Left" Margin="622,479,0,0" TextWrapping="Wrap" Text="9" VerticalAlignment="Top" Width="53" />
                 <TextBlock HorizontalAlignment="Left" Margin="520,480,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="88" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Building Cost"/></TextBlock>
                 <Border x:Name="Border5_Copy4" BorderBrush="White" BorderThickness="1" Margin="46,527,532,1202"/>
                 <TextBlock HorizontalAlignment="Left" Margin="91,535,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="22" Width="116" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Barracks Options"/></TextBlock>
-                <TextBox x:Name="BarrackCost" PreviewTextInput="FloatOnlyInput" HorizontalAlignment="Left" Margin="171,561,0,0" TextWrapping="Wrap" Text="5.65" VerticalAlignment="Top" Width="53" />
+                <TextBox x:Name="BarrackCost" PreviewTextInput="FloatOnlyInput" HorizontalAlignment="Left" Margin="171,561,0,0" TextWrapping="Wrap" Text="12" VerticalAlignment="Top" Width="53" />
                 <TextBlock HorizontalAlignment="Left" Margin="70,562,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="88" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Building Cost"/></TextBlock>
                 <Border x:Name="Border5_Copy5" BorderBrush="White" BorderThickness="1" Margin="279,528,296,1201"/>
                 <TextBlock HorizontalAlignment="Left" Margin="317,536,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="22" Width="116" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Smith Options"/></TextBlock>
-                <TextBox x:Name="SmithCost" PreviewTextInput="FloatOnlyInput" HorizontalAlignment="Left" Margin="398,562,0,0" TextWrapping="Wrap" Text="5.65" VerticalAlignment="Top" Width="53" />
+                <TextBox x:Name="SmithCost" PreviewTextInput="FloatOnlyInput" HorizontalAlignment="Left" Margin="398,562,0,0" TextWrapping="Wrap" Text="15" VerticalAlignment="Top" Width="53" />
                 <TextBlock HorizontalAlignment="Left" Margin="296,563,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="88" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Building Cost"/></TextBlock>
                 <Border x:Name="Border5_Copy6" BorderBrush="White" BorderThickness="1" Margin="497,528,67,1201"/>
                 <TextBlock HorizontalAlignment="Left" Margin="541,536,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="22" Width="116" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Farm Options"/></TextBlock>
-                <TextBox x:Name="FarmCost" PreviewTextInput="FloatOnlyInput" HorizontalAlignment="Left" Margin="622,562,0,0" TextWrapping="Wrap" Text="666.6" VerticalAlignment="Top" Width="53" />
+                <TextBox x:Name="FarmCost" PreviewTextInput="FloatOnlyInput" HorizontalAlignment="Left" Margin="622,562,0,0" TextWrapping="Wrap" Text="18" VerticalAlignment="Top" Width="53" />
                 <TextBlock HorizontalAlignment="Left" Margin="520,563,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="88" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Building Cost"/></TextBlock>
                 <Label Content="Building Options" HorizontalAlignment="Left" Margin="312,408,0,0" VerticalAlignment="Top" Width="137" Foreground="White" FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold"/>
                 <Label Content="Unit Options" HorizontalAlignment="Left" Margin="324,50,0,0" VerticalAlignment="Top" Width="137" Foreground="White" FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold"/>
@@ -214,7 +214,7 @@
                 <Style TargetType ="Button">
                     <Setter Property="Background">
                         <Setter.Value>
-                            <ImageBrush x:Name="BackButtonBrush" ImageSource="/FrontEnd/gui/Buttons/SaveButton.png"/>
+                            <ImageBrush x:Name="SaveButtonBrush" ImageSource="/FrontEnd/gui/Buttons/SaveButton.png"/>
                         </Setter.Value>
                     </Setter>
                     <Style.Triggers>
@@ -230,7 +230,23 @@
                 <Style TargetType ="Button">
                     <Setter Property="Background">
                         <Setter.Value>
-                            <ImageBrush x:Name="BackButtonBrush" ImageSource="/FrontEnd/gui/Buttons/CancelButton.png"/>
+                            <ImageBrush x:Name="CancelButtonBrush" ImageSource="/FrontEnd/gui/Buttons/CancelButton.png"/>
+                        </Setter.Value>
+                    </Setter>
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Opacity" Value="0.8"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+        </Button>
+        <Button Template="{DynamicResource CancelTemplate}" BorderThickness="0" Margin="667,341,24,19"  Height="40" Grid.RowSpan="1" Click="ResetClicked">
+            <Button.Style>
+                <Style TargetType ="{x:Type Button}">
+                    <Setter Property="Background">
+                        <Setter.Value>
+                            <ImageBrush x:Name="CanceButtonBrush" ImageSource="/Frontend/GUI/Buttons/CancelButton.png"/>
                         </Setter.Value>
                     </Setter>
                     <Style.Triggers>

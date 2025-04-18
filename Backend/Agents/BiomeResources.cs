@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Data.SQLite;
-using static JuniorProject.Backend.Agents.BiomeResources;
-using System.Xml.Linq;
+﻿using System.Data.SQLite;
+using System.Text.Json;
+using System.IO;
 using static JuniorProject.Backend.Agents.Building;
 
 namespace JuniorProject.Backend.Agents
@@ -34,14 +29,19 @@ namespace JuniorProject.Backend.Agents
 
         public static void LoadBiomeResourcesTemplate()
         {
-            biomeResourcesTemplate.Clear();
+            if (biomeResourcesTemplate == null)
+                biomeResourcesTemplate = new Dictionary<(string Biome, string Resource), BiomeResourcesTemplate>();
+            else if (biomeResourcesTemplate.Count > 0)
+                return;
+
+            biomeResourcesTemplate.Clear(); 
 
             using var results = DatabaseManager.ReadDB("SELECT * FROM BiomeResource;");
             while (results.Read())
             {
-                var biomeID = results.GetString(0);    // BiomeID
-                var resourceID = results.GetString(1); // ResourceID
-                var gatherRate = results.GetInt32(2);  // GatherRate
+                var biomeID = results.GetString(0);    
+                var resourceID = results.GetString(1); 
+                var gatherRate = results.GetInt32(2);  
 
                 var key = (biomeID, resourceID);
 
@@ -54,7 +54,34 @@ namespace JuniorProject.Backend.Agents
             }
         }
 
+        public static void ResetBiomeResourcesFromJson(string jsonFilePath)
+        {
+            if (!File.Exists(jsonFilePath))
+                throw new FileNotFoundException($"Default data JSON not found: {jsonFilePath}");
 
+            string json = File.ReadAllText(jsonFilePath);
+            var jsonData = JsonSerializer.Deserialize<Dictionary<string, List<BiomeResourcesTemplate>>>(json);
+
+            if (jsonData != null && jsonData.ContainsKey("BiomeResource"))
+            {
+                DatabaseManager.WriteDB("DELETE FROM BiomeResource;", null);
+
+                foreach (var br in jsonData["BiomeResource"])
+                {
+                    DatabaseManager.WriteDB(
+                        "INSERT INTO BiomeResource (BiomeID, ResourceID, GatherRate) VALUES (@biome, @resource, @rate)",
+                        new Dictionary<string, object>
+                        {
+                    { "@biome", br.Name},
+                    { "@resource", br.Resources},
+                    { "@rate", br.GatherRate }
+                        });
+                }
+
+                biomeResourcesTemplate = null;
+                LoadBiomeResourcesTemplate();
+            }
+        }
 
         public static void SaveBiomeResourcesTemplate()
         {
