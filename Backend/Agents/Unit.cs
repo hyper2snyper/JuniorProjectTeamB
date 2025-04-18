@@ -6,6 +6,7 @@ using System.Security.Policy;
 using System.Xml.Linq;
 using JuniorProject.Backend.Agents.Objectives;
 using JuniorProject.Frontend.Components;
+using System.Text.Json;
 
 namespace JuniorProject.Backend.Agents
 {
@@ -24,6 +25,9 @@ namespace JuniorProject.Backend.Agents
         public static Dictionary<string, UnitTemplate> unitTemplates;
         public static void LoadUnitTemplates()
         {
+            if (unitTemplates != null && unitTemplates.Count > 0)
+                return;
+
             unitTemplates = new Dictionary<string, UnitTemplate>();
             SQLiteDataReader results = DatabaseManager.ReadDB("SELECT * FROM Units;");
             while (results.Read())
@@ -35,8 +39,57 @@ namespace JuniorProject.Backend.Agents
                 template.attackRange = results.GetInt32(3);
                 template.maxHealth = results.GetInt32(4);
                 template.sprite = results.GetString(5);
-                template.flags = results.GetInt32(6); //PLACEHOLDER
+                template.flags = results.GetInt32(6);
                 unitTemplates.Add(template.name, template);
+            }
+        }
+
+        public static void SaveAllUnitTemplates()
+        {
+            foreach (var template in unitTemplates.Values)
+            {
+                DatabaseManager.WriteDB(
+                    "UPDATE Units SET AttackDamage=@dmg, AttackRange=@rng, MaxHealth=@hp WHERE UnitType=@name",
+                    new Dictionary<string, object>
+                    {
+                {"@dmg", template.attackDamage},
+                {"@rng", template.attackRange},
+                {"@hp", template.maxHealth},
+                {"@name", template.name}
+                    }
+                );
+            }
+        }
+
+        public static void ResetUnitTemplatesFromJson(string jsonFilePath)
+        {
+            if (!File.Exists(jsonFilePath))
+                throw new FileNotFoundException($"Default data JSON not found: {jsonFilePath}");
+
+            string json = File.ReadAllText(jsonFilePath);
+            var jsonData = JsonSerializer.Deserialize<Dictionary<string, List<UnitTemplate>>>(json);
+
+            if (jsonData != null && jsonData.ContainsKey("Units"))
+            {
+                // Clear the existing Units table
+                DatabaseManager.WriteDB("DELETE FROM Units;", null);
+
+                foreach (var unit in jsonData["Units"])
+                {
+                    DatabaseManager.WriteDB(
+                        "INSERT INTO Units (UnitName, AttackDamage, AttackRange, MaxHealth) " +
+                        "VALUES (@name, @dmg, @range, @health)",
+                        new Dictionary<string, object>
+                        {
+                    { "@name", unit.name },
+                    { "@dmg", unit.attackDamage },
+                    { "@range", unit.attackRange },
+                    { "@health", unit.maxHealth }
+                        });
+                }
+
+                unitTemplates = null;
+                LoadUnitTemplates();
             }
         }
 
@@ -138,17 +191,15 @@ namespace JuniorProject.Backend.Agents
 		public override void SerializeFields()
         {
             base.SerializeFields();
-            SerializeField(unitType.name); //Save the type.
+            SerializeField(unitType.name);
             SerializeField(health);
             SerializeField(name);
-
-            //Eventually we need to save objective states.
         }
 
         public override void DeserializeFields()
         {
             base.DeserializeFields();
-            unitType = unitTemplates[DeserializeField<string>()]; //The templates need to be loaded first.
+            unitType = unitTemplates[DeserializeField<string>()]; 
             health = DeserializeField<int>();
             name = DeserializeField<string>();
             

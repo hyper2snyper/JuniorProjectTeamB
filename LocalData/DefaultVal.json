@@ -1,0 +1,209 @@
+{
+  "Units": [
+    {
+      "UnitType": "Soldier",
+      "UnitDescription": " ",
+      "AttackDamage": 1,
+      "AttackRange": 1,
+      "MaxHealth": 5,
+      "Sprite": "Soldier",
+      "Flags": 0
+    },
+    {
+      "UnitType": "Archer",
+      "UnitDescription": " ",
+      "AttackDamage": 1,
+      "AttackRange": 2,
+      "MaxHealth": 3,
+      "Sprite": "Archer",
+      "Flags": 0
+    },
+    {
+      "UnitType": "Cavalier",
+      "UnitDescription": " ",
+      "AttackDamage": 3,
+      "AttackRange": 1,
+      "MaxHealth": 8,
+      "Sprite": "Cavalier",
+      "Flags": 0
+    },
+    {
+      "UnitType": "Catapult",
+      "UnitDescription": " ",
+      "AttackDamage": 10,
+      "AttackRange": 3,
+      "MaxHealth": 10,
+      "Sprite": "Catapult",
+      "Flags": 0
+    },
+    {
+      "UnitType": "Cannoneer",
+      "UnitDescription": " ",
+      "AttackDamage": 5,
+      "AttackRange": 5,
+      "MaxHealth": 8,
+      "Sprite": "Cannoneer",
+      "Flags": 0
+    }
+  ],
+  "BiomeResource": [
+    {
+      "BiomeID": "Grassland",
+      "ResourceID": "Wood",
+      "GatherRate": 40
+    },
+    {
+      "BiomeID": "Grassland",
+      "ResourceID": "Iron",
+      "GatherRate": 10
+    },
+    {
+      "BiomeID": "Grassland",
+      "ResourceID": "Stone",
+      "GatherRate": 20
+    },
+    {
+      "BiomeID": "Grassland",
+      "ResourceID": "Food",
+      "GatherRate": 75
+    },
+    {
+      "BiomeID": "Grassland",
+      "ResourceID": "Gold",
+      "GatherRate": 0
+    },
+    {
+      "BiomeID": "Highlands",
+      "ResourceID": "Wood",
+      "GatherRate": 20
+    },
+    {
+      "BiomeID": "Highlands",
+      "ResourceID": "Iron",
+      "GatherRate": 60
+    },
+    {
+      "BiomeID": "Highlands",
+      "ResourceID": "Stone",
+      "GatherRate": 80
+    },
+    {
+      "BiomeID": "Highlands",
+      "ResourceID": "Food",
+      "GatherRate": 0
+    },
+    {
+      "BiomeID": "Highlands",
+      "ResourceID": "Gold",
+      "GatherRate": 30
+    },
+    {
+      "BiomeID": "Forest",
+      "ResourceID": "Wood",
+      "GatherRate": 70
+    },
+    {
+      "BiomeID": "Forest",
+      "ResourceID": "Iron",
+      "GatherRate": 0
+    },
+    {
+      "BiomeID": "Forest",
+      "ResourceID": "Stone",
+      "GatherRate": 10
+    },
+    {
+      "BiomeID": "Forest",
+      "ResourceID": "Food",
+      "GatherRate": 60
+    },
+    {
+      "BiomeID": "Forest",
+      "ResourceID": "Gold",
+      "GatherRate": 0
+    },
+    {
+      "BiomeID": "HighlandsForest",
+      "ResourceID": "Wood",
+      "GatherRate": 60
+    },
+    {
+      "BiomeID": "HighlandsForest",
+      "ResourceID": "Iron",
+      "GatherRate": 300
+    },
+    {
+      "BiomeID": "HighlandsForest",
+      "ResourceID": "Stone",
+      "GatherRate": 20
+    },
+    {
+      "BiomeID": "HighlandsForest",
+      "ResourceID": "Food",
+      "GatherRate": 55
+    },
+    {
+      "BiomeID": "HighlandsForest",
+      "ResourceID": "Gold",
+      "GatherRate": 10
+    }
+  ],
+  "Buildings": [
+    {
+      "BuildingName": "House",
+      "BuildingCost": 6,
+      "Health": 0,
+      "Sprite": "House",
+      "HasColor": 1,
+      "Capital": 0
+    },
+    {
+      "BuildingName": "Capital",
+      "BuildingCost": 3,
+      "Health": 0,
+      "Sprite": "Castle",
+      "HasColor": 1,
+      "Capital": 1
+    },
+    {
+      "BuildingName": "Barracks",
+      "BuildingCost": 12,
+      "Health": 0,
+      "Sprite": "8",
+      "HasColor": 0,
+      "Capital": 0
+    },
+    {
+      "BuildingName": "Mine",
+      "BuildingCost": 9,
+      "Health": 0,
+      "Sprite": "Mine",
+      "HasColor": 0,
+      "Capital": 0
+    },
+    {
+      "BuildingName": "Smith",
+      "BuildingCost": 15,
+      "Health": 0,
+      "Sprite": "10",
+      "HasColor": 0,
+      "Capital": 0
+    },
+    {
+      "BuildingName": "Farm",
+      "BuildingCost": 18,
+      "Health": 0,
+      "Sprite": "WheatFarm",
+      "HasColor": 0,
+      "Capital": 0
+    },
+    {
+      "BuildingName": "Port",
+      "BuildingCost": 0,
+      "Health": 0,
+      "Sprite": "Dock",
+      "HasColor": 1,
+      "Capital": 0
+    }
+  ]
+}
