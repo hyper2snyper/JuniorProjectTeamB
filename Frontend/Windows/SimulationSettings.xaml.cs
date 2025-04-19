@@ -229,7 +229,7 @@ namespace JuniorProject.Frontend.Windows
         {
             try
             {
-                string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "LocalData", "DefaultVal.json");
+                string path = $"{Properties.Resources.ProjectDir}\\LocalData\\DefaultVal.json";
 
                 // Reset all three
                 Unit.ResetUnitTemplatesFromJson(path);
