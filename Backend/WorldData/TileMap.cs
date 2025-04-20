@@ -1,5 +1,7 @@
 ﻿using JuniorProject.Backend.Agents;
 using JuniorProject.Backend.Helpers;
+using System.Collections.Generic;
+using System.Data.SQLite;
 using System.Diagnostics;
 using System.Drawing;
 
@@ -18,6 +20,8 @@ namespace JuniorProject.Backend.WorldData
 
             public bool impassible = false;
             public bool coast = false;
+
+            public string primaryBiome;
 
             List<Mob> occupants = new List<Mob>();
             public List<Mob> Occupants
@@ -196,6 +200,17 @@ namespace JuniorProject.Backend.WorldData
                     if (totalLandPercentage < 0.3) tile.impassible = true;
                     tile.movementCost = movementCostTotal / (float)(tileSize * tileSize);
                     tiles[tileX, tileY] = tile;
+
+                    string mainBiome = "";
+                    foreach (var item1 in tile.terrainPercentages)
+                    {
+                        foreach (var item2 in tile.terrainPercentages)
+                        {
+                            if (item1.Value > item2.Value) mainBiome = item1.Key;
+                            else if (item2.Value > item1.Value) mainBiome = item2.Key;
+                        }
+                    }
+                    tile.primaryBiome = mainBiome;
                 }
             }
             ClientCommunicator.RegisterData<TileMap>("TileMap", this);
@@ -226,7 +241,7 @@ namespace JuniorProject.Backend.WorldData
             ClientCommunicator.RegisterData<int>("tileSize", tileSize);
             ClientCommunicator.RegisterData<TileMap>("TileMap", this);
         }
-        public int GetTileResource(int xPos, int yPos, string resourceType)
+        public Dictionary<string, int> GetTileResource(int xPos, int yPos)
         {
             string primaryBiome = "";
             foreach (var item1 in tiles[xPos, yPos].terrainPercentages)
@@ -237,7 +252,7 @@ namespace JuniorProject.Backend.WorldData
                     else if (item2.Value > item1.Value) primaryBiome = item2.Key;
                 }
             }
-            return (map.GetBiomeResources(primaryBiome, resourceType));
+            return (map.GetBiomeResources(primaryBiome));
         }
     }
 }
