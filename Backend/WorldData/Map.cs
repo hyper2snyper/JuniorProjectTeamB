@@ -238,7 +238,12 @@ namespace JuniorProject.Backend.WorldData
 
         }
 
-        public int GetBiomeResources(string biomeName, string resourceName)
+        public Dictionary<string, int> GetBiomeResources(string biomeName)
+        {
+            return biomeList[biomeName].resourceData;
+        }
+
+        public int GetSingleResource(string biomeName, string resourceName)
         {
             return biomeList[biomeName].resourceData[resourceName];
         }
