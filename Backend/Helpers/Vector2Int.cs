@@ -25,7 +25,7 @@ namespace JuniorProject.Backend.Helpers
         {
             get
             {
-                return new Vector2Int(X/Magnitude, Y/Magnitude);
+                return new Vector2Int(X / Magnitude, Y / Magnitude);
             }
         }
 
@@ -58,10 +58,10 @@ namespace JuniorProject.Backend.Helpers
             return v1.x * v2.x + v1.y * v2.y;
         }
 
-		public override string ToString()
-		{
+        public override string ToString()
+        {
             return $"({X}, {Y})";
-		}
+        }
 
-	}
+    }
 }
