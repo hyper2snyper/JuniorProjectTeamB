@@ -161,6 +161,21 @@ namespace JuniorProject.Frontend.Components
             images.Add(tileImage);
             titles.Add("Tile");
             information.Add(getTileInformation(ref tile));
+            
+            if (tile.primaryBiome == "Grassland" || tile.primaryBiome == "Highlands" || tile.primaryBiome == "Forest" || tile.primaryBiome == "HighlandsForest")
+            {
+                string resInfo = $"";
+                foreach (var element in tileMap.GetTileResource(tile.pos.X, tile.pos.Y))
+                {
+                    resInfo += element.Key.ToString();
+                    resInfo += " -> ";
+                    resInfo += element.Value.ToString();
+                    resInfo += "\n";
+                }
+                images.Add(tileImage);
+                titles.Add("Resources");
+                information.Add(resInfo);
+            }
 
             foreach (Mob m in tile.Occupants) {
                 Controls.Image mobImage = new Controls.Image

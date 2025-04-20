@@ -26,6 +26,8 @@ namespace JuniorProject.Backend.Agents
 
         public List<TileMap.Tile> desiredLand = new List<TileMap.Tile>();
 
+        NationResources resources;
+
         Timer<ulong> calculationTimer = new Timer<ulong>(0, 10);
 
         public int money = 0;
