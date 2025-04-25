@@ -180,7 +180,6 @@
                 <TextBlock HorizontalAlignment="Left" Margin="405,916,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="88" Foreground="White" Text="Wood" FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold"/>
                 <TextBlock HorizontalAlignment="Left" Margin="405,943,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="18" Width="80" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Iron"/></TextBlock>
                 <TextBlock HorizontalAlignment="Left" Margin="406,970,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="80" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Stone"/></TextBlock>
-                <TextBox HorizontalAlignment="Left" Margin="268,767,0,0" TextWrapping="Wrap" Text="20" VerticalAlignment="Top" Width="55"/>
                 <Label Content="Binome Options" HorizontalAlignment="Left" Margin="323,631,0,0" VerticalAlignment="Top" Width="105" Foreground="White" FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold"/>
                 <TextBlock HorizontalAlignment="Left" Margin="406,997,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="80" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Food"/></TextBlock>
 
@@ -207,6 +206,7 @@
                 <TextBox x:Name="GoldG" PreviewTextInput="NumberOnlyInput" HorizontalAlignment="Left" Margin="268,821,0,0" TextWrapping="Wrap" Text="80" VerticalAlignment="Top" Width="55" />
                 <TextBox x:Name="FoodH" PreviewTextInput="NumberOnlyInput" HorizontalAlignment="Left" Margin="514,794,0,0" TextWrapping="Wrap" Text="50" VerticalAlignment="Top" Width="55" />
                 <TextBlock HorizontalAlignment="Left" Margin="411,794,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="80" Foreground="White"><Run FontWeight="Bold" Text="Food"/></TextBlock>
+                <TextBox x:Name="PortCost" PreviewTextInput="FloatOnlyInput" HorizontalAlignment="Left" Margin="622,540,0,0" TextWrapping="Wrap" Text="18" VerticalAlignment="Top" Width="53" />
             </Grid>
         </ScrollViewer>
         <Button Template="{DynamicResource SaveTemplate}" BorderThickness="0" Margin="667,265,24,0" VerticalAlignment="Top" Height="40" Click="SavedClicked">

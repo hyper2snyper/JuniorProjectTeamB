@@ -2,6 +2,7 @@
 using System.Data.SQLite;
 using System.IO;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 
 namespace JuniorProject.Backend.Agents
@@ -11,12 +12,22 @@ namespace JuniorProject.Backend.Agents
 
         public class BuildingTemplate
         {
-            public string name;
-            public int cost;
-            public int maxHealth;
+            [JsonPropertyName("BuildingName")]
+            public string name { get; set; }
+
+            [JsonPropertyName("BuildingCost")]
+            public int cost { get; set; }
+
+            [JsonPropertyName("Health")]
+            public int maxHealth { get; set; }
+
+            [JsonIgnore] // Prevent changing sprite from JSON
             public string sprite;
+
+            [JsonIgnore] // Prevent changing color flag from JSON
             public bool hasColor = false;
         }
+
         public static Dictionary<string, BuildingTemplate> buildingTemplates;
         public static BuildingTemplate capitalTemplate;
         public static void LoadBuildingTemplates()
@@ -46,18 +57,22 @@ namespace JuniorProject.Backend.Agents
 
         public static void SaveAllBuildingTemplates()
         {
+            if (buildingTemplates == null) return;
+
             foreach (var template in buildingTemplates.Values)
             {
                 DatabaseManager.WriteDB(
                     "UPDATE Buildings SET BuildingCost=@cost WHERE BuildingName=@name",
                     new Dictionary<string, object>
                     {
-                { "@cost", template.cost },
-                { "@name", template.name }
+                        { "@cost", template.cost },
+                        { "@name", template.name }
                     }
                 );
             }
         }
+
+
 
         public BuildingTemplate template;
 
@@ -84,21 +99,22 @@ namespace JuniorProject.Backend.Agents
 
             if (jsonData != null && jsonData.ContainsKey("Buildings"))
             {
-                DatabaseManager.WriteDB("DELETE FROM Buildings;", null);
-
                 foreach (var template in jsonData["Buildings"])
                 {
+                    if (string.IsNullOrWhiteSpace(template.name)) continue;
+
                     DatabaseManager.WriteDB(
-                        "INSERT INTO Buildings (BuildingName, BuildingCost, BuildingMaxHealth, Sprite, HasColor, IsCapital) " +
-                        "VALUES (@name, @cost, @maxHealth, @sprite, @hasColor, @isCapital)",
+                        "INSERT OR REPLACE INTO Buildings " +
+                        "(BuildingName, BuildingCost, Health, Sprite, HasColor, Capital) " +
+                        "VALUES (@name, @cost, @health, @sprite, @hasColor, @capital)",
                         new Dictionary<string, object>
                         {
-                    { "@name", template.name },
-                    { "@cost", template.cost },
-                    { "@maxHealth", template.maxHealth },
-                    { "@sprite", template.sprite },
-                    { "@hasColor", template.hasColor },
-                    { "@isCapital", template.name == "Capital" ? 1 : 0 }
+                            { "@name", template.name },
+                            { "@cost", template.cost },
+                            { "@health", template.maxHealth },
+                            { "@sprite", template.sprite ?? "" },
+                            { "@hasColor", template.hasColor ? 1 : 0 },
+                            { "@capital", template.name == "Capital" ? 1 : 0 }
                         });
                 }
 
@@ -106,6 +122,7 @@ namespace JuniorProject.Backend.Agents
                 LoadBuildingTemplates();
             }
         }
+
 
         void SetType(BuildingTemplate template)
         {

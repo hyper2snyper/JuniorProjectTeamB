@@ -69,11 +69,7 @@ namespace JuniorProject.Backend
                     cmd.Parameters.AddWithValue(pair.Key, pair.Value);
                 }
             }
+            cmd.ExecuteNonQuery();
         }
-
-
-
-
-
     }
 }

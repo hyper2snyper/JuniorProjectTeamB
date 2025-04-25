@@ -47,10 +47,12 @@ namespace JuniorProject.Frontend.Windows
             SaveUnit("Archer", ArcherD, ArcherR, ArcherH);
             SaveUnit("Soldier", SoldierD, SoldierR, SoldierH);
             SaveUnit("Catapult", CatapultD, CatapultR, CatapultH);
-            SaveUnit("Cannon", CannonD, CannonR, CannonH);
+            SaveUnit("Cannoneer", CannonD, CannonR, CannonH);
             SaveUnit("Cavalier", CavalierD, CavalierR, CavalierH);
             SaveUnits();
-            
+
+
+            // Buildings
             // Buildings
             SaveBuilding("Capital", CapitialCost);
             SaveBuilding("House", HouseCost);
@@ -58,14 +60,16 @@ namespace JuniorProject.Frontend.Windows
             SaveBuilding("Barracks", BarrackCost);
             SaveBuilding("Smith", SmithCost);
             SaveBuilding("Farm", FarmCost);
+            SaveBuilding("Port", PortCost);
+
+            Building.SaveAllBuildingTemplates();
 
             //Biome Resources
             SaveBiome("Grassland", GoldG, WoodG, StoneG, FoodG, IronG);
-            SaveBiome("Highland", GoldH, WoodH, StoneH, FoodH, IronH);
+            SaveBiome("Highlands", GoldH, WoodH, StoneH, FoodH, IronH);
             SaveBiome("Forest", GoldF, WoodF, StoneF, FoodF, IronF);
-            SaveBiome("HighlandForest", GoldHF, WoodHF, StoneHF, FoodHF, IronHF);
+            SaveBiome("HighlandsForest", GoldHF, WoodHF, StoneHF, FoodHF, IronHF);
 
-            BiomeResources.SaveBiomeResourcesTemplate();
 
 
             Debug.Print("Saved!");
@@ -100,7 +104,7 @@ namespace JuniorProject.Frontend.Windows
                 LoadUnit("Archer", ArcherD, ArcherR, ArcherH);
                 LoadUnit("Soldier", SoldierD, SoldierR, SoldierH);
                 LoadUnit("Catapult", CatapultD, CatapultR, CatapultH);
-                LoadUnit("Cannon", CannonD, CannonR, CannonH);
+                LoadUnit("Cannoneer", CannonD, CannonR, CannonH);
                 LoadUnit("Cavalier", CavalierD, CavalierR, CavalierH);
             }
 
@@ -115,6 +119,7 @@ namespace JuniorProject.Frontend.Windows
                 LoadBuilding("Barracks", BarrackCost);
                 LoadBuilding("Smith", SmithCost);
                 LoadBuilding("Farm", FarmCost);
+                LoadBuilding("Port", PortCost);
             }
 
             if (biomeResourcesTemplate == null)
@@ -122,9 +127,9 @@ namespace JuniorProject.Frontend.Windows
                 BiomeResources.LoadBiomeResourcesTemplate();
 
                 LoadBiome("Grassland", GoldG, WoodG, StoneG, FoodG, IronG);
-                LoadBiome("Highland", GoldH, WoodH, StoneH, FoodH, IronH);
+                LoadBiome("Highlands", GoldH, WoodH, StoneH, FoodH, IronH);
                 LoadBiome("Forest", GoldF, WoodF, StoneF, FoodF, IronF);
-                LoadBiome("HighlandForest", GoldHF, WoodHF, StoneHF, FoodHF, IronHF);
+                LoadBiome("HighlandsForest", GoldHF, WoodHF, StoneHF, FoodHF, IronHF);
             }
         }
 
@@ -168,22 +173,19 @@ namespace JuniorProject.Frontend.Windows
 
         private void SaveBuilding(string name, TextBox costField)
         {
-
             if (int.TryParse(costField.Text, out int cost))
             {
-
-                if (buildingTemplates != null && buildingTemplates.TryGetValue(name, out var localTemplate))
+                if (buildingTemplates.TryGetValue(name, out var localTemplate))
                 {
                     localTemplate.cost = cost;
                 }
 
-                if (buildingTemplates != null && buildingTemplates.TryGetValue(name, out var globalTemplate))
+                if (Building.buildingTemplates.TryGetValue(name, out var globalTemplate))
                 {
                     globalTemplate.cost = cost;
                 }
             }
         }
-
 
         private void SaveBiome(string biomeName, TextBox gold, TextBox wood, TextBox stone, TextBox food, TextBox iron)
         {
@@ -198,13 +200,17 @@ namespace JuniorProject.Frontend.Windows
         {
             if (int.TryParse(field.Text, out int rate))
             {
-                if (BiomeResources.biomeResourcesTemplate.TryGetValue((biome, resource), out var global))
-                    global.GatherRate = rate;
+                var key = (biome, resource);
+                if (BiomeResources.biomeResourcesTemplate.TryGetValue(key, out var template))
+                {
+                    template.GatherRate = rate;
+                }
 
-                if (biomeResourcesTemplate != null && biomeResourcesTemplate.TryGetValue((biome, resource), out var local))
-                    local.GatherRate = rate;
+                // Now persist the updated value
+                BiomeResources.SaveBiomeResourcesTemplate();
             }
         }
+
 
 
         private void LoadBiome(string biomeName, TextBox gold, TextBox wood, TextBox stone, TextBox food, TextBox iron)
@@ -231,34 +237,40 @@ namespace JuniorProject.Frontend.Windows
             {
                 string path = $"{Properties.Resources.ProjectDir}\\LocalData\\DefaultVal.json";
 
-                // Reset all three
+                // Reset all three (DB gets wiped + repopulated)
                 Unit.ResetUnitTemplatesFromJson(path);
                 Building.ResetBuildingTemplatesFromJson(path);
                 BiomeResources.ResetBiomeResourcesFromJson(path);
 
-                // Reload UI: Units
-                unitTemplates = Unit.unitTemplates;
+                // Reload from DB to in-memory
+                Unit.LoadUnitTemplates();
+                Building.LoadBuildingTemplates();
+                BiomeResources.LoadBiomeResourcesTemplate();
+
+                // Refresh local cache
+                unitTemplates = new Dictionary<string, Unit.UnitTemplate>(Unit.unitTemplates);
+                buildingTemplates = new Dictionary<string, Building.BuildingTemplate>(Building.buildingTemplates);
+                biomeResourcesTemplate = new Dictionary<(string, string), BiomeResourcesTemplate>(BiomeResources.biomeResourcesTemplate);
+
+                // Update UI
                 LoadUnit("Archer", ArcherD, ArcherR, ArcherH);
                 LoadUnit("Soldier", SoldierD, SoldierR, SoldierH);
                 LoadUnit("Catapult", CatapultD, CatapultR, CatapultH);
-                LoadUnit("Cannon", CannonD, CannonR, CannonH);
+                LoadUnit("Cannoneer", CannonD, CannonR, CannonH);
                 LoadUnit("Cavalier", CavalierD, CavalierR, CavalierH);
 
-                // Reload UI: Buildings
-                buildingTemplates = Building.buildingTemplates;
                 LoadBuilding("Capital", CapitialCost);
                 LoadBuilding("House", HouseCost);
                 LoadBuilding("Mine", MineCost);
                 LoadBuilding("Barracks", BarrackCost);
                 LoadBuilding("Smith", SmithCost);
                 LoadBuilding("Farm", FarmCost);
+                LoadBuilding("Port", PortCost);
 
-                // Reload UI: Biome Resources
-                BiomeResources.LoadBiomeResourcesTemplate();
                 LoadBiome("Grassland", GoldG, WoodG, StoneG, FoodG, IronG);
-                LoadBiome("Highland", GoldH, WoodH, StoneH, FoodH, IronH);
+                LoadBiome("Highlands", GoldH, WoodH, StoneH, FoodH, IronH);
                 LoadBiome("Forest", GoldF, WoodF, StoneF, FoodF, IronF);
-                LoadBiome("HighlandForest", GoldHF, WoodHF, StoneHF, FoodHF, IronHF);
+                LoadBiome("HighlandsForest", GoldHF, WoodHF, StoneHF, FoodHF, IronHF);
 
                 Debug.Print("All templates reset to default values.");
             }
@@ -267,5 +279,6 @@ namespace JuniorProject.Frontend.Windows
                 Debug.Print($"Error resetting templates: {ex.Message}");
             }
         }
+
     }
 }

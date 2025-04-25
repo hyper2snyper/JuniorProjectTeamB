@@ -169,7 +169,7 @@
       "BuildingName": "Barracks",
       "BuildingCost": 12,
       "Health": 0,
-      "Sprite": "8",
+      "Sprite": "Barracks",
       "HasColor": 0,
       "Capital": 0
     },
@@ -185,7 +185,7 @@
       "BuildingName": "Smith",
       "BuildingCost": 15,
       "Health": 0,
-      "Sprite": "10",
+      "Sprite": "Smith",
       "HasColor": 0,
       "Capital": 0
     },
@@ -199,7 +199,7 @@
     },
     {
       "BuildingName": "Port",
-      "BuildingCost": 0,
+      "BuildingCost": 8,
       "Health": 0,
       "Sprite": "Dock",
       "HasColor": 1,

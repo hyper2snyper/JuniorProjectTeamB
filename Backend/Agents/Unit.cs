@@ -7,22 +7,30 @@ using System.Xml.Linq;
 using JuniorProject.Backend.Agents.Objectives;
 using JuniorProject.Frontend.Components;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace JuniorProject.Backend.Agents
 {
     public class Unit : Mob
     {
-        public class UnitTemplate //The template of the unit, the type if you will.
-        {
-            public string name;
-            public string description;
-            public int attackDamage;
-            public int attackRange;
-            public int maxHealth;
-            public string sprite;
-            public int flags;
-        }
-        public static Dictionary<string, UnitTemplate> unitTemplates;
+
+    public class UnitTemplate
+    {
+            [JsonPropertyName("UnitType")]
+            public string name { get; set; }
+
+            [JsonPropertyName("AttackDamage")]
+            public int attackDamage { get; set; }
+
+            [JsonPropertyName("AttackRange")]
+            public int attackRange { get; set; }
+
+            [JsonPropertyName("MaxHealth")]
+            public int maxHealth { get; set; }
+
+    }
+
+    public static Dictionary<string, UnitTemplate> unitTemplates;
         public static void LoadUnitTemplates()
         {
             if (unitTemplates != null && unitTemplates.Count > 0)
@@ -34,12 +42,9 @@ namespace JuniorProject.Backend.Agents
             {
                 UnitTemplate template = new UnitTemplate();
                 template.name = results.GetString(0);
-                template.description = results.GetString(1);
                 template.attackDamage = results.GetInt32(2);
                 template.attackRange = results.GetInt32(3);
                 template.maxHealth = results.GetInt32(4);
-                template.sprite = results.GetString(5);
-                template.flags = results.GetInt32(6);
                 unitTemplates.Add(template.name, template);
             }
         }
@@ -52,10 +57,10 @@ namespace JuniorProject.Backend.Agents
                     "UPDATE Units SET AttackDamage=@dmg, AttackRange=@rng, MaxHealth=@hp WHERE UnitType=@name",
                     new Dictionary<string, object>
                     {
-                {"@dmg", template.attackDamage},
-                {"@rng", template.attackRange},
-                {"@hp", template.maxHealth},
-                {"@name", template.name}
+                        {"@dmg", template.attackDamage},
+                        {"@rng", template.attackRange},
+                        {"@hp", template.maxHealth},
+                        {"@name", template.name}
                     }
                 );
             }
@@ -71,27 +76,31 @@ namespace JuniorProject.Backend.Agents
 
             if (jsonData != null && jsonData.ContainsKey("Units"))
             {
-                // Clear the existing Units table
-                DatabaseManager.WriteDB("DELETE FROM Units;", null);
-
                 foreach (var unit in jsonData["Units"])
                 {
+                    if (string.IsNullOrWhiteSpace(unit.name)) continue;
+
                     DatabaseManager.WriteDB(
-                        "INSERT INTO Units (UnitName, AttackDamage, AttackRange, MaxHealth) " +
-                        "VALUES (@name, @dmg, @range, @health)",
+                        "INSERT OR REPLACE INTO Units (UnitType, AttackDamage, AttackRange, MaxHealth, Sprite, Flags) " +
+                        "VALUES (@name, @dmg, @range, @health, @sprite, @flag)",
                         new Dictionary<string, object>
                         {
-                    { "@name", unit.name },
-                    { "@dmg", unit.attackDamage },
-                    { "@range", unit.attackRange },
-                    { "@health", unit.maxHealth }
+                            { "@name", unit.name },
+                            { "@dmg", unit.attackDamage },
+                            { "@range", unit.attackRange },
+                            { "@health", unit.maxHealth },
+                            { "@sprite", unit.name},
+                            { "@flag", "0"} 
                         });
+
+
                 }
 
                 unitTemplates = null;
                 LoadUnitTemplates();
             }
         }
+
 
 
         public UnitTemplate unitType;
@@ -119,8 +128,6 @@ namespace JuniorProject.Backend.Agents
 		void SetType(UnitTemplate template)
 		{
 			unitType = template;
-            sprite = unitType.sprite;
-
 			health = unitType.maxHealth;
 		}
 

@@ -1,5 +1,6 @@
 ﻿using System.Data.SQLite;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.IO;
 using static JuniorProject.Backend.Agents.Building;
 
@@ -9,20 +10,14 @@ namespace JuniorProject.Backend.Agents
     {
         public class BiomeResourcesTemplate
         {
-            public string Name;
-            public string Resources;
-            public int GatherRate;
+            [JsonPropertyName("BiomeID")]
+            public string Name { get; set; }
 
-            public BiomeResourcesTemplate()
-            {
-                SQLiteDataReader results = DatabaseManager.ReadDB("SELECT * FROM BiomeResource;");
-                while (results.Read())
-                {
-                    Name = results.GetString(0);
-                    Resources = results.GetString(1);
-                    GatherRate = results.GetInt32(2);
-                }
-            }
+            [JsonPropertyName("ResourceID")]
+            public string Resources { get; set; }
+
+            [JsonPropertyName("GatherRate")]
+            public int GatherRate { get; set; }
         }
 
         public static Dictionary<(string Biome, string Resource), BiomeResourcesTemplate> biomeResourcesTemplate = new();
@@ -34,14 +29,14 @@ namespace JuniorProject.Backend.Agents
             else if (biomeResourcesTemplate.Count > 0)
                 return;
 
-            biomeResourcesTemplate.Clear(); 
+            biomeResourcesTemplate.Clear();
 
             using var results = DatabaseManager.ReadDB("SELECT * FROM BiomeResource;");
             while (results.Read())
             {
-                var biomeID = results.GetString(0);    
-                var resourceID = results.GetString(1); 
-                var gatherRate = results.GetInt32(2);  
+                var biomeID = results.GetString(0);
+                var resourceID = results.GetString(1);
+                var gatherRate = results.GetInt32(2);
 
                 var key = (biomeID, resourceID);
 
@@ -64,17 +59,17 @@ namespace JuniorProject.Backend.Agents
 
             if (jsonData != null && jsonData.ContainsKey("BiomeResource"))
             {
-                DatabaseManager.WriteDB("DELETE FROM BiomeResource;", null);
-
                 foreach (var br in jsonData["BiomeResource"])
                 {
+                    if (string.IsNullOrWhiteSpace(br.Name) || string.IsNullOrWhiteSpace(br.Resources)) continue;
+
                     DatabaseManager.WriteDB(
-                        "INSERT INTO BiomeResource (BiomeID, ResourceID, GatherRate) VALUES (@biome, @resource, @rate)",
+                        "UPDATE BiomeResource SET GatherRate=@rate WHERE BiomeID=@biome AND ResourceID=@resource",
                         new Dictionary<string, object>
                         {
-                    { "@biome", br.Name},
-                    { "@resource", br.Resources},
-                    { "@rate", br.GatherRate }
+                            { "@biome", br.Name },
+                            { "@resource", br.Resources },
+                            { "@rate", br.GatherRate }
                         });
                 }
 
