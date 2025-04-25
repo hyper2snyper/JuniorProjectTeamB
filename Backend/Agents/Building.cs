@@ -86,7 +86,7 @@ namespace JuniorProject.Backend.Agents
                 return;
             }
             SetType(buildingTemplates[type]);
-            drawableType = GenericDrawable.DrawableType.Building;
+            //drawableType = GenericDrawable.DrawableType.Building;
         }
 
         public static void ResetBuildingTemplatesFromJson(string jsonFilePath)
