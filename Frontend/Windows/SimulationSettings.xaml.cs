@@ -22,7 +22,6 @@ namespace JuniorProject.Frontend.Windows
         Dictionary<string, Building.BuildingTemplate> buildingTemplates; 
         Dictionary<(string Biome, string Resource), BiomeResourcesTemplate> biomeResourcesTemplate;
 
-
         public static readonly Regex intOnly = new Regex("[0-9]+");
         public static readonly Regex correctFloat = new Regex("^[0-9]*\\.?[0-9]*$");
         public static readonly Regex correctFloatNeg = new Regex("^-?[0-9]*\\.?[0-9]*$");

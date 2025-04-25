@@ -16,13 +16,15 @@ namespace JuniorProject.Backend.Agents.Objectives
         List<TileMap.Tile> pathway;
         int pos = 0;
 
-        public FollowAction(Mob targetMob, Delegate? action = null) {
+        public FollowAction(Mob targetMob, Delegate? action = null)
+        {
             this.targetMob = targetMob;
             this.target = targetMob.pos;
             this.action = action;
         }
 
-        public Boolean IsAdjacent() {
+        public Boolean IsAdjacent()
+        {
             Vector2Int difference = unit.pos.pos - targetMob.pos.pos;
             return (Math.Abs(difference.X) == 1 && Math.Abs(difference.Y) == 1);
         }

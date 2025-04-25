@@ -178,5 +178,23 @@
     "y1": 192,
     "width": 32,
     "height": 32
+  },
+  "RedDebugCircle": {
+    "x1": 96,
+    "y1": 160,
+    "width": 32,
+    "height": 32
+  },
+  "GreenDebugCircle": {
+    "x1": 128,
+    "y1": 160,
+    "width": 32,
+    "height": 32
+  },
+  "YellowDebugCircle": {
+    "x1": 160,
+    "y1": 160,
+    "width": 32,
+    "height": 32
   }
 }
