@@ -15,6 +15,9 @@
     <None Remove="Frontend\gui\Buttons\LoadSimulationButtonHover.png" />
     <None Remove="Frontend\GUI\CatalogButton.png" />
     <None Remove="Frontend\GUI\CatalogButtonHover.png" />
+    <None Remove="Frontend\gui\ComponentImages\ButtonBorder.png" />
+    <None Remove="Frontend\gui\ComponentImages\MapBorderImage.png" />
+    <None Remove="Frontend\gui\ComponentImages\SimSettingsMenuBackground.png" />
     <None Remove="Frontend\GUI\Fonts\Alagard.ttf" />
     <None Remove="Frontend\GUI\Buttons\BackButton.png" />
     <None Remove="Frontend\GUI\Buttons\BackButtonHover.png" />
@@ -47,12 +50,16 @@
     <Resource Include="Frontend\gui\Buttons\LoadSimulationButtonHover.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Frontend\gui\ComponentImages\ButtonBorder.png" />
+    <Resource Include="Frontend\gui\ComponentImages\MapBorderImage.png" />
+    <Resource Include="Frontend\gui\ComponentImages\SimSettingsMenuBackground.png" />
     <Resource Include="Frontend\GUI\Fonts\Alagard.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="FontAwesome.WPF" Version="4.7.0.9" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="System.Data.SQLite" Version="1.0.119" />
     <PackageReference Include="System.Drawing.Common" Version="9.0.2" />
