@@ -7,7 +7,7 @@
         Background="#FF424242"
         mc:Ignorable="d"
         Loaded="Window_Loaded"
-        Title="SimulationSettings" Height="416" Width="800">
+        Title="SimulationSettings" Height="420" Width="800">
     <Window.Resources>
         <SolidColorBrush x:Key="Button.MouseOver.Background" Color="#FFBEE6FD"/>
         <SolidColorBrush x:Key="Button.MouseOver.Border" Color="#FF3C7FB1"/>
@@ -71,8 +71,7 @@
             <RowDefinition Height="*" />
 
         </Grid.RowDefinitions>
-
-        <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.RowSpan="2" Margin="9,0,0,-700">
+        <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.RowSpan="2" HorizontalAlignment="Right" Width="791" Margin="0,0,0,-475">
             <Grid Margin="0,0,7,0" Height="1804">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="1804"/>
@@ -144,10 +143,10 @@
                 <TextBlock HorizontalAlignment="Left" Margin="520,563,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="88" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Building Cost"/></TextBlock>
                 <Label Content="Building Options" HorizontalAlignment="Left" Margin="312,408,0,0" VerticalAlignment="Top" Width="137" Foreground="White" FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold"/>
                 <Label Content="Unit Options" HorizontalAlignment="Left" Margin="324,50,0,0" VerticalAlignment="Top" Width="137" Foreground="White" FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold"/>
-                <Border x:Name="Border7_Copy" BorderBrush="White" BorderThickness="1" Margin="154,879,413,742"/>
-                <Border x:Name="Border5_Copy7" BorderBrush="White" BorderThickness="1" Margin="383,879,177,742"/>
-                <Border x:Name="Border2_Copy1" BorderBrush="White" BorderThickness="1" Margin="385,668,177,939"/>
-                <Border x:Name="Border_Copy1" BorderBrush="White" BorderThickness="1" Margin="154,668,413,939" RenderTransformOrigin="0.5,0.5">
+                <Border x:Name="Border7_Copy" BorderBrush="White" BorderThickness="1" Margin="154,1005,413,616"/>
+                <Border x:Name="Border5_Copy7" BorderBrush="White" BorderThickness="1" Margin="383,1006,176,615"/>
+                <Border x:Name="Border2_Copy1" BorderBrush="White" BorderThickness="1" Margin="385,790,177,817"/>
+                <Border x:Name="Border_Copy1" BorderBrush="White" BorderThickness="1" Margin="154,790,413,817" RenderTransformOrigin="0.5,0.5">
                     <Border.RenderTransform>
                         <TransformGroup>
                             <ScaleTransform/>
@@ -157,61 +156,64 @@
                         </TransformGroup>
                     </Border.RenderTransform>
                 </Border>
-                <TextBlock HorizontalAlignment="Left" Margin="409,887,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="22" Width="155" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Highlands Forest Options"/></TextBlock>
-                <TextBlock HorizontalAlignment="Left" Margin="432,677,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="27" Width="112" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Highlands Options"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="409,1018,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="22" Width="155" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Highlands Forest Options"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="432,797,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="27" Width="112" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Highlands Options"/></TextBlock>
 
-                <TextBox x:Name="WoodG" PreviewTextInput="NumberOnlyInput"  HorizontalAlignment="Left" Margin="268,713,0,0" TextWrapping="Wrap" Text="40" VerticalAlignment="Top" Width="55" />
-                <TextBox x:Name="IronG" PreviewTextInput="NumberOnlyInput" HorizontalAlignment="Left" Margin="268,740,0,0" TextWrapping="Wrap" Text="10" VerticalAlignment="Top" Width="55" />
-                <TextBlock HorizontalAlignment="Left" Margin="206,679,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="27" Width="112" Foreground="#FFF9F4F4"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Grassland Options"/></TextBlock>
-                <TextBox x:Name="StoneG" PreviewTextInput="NumberOnlyInput" HorizontalAlignment="Left" Margin="268,767,0,0" TextWrapping="Wrap" Text="20" VerticalAlignment="Top" Width="55" />
-                <TextBox x:Name="WoodF" PreviewTextInput="NumberOnlyInput" HorizontalAlignment="Left" Margin="271,45,0,0" TextWrapping="Wrap" Text="70" VerticalAlignment="Center" Width="55" />
-                <TextBox x:Name="StoneF" PreviewTextInput="NumberOnlyInput"  HorizontalAlignment="Left" Margin="271,970,0,0" TextWrapping="Wrap" Text="10" VerticalAlignment="Top" Width="55" />
-                <TextBox x:Name="GoldF"  PreviewTextInput="NumberOnlyInput" HorizontalAlignment="Left" Margin="271,1021,0,0" TextWrapping="Wrap" Text="20" VerticalAlignment="Top" Width="55" />
-                <TextBox x:Name="WoodH"  PreviewTextInput="NumberOnlyInput" HorizontalAlignment="Left" Margin="514,715,0,0" TextWrapping="Wrap" Text="70" VerticalAlignment="Top" Width="53" />
-                <TextBox x:Name="IronH"  PreviewTextInput="NumberOnlyInput" HorizontalAlignment="Left" Margin="514,741,0,0" TextWrapping="Wrap" Text="60" VerticalAlignment="Top" Width="53" />
-                <TextBox x:Name="StoneH" PreviewTextInput="NumberOnlyInput" HorizontalAlignment="Left" Margin="514,767,0,0" TextWrapping="Wrap" Text="10" VerticalAlignment="Top" Width="53" />
-                <TextBox x:Name="IronHF" PreviewTextInput="NumberOnlyInput" HorizontalAlignment="Left" Margin="508,943,0,0" TextWrapping="Wrap" Text="60" VerticalAlignment="Top" Width="53" />
-                <TextBox x:Name="StoneHF" PreviewTextInput="NumberOnlyInput"  HorizontalAlignment="Left" Margin="508,970,0,0" TextWrapping="Wrap" Text="20" VerticalAlignment="Top" Width="53" />
-                <TextBox x:Name="WoodHF" PreviewTextInput="NumberOnlyInput"  HorizontalAlignment="Left" Margin="508,916,0,0" TextWrapping="Wrap" Text="60" VerticalAlignment="Top" Width="53" />
-                <TextBlock HorizontalAlignment="Left" Margin="211,887,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="27" Width="106" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Forest Options"/></TextBlock>
-                <TextBlock HorizontalAlignment="Left" Margin="180,1021,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="18" Width="80" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Gold"/></TextBlock>
-                <TextBlock HorizontalAlignment="Left" Margin="180,970,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="21" Width="80" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Stone"/></TextBlock>
-                <TextBlock HorizontalAlignment="Left" Margin="179,45,0,0" TextWrapping="Wrap" VerticalAlignment="Center" Height="18" Width="89" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Wood"/></TextBlock>
-                <TextBlock HorizontalAlignment="Left" Margin="405,916,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="88" Foreground="White" Text="Wood" FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold"/>
-                <TextBlock HorizontalAlignment="Left" Margin="405,943,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="18" Width="80" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Iron"/></TextBlock>
-                <TextBlock HorizontalAlignment="Left" Margin="406,970,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="80" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Stone"/></TextBlock>
-                <Label Content="Binome Options" HorizontalAlignment="Left" Margin="323,631,0,0" VerticalAlignment="Top" Width="105" Foreground="White" FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold"/>
-                <TextBlock HorizontalAlignment="Left" Margin="406,997,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="80" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Food"/></TextBlock>
+                <TextBox x:Name="WoodG" PreviewTextInput="NumberOnlyInput"  HorizontalAlignment="Left" Margin="268,825,0,0" TextWrapping="Wrap" Text="40" VerticalAlignment="Top" Width="55" />
+                <TextBox x:Name="IronG" PreviewTextInput="NumberOnlyInput" HorizontalAlignment="Left" Margin="268,856,0,0" TextWrapping="Wrap" Text="10" VerticalAlignment="Top" Width="55" />
+                <TextBlock HorizontalAlignment="Left" Margin="206,799,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="27" Width="112" Foreground="#FFF9F4F4"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Grassland Options"/></TextBlock>
+                <TextBox x:Name="StoneG" PreviewTextInput="NumberOnlyInput" HorizontalAlignment="Left" Margin="268,883,0,0" TextWrapping="Wrap" Text="20" VerticalAlignment="Top" Width="55" />
+                <TextBox x:Name="WoodF" PreviewTextInput="NumberOnlyInput" HorizontalAlignment="Left" Margin="271,1052,0,0" TextWrapping="Wrap" Text="70" VerticalAlignment="Top" Width="55" />
+                <TextBox x:Name="StoneF" PreviewTextInput="NumberOnlyInput"  HorizontalAlignment="Left" Margin="271,1106,0,0" TextWrapping="Wrap" Text="10" VerticalAlignment="Top" Width="55" />
+                <TextBox x:Name="GoldF"  PreviewTextInput="NumberOnlyInput" HorizontalAlignment="Left" Margin="271,1162,0,0" TextWrapping="Wrap" Text="20" VerticalAlignment="Top" Width="55" />
+                <TextBox x:Name="WoodH"  PreviewTextInput="NumberOnlyInput" HorizontalAlignment="Left" Margin="514,828,0,0" TextWrapping="Wrap" Text="70" VerticalAlignment="Top" Width="53" />
+                <TextBox x:Name="IronH"  PreviewTextInput="NumberOnlyInput" HorizontalAlignment="Left" Margin="514,853,0,0" TextWrapping="Wrap" Text="60" VerticalAlignment="Top" Width="53" />
+                <TextBox x:Name="StoneH" PreviewTextInput="NumberOnlyInput" HorizontalAlignment="Left" Margin="514,884,0,0" TextWrapping="Wrap" Text="10" VerticalAlignment="Top" Width="53" />
+                <TextBox x:Name="IronHF" PreviewTextInput="NumberOnlyInput" HorizontalAlignment="Left" Margin="480,1083,0,0" TextWrapping="Wrap" Text="60" VerticalAlignment="Top" Width="53" />
+                <TextBox x:Name="StoneHF" PreviewTextInput="NumberOnlyInput"  HorizontalAlignment="Left" Margin="480,1109,0,0" TextWrapping="Wrap" Text="20" VerticalAlignment="Top" Width="53" />
+                <TextBox x:Name="WoodHF" PreviewTextInput="NumberOnlyInput"  HorizontalAlignment="Left" Margin="480,1054,0,0" TextWrapping="Wrap" Text="60" VerticalAlignment="Top" Width="53" />
+                <TextBlock HorizontalAlignment="Left" Margin="211,1021,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="20" Width="106" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Forest Options"/></TextBlock>
+                <TextBlock Margin="180,1164,507,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="18" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Gold"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="180,1110,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="14" Width="80" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Stone"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="179,1054,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="18" Width="89" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Wood"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="405,1058,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="11" Width="51" Foreground="White" Text="Wood" FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold"/>
+                <TextBlock HorizontalAlignment="Left" Margin="405,1085,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="18" Width="51" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Iron"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="406,1110,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="50" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Stone"/></TextBlock>
+                <Label Content="Binome Options" HorizontalAlignment="Left" Margin="323,739,0,0" VerticalAlignment="Top" Width="105" Foreground="White" FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold"/>
+                <TextBlock HorizontalAlignment="Left" Margin="406,1136,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="17" Width="55" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Food"/></TextBlock>
 
-                <TextBox x:Name="FoodHF" PreviewTextInput="NumberOnlyInput" HorizontalAlignment="Left" Margin="508,997,0,0" TextWrapping="Wrap" Text="55" VerticalAlignment="Top" Width="53" />
-                <TextBlock HorizontalAlignment="Left" Margin="406,1021,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="80" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Gold"/></TextBlock>
-                <TextBox x:Name="GoldHF" PreviewTextInput="NumberOnlyInput"  HorizontalAlignment="Left" Margin="508,1021,0,0" TextWrapping="Wrap" Text="10" VerticalAlignment="Top" Width="53" />
-                <TextBox x:Name="GoldH" PreviewTextInput="NumberOnlyInput" HorizontalAlignment="Left" Margin="514,821,0,0" TextWrapping="Wrap" Text="30" VerticalAlignment="Top" Width="53" />
+                <TextBox x:Name="FoodHF" PreviewTextInput="NumberOnlyInput" HorizontalAlignment="Left" Margin="480,1137,0,0" TextWrapping="Wrap" Text="55" VerticalAlignment="Top" Width="53" />
+                <TextBlock HorizontalAlignment="Left" Margin="406,1165,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="13" Width="45" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Gold"/></TextBlock>
+                <TextBox x:Name="GoldHF" PreviewTextInput="NumberOnlyInput"  HorizontalAlignment="Left" Margin="480,1161,0,0" TextWrapping="Wrap" Text="10" VerticalAlignment="Top" Width="53" />
+                <TextBox x:Name="GoldH" PreviewTextInput="NumberOnlyInput" HorizontalAlignment="Left" Margin="514,935,0,0" TextWrapping="Wrap" Text="30" VerticalAlignment="Top" Width="53" />
 
-                <TextBlock HorizontalAlignment="Left" Margin="412,715,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="88" Foreground="White" Text="Wood" FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold"/>
-                <TextBlock HorizontalAlignment="Left" Margin="412,742,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="18" Width="80" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Iron"/></TextBlock>
-                <TextBlock HorizontalAlignment="Left" Margin="411,768,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="80" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Stone"/></TextBlock>
-                <TextBlock HorizontalAlignment="Left" Margin="412,821,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="80" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Gold"/></TextBlock>
-                <TextBlock HorizontalAlignment="Left" Margin="175,715,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="75" Foreground="White" Text="Wood" FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold"/>
-                <TextBlock HorizontalAlignment="Left" Margin="176,742,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="18" Width="80" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Iron"/></TextBlock>
-                <TextBlock HorizontalAlignment="Left" Margin="174,768,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="80" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Stone"/></TextBlock>
-                <TextBlock HorizontalAlignment="Left" Margin="174,794,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="80" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Food"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="412,831,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="88" Foreground="White" Text="Wood" FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold"/>
+                <TextBlock HorizontalAlignment="Left" Margin="412,857,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="18" Width="80" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Iron"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="411,888,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="80" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Stone"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="412,940,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="16" Width="80" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Gold"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="175,827,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="75" Foreground="White" Text="Wood" FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold"/>
+                <TextBlock HorizontalAlignment="Left" Margin="176,856,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="18" Width="80" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Iron"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="174,886,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="20" Width="80" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Stone"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="174,909,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="80" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Food"/></TextBlock>
 
-                <TextBox x:Name="FoodG" PreviewTextInput="NumberOnlyInput"  HorizontalAlignment="Left" Margin="268,794,0,0" TextWrapping="Wrap" Text="75" VerticalAlignment="Top" Width="55" />
-                <TextBlock HorizontalAlignment="Left" Margin="180,943,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="21" Width="80" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Iron"/></TextBlock>
-                <TextBox x:Name="IronF" PreviewTextInput="NumberOnlyInput"  HorizontalAlignment="Left" Margin="271,943,0,0" TextWrapping="Wrap" Text="90" VerticalAlignment="Top" Width="55" />
-                <TextBox x:Name="FoodF" PreviewTextInput="NumberOnlyInput"  HorizontalAlignment="Left" Margin="271,997,0,0" TextWrapping="Wrap" Text="60" VerticalAlignment="Top" Width="55" />
-                <TextBlock HorizontalAlignment="Left" Margin="180,997,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="21" Width="80" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Food"/></TextBlock>
-                <TextBlock HorizontalAlignment="Left" Margin="174,821,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="80" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Gold"/></TextBlock>
-                <TextBox x:Name="GoldG" PreviewTextInput="NumberOnlyInput" HorizontalAlignment="Left" Margin="268,821,0,0" TextWrapping="Wrap" Text="80" VerticalAlignment="Top" Width="55" />
-                <TextBox x:Name="FoodH" PreviewTextInput="NumberOnlyInput" HorizontalAlignment="Left" Margin="514,794,0,0" TextWrapping="Wrap" Text="50" VerticalAlignment="Top" Width="55" />
-                <TextBlock HorizontalAlignment="Left" Margin="411,794,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="80" Foreground="White"><Run FontWeight="Bold" Text="Food"/></TextBlock>
-                <TextBox x:Name="PortCost" PreviewTextInput="FloatOnlyInput" HorizontalAlignment="Left" Margin="622,540,0,0" TextWrapping="Wrap" Text="18" VerticalAlignment="Top" Width="53" />
+                <TextBox x:Name="FoodG" PreviewTextInput="NumberOnlyInput"  HorizontalAlignment="Left" Margin="268,911,0,0" TextWrapping="Wrap" Text="75" VerticalAlignment="Top" Width="55" />
+                <TextBlock HorizontalAlignment="Left" Margin="180,1083,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="21" Width="80" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Iron"/></TextBlock>
+                <TextBox x:Name="IronF" PreviewTextInput="NumberOnlyInput"  HorizontalAlignment="Left" Margin="271,1079,0,0" TextWrapping="Wrap" Text="90" VerticalAlignment="Top" Width="55" />
+                <TextBox x:Name="FoodF" PreviewTextInput="NumberOnlyInput"  HorizontalAlignment="Left" Margin="271,1135,0,0" TextWrapping="Wrap" Text="60" VerticalAlignment="Top" Width="55" />
+                <TextBlock HorizontalAlignment="Left" Margin="180,1137,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="80" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Food"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="174,940,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="12" Width="80" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Gold"/></TextBlock>
+                <TextBox x:Name="GoldG" PreviewTextInput="NumberOnlyInput" HorizontalAlignment="Left" Margin="268,937,0,0" TextWrapping="Wrap" Text="80" VerticalAlignment="Top" Width="55" />
+                <TextBox x:Name="FoodH" PreviewTextInput="NumberOnlyInput" HorizontalAlignment="Left" Margin="514,907,0,0" TextWrapping="Wrap" Text="50" VerticalAlignment="Top" Width="55" />
+                <TextBlock HorizontalAlignment="Left" Margin="411,910,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="80" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Food"/></TextBlock>
+                <TextBox x:Name="PortCost" PreviewTextInput="FloatOnlyInput" HorizontalAlignment="Left" Margin="168,651,0,0" TextWrapping="Wrap" Text="18" VerticalAlignment="Top" Width="53" />
+                <Border x:Name="Border5_Copy" BorderBrush="White" BorderThickness="1" Margin="46,617,532,1112"/>
+                <TextBlock HorizontalAlignment="Left" Margin="70,652,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="88" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Building Cost"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="91,625,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="22" Width="116" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Port Options"/></TextBlock>
             </Grid>
         </ScrollViewer>
         <Button Template="{DynamicResource SaveTemplate}" BorderThickness="0" Margin="667,265,24,0" VerticalAlignment="Top" Height="40" Click="SavedClicked">
             <Button.Style>
-                <Style TargetType ="Button">
+                <Style TargetType ="{x:Type Button}">
                     <Setter Property="Background">
                         <Setter.Value>
                             <ImageBrush x:Name="SaveButtonBrush" ImageSource="/FrontEnd/gui/Buttons/SaveButton.png"/>
@@ -227,7 +229,7 @@
         </Button>
         <Button Template="{DynamicResource CancelTemplate}" BorderThickness="0" Margin="667,301,24,59"  Height="40" Grid.RowSpan="1" Click="CancelClicked">
             <Button.Style>
-                <Style TargetType ="Button">
+                <Style TargetType ="{x:Type Button}">
                     <Setter Property="Background">
                         <Setter.Value>
                             <ImageBrush x:Name="CancelButtonBrush" ImageSource="/FrontEnd/gui/Buttons/CancelButton.png"/>
