@@ -107,6 +107,7 @@ namespace JuniorProject.Backend.Agents
 
         public string name;
         public int health;
+        public string sprite;
         public bool embarked = false;
         public Vector2Int followObjectivePosition;
 
@@ -123,7 +124,7 @@ namespace JuniorProject.Backend.Agents
                 return;
             }
             SetType(unitTemplates[type]);
-            //drawableType = GenericDrawable.DrawableType.Unit;
+            drawableType = GenericDrawable.DrawableType.Unit;
         }
 
 void SetType(UnitTemplate template)

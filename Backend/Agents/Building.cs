@@ -3,7 +3,7 @@ using System.Data.SQLite;
 using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-
+using JuniorProject.Frontend.Components;
 
 namespace JuniorProject.Backend.Agents
 {
@@ -86,7 +86,7 @@ namespace JuniorProject.Backend.Agents
                 return;
             }
             SetType(buildingTemplates[type]);
-            //drawableType = GenericDrawable.DrawableType.Building;
+            drawableType = GenericDrawable.DrawableType.Building;
         }
 
         public static void ResetBuildingTemplatesFromJson(string jsonFilePath)
