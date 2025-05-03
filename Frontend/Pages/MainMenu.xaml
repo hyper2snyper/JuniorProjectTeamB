@@ -8,7 +8,7 @@
         MinWidth="1100"
         MinHeight="800"
         VerticalAlignment="Stretch"
-        HorizontalAlignment="Stretch" Background="#FF424242">
+        HorizontalAlignment="Stretch" Background="#FF505050">
     <Page.Resources>
         <SolidColorBrush x:Key="Button.MouseOver.Background" Color="#FFBEE6FD"/>
         <SolidColorBrush x:Key="Button.MouseOver.Border" Color="#FF3C7FB1"/>
