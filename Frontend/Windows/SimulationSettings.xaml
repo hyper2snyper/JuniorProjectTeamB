@@ -60,6 +60,23 @@
                 </Trigger>
             </ControlTemplate.Triggers>
         </ControlTemplate>
+        <ControlTemplate x:Key="ResetTemplate" TargetType="{x:Type ButtonBase}">
+            <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" SnapsToDevicePixels="true">
+                <ContentPresenter x:Name="contentPresenter" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="Button.IsDefaulted" Value="true">
+                    <Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="true">
+                    <Setter TargetName="border" Property="Background">
+                        <Setter.Value>
+                            <ImageBrush ImageSource="/Frontend/gui/Buttons/ResetButtonHover.png"/>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
 
     </Window.Resources>
     <Grid>
@@ -243,12 +260,12 @@
                 </Style>
             </Button.Style>
         </Button>
-        <Button Template="{DynamicResource CancelTemplate}" BorderThickness="0" Margin="667,341,24,19"  Height="40" Grid.RowSpan="1" Click="ResetClicked">
+        <Button Template="{DynamicResource ResetTemplate}" BorderThickness="0" Margin="667,341,24,19"  Height="40" Grid.RowSpan="1" Click="ResetClicked">
             <Button.Style>
                 <Style TargetType ="{x:Type Button}">
                     <Setter Property="Background">
                         <Setter.Value>
-                            <ImageBrush x:Name="CanceButtonBrush" ImageSource="/Frontend/GUI/Buttons/CancelButton.png"/>
+                            <ImageBrush x:Name="ResetButton" ImageSource="/Frontend/GUI/Buttons/ResetButton.png"/>
                         </Setter.Value>
                     </Setter>
                     <Style.Triggers>

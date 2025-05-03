@@ -13,6 +13,8 @@
   <ItemGroup>
     <None Remove="Frontend\gui\Buttons\LoadSimulationButton.png" />
     <None Remove="Frontend\gui\Buttons\LoadSimulationButtonHover.png" />
+    <None Remove="Frontend\gui\Buttons\ResetButton.png" />
+    <None Remove="Frontend\gui\Buttons\ResetButtonHover.png" />
     <None Remove="Frontend\GUI\CatalogButton.png" />
     <None Remove="Frontend\GUI\CatalogButtonHover.png" />
     <None Remove="Frontend\GUI\Fonts\Alagard.ttf" />
@@ -48,6 +50,8 @@
     <Resource Include="Frontend\gui\Buttons\LoadSimulationButtonHover.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Frontend\gui\Buttons\ResetButton.png" />
+    <Resource Include="Frontend\gui\Buttons\ResetButtonHover.png" />
     <Resource Include="Frontend\GUI\Fonts\Alagard.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
