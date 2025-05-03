@@ -28,7 +28,10 @@ namespace JuniorProject.Backend.Agents
             [JsonPropertyName("MaxHealth")]
             public int maxHealth { get; set; }
 
-    }
+            [JsonPropertyName("Sprite")]
+            public string sprite { get; set; }
+
+        }
 
     public static Dictionary<string, UnitTemplate> unitTemplates;
         public static void LoadUnitTemplates()
@@ -45,6 +48,7 @@ namespace JuniorProject.Backend.Agents
                 template.attackDamage = results.GetInt32(2);
                 template.attackRange = results.GetInt32(3);
                 template.maxHealth = results.GetInt32(4);
+                template.sprite = results.GetString(5);
                 unitTemplates.Add(template.name, template);
             }
         }
@@ -60,7 +64,8 @@ namespace JuniorProject.Backend.Agents
                         {"@dmg", template.attackDamage},
                         {"@rng", template.attackRange},
                         {"@hp", template.maxHealth},
-                        {"@name", template.name}
+                        {"@name", template.name},
+                        {"@sprite", template.sprite }
                     }
                 );
             }
@@ -89,7 +94,7 @@ namespace JuniorProject.Backend.Agents
                             { "@dmg", unit.attackDamage },
                             { "@range", unit.attackRange },
                             { "@health", unit.maxHealth },
-                            { "@sprite", unit.name},
+                            { "@sprite", unit.sprite},
                             { "@flag", "0"} 
                         });
 
@@ -107,7 +112,6 @@ namespace JuniorProject.Backend.Agents
 
         public string name;
         public int health;
-        public string sprite;
         public bool embarked = false;
         public Vector2Int followObjectivePosition;
 
@@ -127,11 +131,12 @@ namespace JuniorProject.Backend.Agents
             drawableType = GenericDrawable.DrawableType.Unit;
         }
 
-void SetType(UnitTemplate template)
+        void SetType(UnitTemplate template)
 		{
 			unitType = template;
 			health = unitType.maxHealth;
-		}
+            sprite = unitType.sprite;
+        }
 
         public override string GetSprite()
         {
@@ -190,7 +195,7 @@ void SetType(UnitTemplate template)
 
         public override void populateDrawables(ref List<GenericDrawable> genericDrawables)
         {
-            //genericDrawables.Add(new GenericDrawable(PosVector, GetSprite(), GenericDrawable.DrawableType.Unit, name));
+            genericDrawables.Add(new GenericDrawable(PosVector, GetSprite(), GenericDrawable.DrawableType.Unit, name));
         }
 
         public override void DestroyMob()

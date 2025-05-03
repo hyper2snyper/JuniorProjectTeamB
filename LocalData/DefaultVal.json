@@ -154,7 +154,7 @@
       "BuildingCost": 6,
       "Health": 0,
       "Sprite": "House",
-      "HasColor": 1,
+      "HasColor": true,
       "Capital": 0
     },
     {
@@ -162,7 +162,7 @@
       "BuildingCost": 3,
       "Health": 0,
       "Sprite": "Castle",
-      "HasColor": 1,
+      "HasColor": true,
       "Capital": 1
     },
     {
@@ -170,7 +170,7 @@
       "BuildingCost": 12,
       "Health": 0,
       "Sprite": "Barracks",
-      "HasColor": 0,
+      "HasColor": true,
       "Capital": 0
     },
     {
@@ -178,7 +178,7 @@
       "BuildingCost": 9,
       "Health": 0,
       "Sprite": "Mine",
-      "HasColor": 0,
+      "HasColor": false,
       "Capital": 0
     },
     {
@@ -186,7 +186,7 @@
       "BuildingCost": 15,
       "Health": 0,
       "Sprite": "Smith",
-      "HasColor": 0,
+      "HasColor": false,
       "Capital": 0
     },
     {
@@ -194,7 +194,7 @@
       "BuildingCost": 18,
       "Health": 0,
       "Sprite": "WheatFarm",
-      "HasColor": 0,
+      "HasColor": false,
       "Capital": 0
     },
     {
@@ -202,7 +202,7 @@
       "BuildingCost": 8,
       "Health": 0,
       "Sprite": "Dock",
-      "HasColor": 1,
+      "HasColor": true,
       "Capital": 0
     }
   ]

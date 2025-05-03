@@ -21,11 +21,14 @@ namespace JuniorProject.Backend.Agents
             [JsonPropertyName("Health")]
             public int maxHealth { get; set; }
 
-            [JsonIgnore] // Prevent changing sprite from JSON
-            public string sprite;
+            [JsonPropertyName("Sprite")] // Prevent changing sprite from JSON
+            public string sprite { get; set; }
 
-            [JsonIgnore] // Prevent changing color flag from JSON
-            public bool hasColor = false;
+            [JsonPropertyName("HasColor")] // Prevent changing color flag from JSON
+            public bool hasColor { get; set; }
+
+            [JsonPropertyName("Capital")] // Prevent changing color flag from JSON
+            public int capital { get; set; }
         }
 
         public static Dictionary<string, BuildingTemplate> buildingTemplates;
@@ -45,13 +48,14 @@ namespace JuniorProject.Backend.Agents
                     cost = results.GetInt32(1),
                     maxHealth = results.GetInt32(2),
                     sprite = results.GetString(3),
-                    hasColor = results.GetBoolean(4)
+                    hasColor = results.GetBoolean(4),
                 };
 
                 if (results.GetInt32(5) != 0)
                 {
                     capitalTemplate = template;
                 }
+
                 buildingTemplates.Add(template.name, template);
             }
         }
@@ -99,9 +103,9 @@ namespace JuniorProject.Backend.Agents
 
             if (jsonData != null && jsonData.ContainsKey("Buildings"))
             {
-                foreach (var template in jsonData["Buildings"])
+                foreach (var t in jsonData["Buildings"])
                 {
-                    if (string.IsNullOrWhiteSpace(template.name)) continue;
+                    if (string.IsNullOrWhiteSpace(t.name)) continue;
 
                     DatabaseManager.WriteDB(
                         "INSERT OR REPLACE INTO Buildings " +
@@ -109,12 +113,12 @@ namespace JuniorProject.Backend.Agents
                         "VALUES (@name, @cost, @health, @sprite, @hasColor, @capital)",
                         new Dictionary<string, object>
                         {
-                            { "@name", template.name },
-                            { "@cost", template.cost },
-                            { "@health", template.maxHealth },
-                            { "@sprite", template.sprite ?? "" },
-                            { "@hasColor", template.hasColor ? 1 : 0 },
-                            { "@capital", template.name == "Capital" ? 1 : 0 }
+                            { "@name", t.name },
+                            { "@cost", t.cost },
+                            { "@health", t.maxHealth },
+                            { "@sprite", t.sprite ?? "" },
+                            { "@hasColor", t.hasColor ? 1 : 0 },
+                            { "@capital", t.name == "Capital" ? 1 : 0 }
                         });
                 }
 
