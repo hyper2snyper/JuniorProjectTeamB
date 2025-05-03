@@ -19,7 +19,7 @@ namespace JuniorProject.Frontend.Windows
     {
 
         Dictionary<string, Unit.UnitTemplate> unitTemplates;
-        Dictionary<string, Building.BuildingTemplate> buildingTemplates; 
+        Dictionary<string, Building.BuildingTemplate> buildingTemplates;
         Dictionary<(string Biome, string Resource), BiomeResourcesTemplate> biomeResourcesTemplate;
 
         public static readonly Regex intOnly = new Regex("[0-9]+");

@@ -36,7 +36,7 @@ namespace JuniorProject.Backend.Agents
         public static void LoadBuildingTemplates()
         {
             if (buildingTemplates != null && buildingTemplates.Count > 0)
-                return; 
+                return;
 
             buildingTemplates = new Dictionary<string, BuildingTemplate>();
             SQLiteDataReader results = DatabaseManager.ReadDB("SELECT * FROM Buildings;");

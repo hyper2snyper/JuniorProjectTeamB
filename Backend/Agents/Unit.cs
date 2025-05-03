@@ -14,8 +14,8 @@ namespace JuniorProject.Backend.Agents
     public class Unit : Mob
     {
 
-    public class UnitTemplate
-    {
+        public class UnitTemplate
+        {
             [JsonPropertyName("UnitType")]
             public string name { get; set; }
 
@@ -33,7 +33,7 @@ namespace JuniorProject.Backend.Agents
 
         }
 
-    public static Dictionary<string, UnitTemplate> unitTemplates;
+        public static Dictionary<string, UnitTemplate> unitTemplates;
         public static void LoadUnitTemplates()
         {
             if (unitTemplates != null && unitTemplates.Count > 0)
@@ -95,7 +95,7 @@ namespace JuniorProject.Backend.Agents
                             { "@range", unit.attackRange },
                             { "@health", unit.maxHealth },
                             { "@sprite", unit.sprite},
-                            { "@flag", "0"} 
+                            { "@flag", "0"}
                         });
 
 
@@ -132,9 +132,9 @@ namespace JuniorProject.Backend.Agents
         }
 
         void SetType(UnitTemplate template)
-		{
-			unitType = template;
-			health = unitType.maxHealth;
+        {
+            unitType = template;
+            health = unitType.maxHealth;
             sprite = unitType.sprite;
         }
 
@@ -215,7 +215,7 @@ namespace JuniorProject.Backend.Agents
         public override void DeserializeFields()
         {
             base.DeserializeFields();
-            unitType = unitTemplates[DeserializeField<string>()]; 
+            unitType = unitTemplates[DeserializeField<string>()];
             health = DeserializeField<int>();
             name = DeserializeField<string>();
 
