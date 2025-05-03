@@ -1,9 +1,9 @@
-﻿using JuniorProject.Backend.Helpers;
 using JuniorProject.Backend.WorldData;
-using JuniorProject.Frontend.Components;
-using System;
 using System.Data.SQLite;
-
+using System.IO;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using JuniorProject.Frontend.Components;
 
 namespace JuniorProject.Backend.Agents
 {
@@ -12,31 +12,68 @@ namespace JuniorProject.Backend.Agents
 
         public class BuildingTemplate
         {
-            public string name;
-            public int cost;
-            public int maxHealth;
-            public string sprite;
-            public bool hasColor = false;
+            [JsonPropertyName("BuildingName")]
+            public string name { get; set; }
+
+            [JsonPropertyName("BuildingCost")]
+            public int cost { get; set; }
+
+            [JsonPropertyName("Health")]
+            public int maxHealth { get; set; }
+
+            [JsonPropertyName("Sprite")] // Prevent changing sprite from JSON
+            public string sprite { get; set; }
+
+            [JsonPropertyName("HasColor")] // Prevent changing color flag from JSON
+            public bool hasColor { get; set; }
+
+            [JsonPropertyName("Capital")] // Prevent changing color flag from JSON
+            public int capital { get; set; }
         }
+
         public static Dictionary<string, BuildingTemplate> buildingTemplates;
         public static BuildingTemplate capitalTemplate;
         public static void LoadBuildingTemplates()
         {
+            if (buildingTemplates != null && buildingTemplates.Count > 0)
+                return;
+
             buildingTemplates = new Dictionary<string, BuildingTemplate>();
             SQLiteDataReader results = DatabaseManager.ReadDB("SELECT * FROM Buildings;");
             while (results.Read())
             {
-                BuildingTemplate template = new BuildingTemplate();
-                template.name = results.GetString(0);
-                template.cost = results.GetInt32(1);
-                template.maxHealth = results.GetInt32(2);
-                template.sprite = results.GetString(3);
-                template.hasColor = results.GetBoolean(4);
+                BuildingTemplate template = new BuildingTemplate
+                {
+                    name = results.GetString(0),
+                    cost = results.GetInt32(1),
+                    maxHealth = results.GetInt32(2),
+                    sprite = results.GetString(3),
+                    hasColor = results.GetBoolean(4),
+                };
+
                 if (results.GetInt32(5) != 0)
                 {
                     capitalTemplate = template;
                 }
+
                 buildingTemplates.Add(template.name, template);
+            }
+        }
+
+        public static void SaveAllBuildingTemplates()
+        {
+            if (buildingTemplates == null) return;
+
+            foreach (var template in buildingTemplates.Values)
+            {
+                DatabaseManager.WriteDB(
+                    "UPDATE Buildings SET BuildingCost=@cost WHERE BuildingName=@name",
+                    new Dictionary<string, object>
+                    {
+                        { "@cost", template.cost },
+                        { "@name", template.name }
+                    }
+                );
             }
         }
 
@@ -55,6 +92,41 @@ namespace JuniorProject.Backend.Agents
             SetType(buildingTemplates[type]);
             drawableType = GenericDrawable.DrawableType.Building;
         }
+
+        public static void ResetBuildingTemplatesFromJson(string jsonFilePath)
+        {
+            if (!File.Exists(jsonFilePath))
+                throw new FileNotFoundException($"Default data JSON not found: {jsonFilePath}");
+
+            string json = File.ReadAllText(jsonFilePath);
+            var jsonData = JsonSerializer.Deserialize<Dictionary<string, List<BuildingTemplate>>>(json);
+
+            if (jsonData != null && jsonData.ContainsKey("Buildings"))
+            {
+                foreach (var t in jsonData["Buildings"])
+                {
+                    if (string.IsNullOrWhiteSpace(t.name)) continue;
+
+                    DatabaseManager.WriteDB(
+                        "INSERT OR REPLACE INTO Buildings " +
+                        "(BuildingName, BuildingCost, Health, Sprite, HasColor, Capital) " +
+                        "VALUES (@name, @cost, @health, @sprite, @hasColor, @capital)",
+                        new Dictionary<string, object>
+                        {
+                            { "@name", t.name },
+                            { "@cost", t.cost },
+                            { "@health", t.maxHealth },
+                            { "@sprite", t.sprite ?? "" },
+                            { "@hasColor", t.hasColor ? 1 : 0 },
+                            { "@capital", t.name == "Capital" ? 1 : 0 }
+                        });
+                }
+
+                buildingTemplates = null;
+                LoadBuildingTemplates();
+            }
+        }
+
 
         void SetType(BuildingTemplate template)
         {

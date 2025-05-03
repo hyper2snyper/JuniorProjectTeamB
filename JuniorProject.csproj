@@ -13,6 +13,8 @@
   <ItemGroup>
     <None Remove="Frontend\gui\Buttons\LoadSimulationButton.png" />
     <None Remove="Frontend\gui\Buttons\LoadSimulationButtonHover.png" />
+    <None Remove="Frontend\gui\Buttons\ResetButton.png" />
+    <None Remove="Frontend\gui\Buttons\ResetButtonHover.png" />
     <None Remove="Frontend\GUI\CatalogButton.png" />
     <None Remove="Frontend\GUI\CatalogButtonHover.png" />
     <None Remove="Frontend\gui\ComponentImages\ButtonBorder.png" />
@@ -41,6 +43,7 @@
     <None Remove="Frontend\GUI\SettingsButtonHover.png" />
     <None Remove="Frontend\GUI\StartSimulationButton.png" />
     <None Remove="Frontend\GUI\StartSimulationButtonHover.png" />
+    <None Remove="LocalData\DefaultVal.json" />
   </ItemGroup>
 
   <ItemGroup>
@@ -53,6 +56,8 @@
     <Resource Include="Frontend\gui\ComponentImages\ButtonBorder.png" />
     <Resource Include="Frontend\gui\ComponentImages\MapBorderImage.png" />
     <Resource Include="Frontend\gui\ComponentImages\SimSettingsMenuBackground.png" />
+    <Resource Include="Frontend\gui\Buttons\ResetButton.png" />
+    <Resource Include="Frontend\gui\Buttons\ResetButtonHover.png" />
     <Resource Include="Frontend\GUI\Fonts\Alagard.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
@@ -136,6 +141,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Frontend\GUI\Buttons\StartSimulationButtonHover.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="LocalData\DefaultVal.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>

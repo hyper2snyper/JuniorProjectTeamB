@@ -6,39 +6,106 @@ using System.Security.Policy;
 using System.Xml.Linq;
 using JuniorProject.Backend.Agents.Objectives;
 using JuniorProject.Frontend.Components;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace JuniorProject.Backend.Agents
 {
     public class Unit : Mob
     {
-        public class UnitTemplate //The template of the unit, the type if you will.
+
+        public class UnitTemplate
         {
-            public string name;
-            public string description;
-            public int attackDamage;
-            public int attackRange;
-            public int maxHealth;
-            public string sprite;
-            public int flags;
+            [JsonPropertyName("UnitType")]
+            public string name { get; set; }
+
+            [JsonPropertyName("AttackDamage")]
+            public int attackDamage { get; set; }
+
+            [JsonPropertyName("AttackRange")]
+            public int attackRange { get; set; }
+
+            [JsonPropertyName("MaxHealth")]
+            public int maxHealth { get; set; }
+
+            [JsonPropertyName("Sprite")]
+            public string sprite { get; set; }
+
         }
+
         public static Dictionary<string, UnitTemplate> unitTemplates;
         public static void LoadUnitTemplates()
         {
+            if (unitTemplates != null && unitTemplates.Count > 0)
+                return;
+
             unitTemplates = new Dictionary<string, UnitTemplate>();
             SQLiteDataReader results = DatabaseManager.ReadDB("SELECT * FROM Units;");
             while (results.Read())
             {
                 UnitTemplate template = new UnitTemplate();
                 template.name = results.GetString(0);
-                template.description = results.GetString(1);
                 template.attackDamage = results.GetInt32(2);
                 template.attackRange = results.GetInt32(3);
                 template.maxHealth = results.GetInt32(4);
                 template.sprite = results.GetString(5);
-                template.flags = results.GetInt32(6); //PLACEHOLDER
                 unitTemplates.Add(template.name, template);
             }
         }
+
+        public static void SaveAllUnitTemplates()
+        {
+            foreach (var template in unitTemplates.Values)
+            {
+                DatabaseManager.WriteDB(
+                    "UPDATE Units SET AttackDamage=@dmg, AttackRange=@rng, MaxHealth=@hp WHERE UnitType=@name",
+                    new Dictionary<string, object>
+                    {
+                        {"@dmg", template.attackDamage},
+                        {"@rng", template.attackRange},
+                        {"@hp", template.maxHealth},
+                        {"@name", template.name},
+                        {"@sprite", template.sprite }
+                    }
+                );
+            }
+        }
+
+        public static void ResetUnitTemplatesFromJson(string jsonFilePath)
+        {
+            if (!File.Exists(jsonFilePath))
+                throw new FileNotFoundException($"Default data JSON not found: {jsonFilePath}");
+
+            string json = File.ReadAllText(jsonFilePath);
+            var jsonData = JsonSerializer.Deserialize<Dictionary<string, List<UnitTemplate>>>(json);
+
+            if (jsonData != null && jsonData.ContainsKey("Units"))
+            {
+                foreach (var unit in jsonData["Units"])
+                {
+                    if (string.IsNullOrWhiteSpace(unit.name)) continue;
+
+                    DatabaseManager.WriteDB(
+                        "INSERT OR REPLACE INTO Units (UnitType, AttackDamage, AttackRange, MaxHealth, Sprite, Flags) " +
+                        "VALUES (@name, @dmg, @range, @health, @sprite, @flag)",
+                        new Dictionary<string, object>
+                        {
+                            { "@name", unit.name },
+                            { "@dmg", unit.attackDamage },
+                            { "@range", unit.attackRange },
+                            { "@health", unit.maxHealth },
+                            { "@sprite", unit.sprite},
+                            { "@flag", "0"}
+                        });
+
+
+                }
+
+                unitTemplates = null;
+                LoadUnitTemplates();
+            }
+        }
+
 
 
         public UnitTemplate unitType;
@@ -67,9 +134,8 @@ namespace JuniorProject.Backend.Agents
         void SetType(UnitTemplate template)
         {
             unitType = template;
-            sprite = unitType.sprite;
-
             health = unitType.maxHealth;
+            sprite = unitType.sprite;
         }
 
         public override string GetSprite()
@@ -141,17 +207,15 @@ namespace JuniorProject.Backend.Agents
         public override void SerializeFields()
         {
             base.SerializeFields();
-            SerializeField(unitType.name); //Save the type.
+            SerializeField(unitType.name);
             SerializeField(health);
             SerializeField(name);
-
-            //Eventually we need to save objective states.
         }
 
         public override void DeserializeFields()
         {
             base.DeserializeFields();
-            unitType = unitTemplates[DeserializeField<string>()]; //The templates need to be loaded first.
+            unitType = unitTemplates[DeserializeField<string>()];
             health = DeserializeField<int>();
             name = DeserializeField<string>();
 
