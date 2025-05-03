@@ -56,14 +56,20 @@ namespace JuniorProject.Backend
         /// Executes 'command' on the opened database. Won't return any values. Used only for modification operations.
         /// </summary>
         /// <param name="command"></param>
-        public static void WriteDB(string command)
+        public static void WriteDB(string commandText, Dictionary<string, object> parameters)
         {
-            SQLiteCommand cmd = Instance.connection.CreateCommand();
-            cmd.CommandText = command;
+            using var conn = new SQLiteConnection(Instance.connection.ConnectionString);
+            conn.Open();
+            using var cmd = conn.CreateCommand();
+            cmd.CommandText = commandText;
+            if (parameters != null)
+            {
+                foreach (var pair in parameters)
+                {
+                    cmd.Parameters.AddWithValue(pair.Key, pair.Value);
+                }
+            }
             cmd.ExecuteNonQuery();
         }
-
-
-
     }
 }
