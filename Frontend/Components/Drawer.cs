@@ -152,23 +152,21 @@ namespace JuniorProject.Frontend.Components
             titles.Add("Tile");
             information.Add(getTileInformation(ref tile));
             
-            if (tile.primaryBiome == "Grassland" || tile.primaryBiome == "Highlands" || tile.primaryBiome == "Forest" || tile.primaryBiome == "HighlandsForest")
+            string resInfo = $"";
+            foreach (var element in tileMap.GetTileResource(tile.pos.X, tile.pos.Y))
             {
-                string resInfo = $"";
-                foreach (var element in tileMap.GetTileResource(tile.pos.X, tile.pos.Y))
-                {
-                    resInfo += element.Key.ToString();
-                    resInfo += " -> ";
-                    resInfo += element.Value.ToString();
-                    resInfo += "\n";
-                }
-                images.Add(tileImage);
-                titles.Add("Resources");
-                information.Add(resInfo);
+                resInfo += element.Key.ToString();
+                resInfo += " -> ";
+                resInfo += element.Value.ToString();
+                resInfo += "\n";
             }
 
             foreach (Mob m in tile.Occupants)
             {
+            images.Add(tileImage);
+            titles.Add("Resources");
+            information.Add(resInfo);
+            
                 Controls.Image mobImage = new Controls.Image
                 {
                     Width = getPreloadedSprite(m.GetSprite()).Width,

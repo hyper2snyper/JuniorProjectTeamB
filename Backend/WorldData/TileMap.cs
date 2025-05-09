@@ -22,6 +22,7 @@ namespace JuniorProject.Backend.WorldData
             public bool coast = false;
 
             public string primaryBiome;
+            public Dictionary<string, int> tileResources = new Dictionary<string, int>();
 
             List<Mob> occupants = new List<Mob>();
             public List<Mob> Occupants
@@ -200,7 +201,7 @@ namespace JuniorProject.Backend.WorldData
                     if (totalLandPercentage < 0.3) tile.impassible = true;
                     tile.movementCost = movementCostTotal / (float)(tileSize * tileSize);
                     tiles[tileX, tileY] = tile;
-
+                    
                     string mainBiome = "";
                     foreach (var item1 in tile.terrainPercentages)
                     {
@@ -211,6 +212,8 @@ namespace JuniorProject.Backend.WorldData
                         }
                     }
                     tile.primaryBiome = mainBiome;
+                    if( map.GetBiomeResources(tile.primaryBiome) != null){ tile.tileResources = map.GetBiomeResources(tile.primaryBiome); }
+                    else { foreach (var item in map.GetBiomeResources("Forest")) { tile.tileResources[item.Key] = 0; } }
                 }
             }
             ClientCommunicator.RegisterData<TileMap>("TileMap", this);
@@ -243,16 +246,7 @@ namespace JuniorProject.Backend.WorldData
         }
         public Dictionary<string, int> GetTileResource(int xPos, int yPos)
         {
-            string primaryBiome = "";
-            foreach (var item1 in tiles[xPos, yPos].terrainPercentages)
-            {
-                foreach (var item2 in tiles[xPos, yPos].terrainPercentages)
-                {
-                    if (item1.Value > item2.Value) primaryBiome = item1.Key;
-                    else if (item2.Value > item1.Value) primaryBiome = item2.Key;
-                }
-            }
-            return (map.GetBiomeResources(primaryBiome));
+            return (tiles[xPos, yPos].tileResources);
         }
     }
 }
