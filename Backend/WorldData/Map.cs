@@ -240,7 +240,8 @@ namespace JuniorProject.Backend.WorldData
 
         public Dictionary<string, int> GetBiomeResources(string biomeName)
         {
-            return biomeList[biomeName].resourceData;
+            if (biomeList.ContainsKey(biomeName)){ return biomeList[biomeName].resourceData; }
+            else{ return null; }
         }
 
         public int GetSingleResource(string biomeName, string resourceName)
