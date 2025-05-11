@@ -26,7 +26,7 @@ namespace JuniorProject.Backend.Agents
 
         public List<TileMap.Tile> desiredLand = new List<TileMap.Tile>();
 
-        NationResources resources;
+        NationResources resources = new NationResources();
 
         Timer<ulong> calculationTimer = new Timer<ulong>(0, 10);
 
@@ -194,7 +194,7 @@ namespace JuniorProject.Backend.Agents
             }
         }
 
-        public void TakeTurn(ulong tick)
+        public void TakeTurn(ulong tick, TileMap map)
         {
             if(calculationTimer.Tick(tick))
             {
@@ -228,6 +228,17 @@ namespace JuniorProject.Backend.Agents
                 }
             }
             mobsToRemove.Clear();
+
+            foreach(TileMap.Tile tile in territory)
+            {
+                Console.WriteLine(name, "\n");
+                foreach (var element in tile.tileResources) 
+                {
+                    resources.TakeTurn(element.Key, map.tiles[tile.pos.X, tile.pos.Y].tileResources[element.Key]);
+                    Console.WriteLine(element.Key + " " + resources.ownedResources[element.Key] + "\n");
+                }
+                Console.WriteLine("---------------\n");
+            }
         }
 
 		public void PopulateDrawablesList(ref List<GenericDrawable> genericDrawables)
