@@ -1,9 +1,10 @@
-using JuniorProject.Backend.WorldData;
+﻿using JuniorProject.Backend.WorldData;
 using System.Data.SQLite;
 using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using JuniorProject.Frontend.Components;
+using System.Drawing.Printing;
 
 namespace JuniorProject.Backend.Agents
 {
@@ -138,11 +139,56 @@ namespace JuniorProject.Backend.Agents
         public override void TakeTurn(ulong tick)
         {
             base.TakeTurn(tick);
+
             if (template.name == "Farm" && nation != null)
             {
-                nation.money++;
+                var db = new Database("LocalData/BackendDatabase.db");
+
+                string biome = "Grassland";  
+                string resource = "Food";    
+
+                double gatherRate = GetGatherRate(db, biome, resource);
+
+                nation.money += (int)Math.Round(gatherRate);
             }
+            if (template.name == "Mine" && nation != null)
+            {
+                var db = new Database("LocalData/BackendDatabase.db");
+
+                string biome2 = "Forest";  
+                string resource2 = "Food"; 
+
+                double gatherRate = GetGatherRate(db, biome2, resource2);
+
+                nation.money += (int)Math.Round(gatherRate);
+            }
+            Debug.Print($"[DEBUG] Template name: '{template.name}'");
+
         }
+
+        private double GetGatherRate(Database db, string biome, string resource)
+        {
+            using (var connection = new SQLiteConnection(db.ConnectionString))
+            {
+                connection.Open();
+                string query = "SELECT GatherRate FROM BiomeResource WHERE BiomeID = @Biome AND ResourceID = @Resource";
+
+                using (var cmd = new SQLiteCommand(query, connection))
+                {
+                    cmd.Parameters.AddWithValue("@Biome", biome);
+                    cmd.Parameters.AddWithValue("@Resource", resource);
+
+                    object result = cmd.ExecuteScalar();
+                    if (result != null && double.TryParse(result.ToString(), out double rate))
+                    {
+                        return rate;
+                    }
+                }
+            }
+            return 0.0;
+        }
+
+
 
         public override string GetSprite()
         {

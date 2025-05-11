@@ -40,6 +40,7 @@
     <None Remove="Frontend\GUI\SettingsButtonHover.png" />
     <None Remove="Frontend\GUI\StartSimulationButton.png" />
     <None Remove="Frontend\GUI\StartSimulationButtonHover.png" />
+    <None Remove="LocalData\BackendDatabase.db" />
     <None Remove="LocalData\DefaultVal.json" />
   </ItemGroup>
 
@@ -136,6 +137,9 @@
     <Resource Include="Frontend\GUI\Buttons\StartSimulationButtonHover.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
+    <Content Include="LocalData\BackendDatabase.db">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Resource Include="LocalData\DefaultVal.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
