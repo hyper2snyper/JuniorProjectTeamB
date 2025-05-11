@@ -51,8 +51,8 @@ namespace JuniorProject.Backend
 
             building.TakeTurn(0);
             building2.TakeTurn(0);
-            Console.WriteLine($"[TEST] Nation money after TakeTurn (Farm): {nation.money}");
-            Console.WriteLine($"[TEST] Nation money after TakeTurn (Mine): {nation1.money}");
+            Debug.Print($"[TEST] Nation money after TakeTurn (Farm): {nation.money}");
+            Debug.Print($"[TEST] Nation money after TakeTurn (Mine): {nation1.money}");
             var db = new Database("LocalData/BackendDatabase.db");
 
 
