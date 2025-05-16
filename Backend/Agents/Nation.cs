@@ -196,7 +196,7 @@ namespace JuniorProject.Backend.Agents
             }
         }
 
-        public void TakeTurn(ulong tick, TileMap map)
+        public void TakeTurn(ulong tick)
         {
             if (calculationTimer.Tick(tick))
             {
@@ -231,16 +231,9 @@ namespace JuniorProject.Backend.Agents
             }
             mobsToRemove.Clear();
 
-            foreach(TileMap.Tile tile in territory)
-            {
-                Console.WriteLine(name, "\n");
-                foreach (var element in tile.tileResources) 
-                {
-                    resources.TakeTurn(element.Key, map.tiles[tile.pos.X, tile.pos.Y].tileResources[element.Key]);
-                    Console.WriteLine(element.Key + " " + resources.ownedResources[element.Key] + "\n");
-                }
-                Console.WriteLine("---------------\n");
-            }
+            Console.WriteLine(name, "\n");
+            resources.TakeTurn();
+            
         }
 
         public void PopulateDrawablesList(ref List<GenericDrawable> genericDrawables)
@@ -287,11 +280,21 @@ namespace JuniorProject.Backend.Agents
             territory.Add(tile);
             if (desiredLand.Contains(tile))
                 desiredLand.Remove(tile);
+
+            foreach (var element in world.map.tiles[tile.pos.X, tile.pos.Y].tileResources)
+            {
+                resources.generationRates[element.Key] += element.Value;
+            }
         }
 
         public void RemoveTerritory(TileMap.Tile tile)
         {
             territory.Remove(tile);
+
+            foreach (var element in world.map.tiles[tile.pos.X, tile.pos.Y].tileResources)
+            {
+                resources.generationRates[element.Key] -= element.Value;
+            }
         }
 
         public void AddBuilding(Building building)

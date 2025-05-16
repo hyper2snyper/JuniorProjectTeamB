@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Security.AccessControl;
+using JuniorProject.Properties;
+using System.Resources;
 
 namespace JuniorProject.Backend.Agents
 {
@@ -11,6 +14,7 @@ namespace JuniorProject.Backend.Agents
     {
 
         public Dictionary<string, int> ownedResources = new Dictionary<string, int>();
+        public Dictionary<string, int> generationRates = new Dictionary<string, int>();
         public Dictionary<string, int> resourceDemands = new Dictionary<string, int>();
 
         public NationResources()
@@ -19,26 +23,26 @@ namespace JuniorProject.Backend.Agents
             while (results.Read())
             {
                 ownedResources[results.GetString(0)] = 0;
+                generationRates[results.GetString(0)] = 0;
                 resourceDemands[results.GetString(0)] = 5;
             }
         }
 
-        void SetOwnedResource(string resourceType, int changeValue)
+        public void TakeTurn()
         {
-            ownedResources[resourceType] += changeValue;
-        }
-        void SetResourceDemand(string resourceType)
-        {
-            if (ownedResources[resourceType] <= 100 && resourceDemands[resourceType] < 10)
-                resourceDemands[resourceType]++;
-            else if (ownedResources[resourceType] >= 500 && resourceDemands[resourceType] > 0)
-                resourceDemands[resourceType]--;
-        }
+            foreach (var resource in ownedResources)
+            {
 
-        public void TakeTurn(string resourceType, int changeValue)
-        {
-            SetOwnedResource(resourceType, changeValue);
-            SetResourceDemand(resourceType);
+                ownedResources[resource.Key] += generationRates[resource.Key];
+
+                if (ownedResources[resource.Key] <= 100 && resourceDemands[resource.Key] < 10)
+                    resourceDemands[resource.Key]++;
+                else if (ownedResources[resource.Key] >= 500 && resourceDemands[resource.Key] > 0)
+                    resourceDemands[resource.Key]--;
+
+                Console.WriteLine(resource.Key + " " + resource.Value + "\n");
+            }
+            Console.WriteLine("---------------\n");
         }
 
     }
