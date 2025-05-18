@@ -140,55 +140,49 @@ namespace JuniorProject.Backend.Agents
         {
             base.TakeTurn(tick);
 
-            if (template.name == "Farm" && nation != null)
+            if (nation == null || this.pos == null)
+                return;
+
+            // Find the largest terrain percentage of the tile and set as the biome
+            string biome = this.pos.terrainPercentages.Aggregate((l, r) => l.Value > r.Value ? l : r).Key;
+            string resource;
+
+            switch (template.name)
             {
-                var db = new Database("LocalData/BackendDatabase.db");
-
-                string biome = "Grassland";  
-                string resource = "Food";    
-
-                double gatherRate = GetGatherRate(db, biome, resource);
-
-                nation.money += (int)Math.Round(gatherRate);
+                case "House":
+                    break;
+                case "Capital":
+                    break;
+                case "Barracks":
+                    break;
+                case "Mine":
+                    break;
+                case "Smith":
+                    break;
+                case "Farm":
+                    resource = "Food";
+                    double gatherRate = GetGatherRate(biome, resource);
+                    nation.money += (int)Math.Round(gatherRate);
+                    break;
+                case "Port":
+                    break;
+                default:
+                    Debug.Print($"ERROR!!! Incorrect template name for nation {template.name}");
+                    break;
             }
-            if (template.name == "Mine" && nation != null)
-            {
-                var db = new Database("LocalData/BackendDatabase.db");
-
-                string biome2 = "Forest";  
-                string resource2 = "Food"; 
-
-                double gatherRate = GetGatherRate(db, biome2, resource2);
-
-                nation.money += (int)Math.Round(gatherRate);
-            }
-            Debug.Print($"[DEBUG] Template name: '{template.name}'");
-
         }
 
-        private double GetGatherRate(Database db, string biome, string resource)
+        private double GetGatherRate(string biome, string resource)
         {
-            using (var connection = new SQLiteConnection(db.ConnectionString))
+            using (var reader = DatabaseManager.ReadDB(
+                $"SELECT GatherRate FROM BiomeResource WHERE BiomeID = '{biome}' AND ResourceID = '{resource}'"))
             {
-                connection.Open();
-                string query = "SELECT GatherRate FROM BiomeResource WHERE BiomeID = @Biome AND ResourceID = @Resource";
-
-                using (var cmd = new SQLiteCommand(query, connection))
-                {
-                    cmd.Parameters.AddWithValue("@Biome", biome);
-                    cmd.Parameters.AddWithValue("@Resource", resource);
-
-                    object result = cmd.ExecuteScalar();
-                    if (result != null && double.TryParse(result.ToString(), out double rate))
-                    {
-                        return rate;
-                    }
-                }
+                if (reader.Read())
+                    return Convert.ToDouble(reader["GatherRate"]);
+                Debug.Print($"ERROR!!! Cannot find gather rate for {biome} and {resource}");
+                return 0.0;
             }
-            return 0.0;
         }
-
-
 
         public override string GetSprite()
         {
