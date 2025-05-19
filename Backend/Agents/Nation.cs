@@ -228,7 +228,7 @@ namespace JuniorProject.Backend.Agents
                 }
             }
             mobsToRemove.Clear();
-
+            // actions to look at (trades) -> say yes or no to respondtotrade
             Console.WriteLine(name, "\n");
             resources.TakeTurn();
             
