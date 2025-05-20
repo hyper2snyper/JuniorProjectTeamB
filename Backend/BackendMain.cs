@@ -1,5 +1,4 @@
-﻿using JuniorProject.Backend.States;
-using JuniorProject.Backend.WorldData;
+﻿using JuniorProject.Backend.WorldData;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -48,15 +47,6 @@ namespace JuniorProject.Backend
                 ClientCommunicator.ProcessActions();
                 SetState(currentState?.Loop());
             }
-
-
         }
-
-
-
-
-
-
-
     }
 }

@@ -1,9 +1,10 @@
-using JuniorProject.Backend.WorldData;
+﻿using JuniorProject.Backend.WorldData;
 using System.Data.SQLite;
 using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using JuniorProject.Frontend.Components;
+using System.Drawing.Printing;
 
 namespace JuniorProject.Backend.Agents
 {
@@ -138,9 +139,48 @@ namespace JuniorProject.Backend.Agents
         public override void TakeTurn(ulong tick)
         {
             base.TakeTurn(tick);
-            if (template.name == "Farm" && nation != null)
+
+            if (nation == null || this.pos == null)
+                return;
+
+            // Find the largest terrain percentage of the tile and set as the biome
+            string biome = this.pos.terrainPercentages.Aggregate((l, r) => l.Value > r.Value ? l : r).Key;
+            string resource;
+
+            switch (template.name)
             {
-                nation.money++;
+                case "House":
+                    break;
+                case "Capital":
+                    break;
+                case "Barracks":
+                    break;
+                case "Mine":
+                    break;
+                case "Smith":
+                    break;
+                case "Farm":
+                    resource = "Food";
+                    double gatherRate = GetGatherRate(biome, resource);
+                    nation.money += (int)Math.Round(gatherRate);
+                    break;
+                case "Port":
+                    break;
+                default:
+                    Debug.Print($"ERROR!!! Incorrect template name for nation {template.name}");
+                    break;
+            }
+        }
+
+        private double GetGatherRate(string biome, string resource)
+        {
+            using (var reader = DatabaseManager.ReadDB(
+                $"SELECT GatherRate FROM BiomeResource WHERE BiomeID = '{biome}' AND ResourceID = '{resource}'"))
+            {
+                if (reader.Read())
+                    return Convert.ToDouble(reader["GatherRate"]);
+                Debug.Print($"ERROR!!! Cannot find gather rate for {biome} and {resource}");
+                return 0.0;
             }
         }
 
