@@ -1,12 +1,9 @@
-﻿using JuniorProject.Backend.Agents;
-using JuniorProject.Backend.States;
-using JuniorProject.Backend.WorldData;
+﻿using JuniorProject.Backend.WorldData;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static JuniorProject.Backend.Agents.Building;
 
 
 namespace JuniorProject.Backend
@@ -31,31 +28,6 @@ namespace JuniorProject.Backend
             Debug.Print($"Back end thread started on thread {Thread.CurrentThread.ManagedThreadId}.");
             DatabaseManager.LoadDB("LocalData\\BackendDatabase.db");
 
-
-            // === TEMP TEST FOR Building.TakeTurn ===
-            var nation = new Nation();
-            var farmTemplate = new BuildingTemplate { name = "Farm" };
-            var building = new Building
-            {
-                template = farmTemplate,
-                nation = nation
-            };
-
-            var nation1 = new Nation();
-            var mineTemplate = new BuildingTemplate { name = "Mine" };
-            var building2 = new Building
-            {
-                template = mineTemplate,
-                nation = nation1
-            };
-
-            building.TakeTurn(0);
-            building2.TakeTurn(0);
-            Debug.Print($"[TEST] Nation money after TakeTurn (Farm): {nation.money}");
-            Debug.Print($"[TEST] Nation money after TakeTurn (Mine): {nation1.money}");
-            var db = new Database("LocalData/BackendDatabase.db");
-
-
             ClientCommunicator.RegisterAction<IState>("SetState", SetState);
 
             MainLoop();
@@ -75,15 +47,6 @@ namespace JuniorProject.Backend
                 ClientCommunicator.ProcessActions();
                 SetState(currentState?.Loop());
             }
-
-
         }
-
-
-
-
-
-
-
     }
 }
