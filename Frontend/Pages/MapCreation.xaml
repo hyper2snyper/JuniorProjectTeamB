@@ -66,13 +66,13 @@
         </ControlTemplate>
     </Page.Resources>
     <Grid>
-        <Rectangle Height="54" Margin="10,10,9,0" Stroke="White" VerticalAlignment="Top" Fill="#FF969696"/>
-        <TextBox x:Name="Seed" HorizontalAlignment="Left" Margin="20,36,0,0" VerticalAlignment="Top" Width="115" Height="28" FontSize="18" TextChanged="Seed_TextChanged" />
-        <TextBox x:Name="Amp" HorizontalAlignment="Left" Margin="140,36,0,0" Text="2" VerticalAlignment="Top" Width="115" Height="28" FontSize="18" PreviewTextInput="Amp_PreviewTextInput" TextChanged="Amp_TextChanged"/>
-        <TextBox x:Name="Freq" HorizontalAlignment="Left" Margin="260,36,0,0" Text="0.002" VerticalAlignment="Top" Width="115" Height="28" FontSize="18" PreviewTextInput="Freq_PreviewTextInput" TextChanged="Freq_TextChanged"/>
-        <TextBox x:Name="Octaves" HorizontalAlignment="Left" Margin="380,37,0,0" Text="8" VerticalAlignment="Top" Width="115" Height="28" FontSize="18" PreviewTextInput="Octaves_PreviewTextInput" TextChanged="Octaves_TextChanged"/>
-        <Label Content="Seed:               Amp:           Freq:             Octaves:           Sea Level:        Tree Line:" FontFamily="pack://application:,,,/Frontend/GUI/Fonts/#Alagard" HorizontalAlignment="Left" Margin="20,3,0,0" VerticalAlignment="Top" Width="715" FontSize="18"/>
-        <Button x:Name="Generate" BorderThickness="0" Template="{DynamicResource GenerateTemplate}" HorizontalAlignment="Left" Margin="740,20,0,0" VerticalAlignment="Top" Height="47" Width="189" FontSize="20" Click="Generate_Click">
+        <Image Margin="306,106,306,184" Source="/Frontend/GUI/ComponentImages/SimSettingsMenuBackground.png" Stretch="Fill"/>
+        <TextBox x:Name="Seed" HorizontalAlignment="Left" Margin="562,261,0,0" VerticalAlignment="Top" Width="115" Height="28" FontSize="18" TextChanged="Seed_TextChanged" Background="#FF443939" BorderBrush="#FF423131" />
+        <TextBox x:Name="Amp" HorizontalAlignment="Left" Margin="562,294,0,0" Text="2" VerticalAlignment="Top" Width="115" Height="28" FontSize="18" PreviewTextInput="Amp_PreviewTextInput" TextChanged="Amp_TextChanged" Background="#FF443939" Foreground="White" BorderBrush="#FF423131"/>
+        <TextBox x:Name="Freq" HorizontalAlignment="Left" Margin="562,327,0,0" Text="0.002" VerticalAlignment="Top" Width="115" Height="28" FontSize="18" PreviewTextInput="Freq_PreviewTextInput" TextChanged="Freq_TextChanged" Background="#FF443939" BorderBrush="#FF423131" Foreground="White"/>
+        <TextBox x:Name="Octaves" HorizontalAlignment="Left" Margin="562,360,0,0" Text="8" VerticalAlignment="Top" Width="115" Height="28" FontSize="18" PreviewTextInput="Octaves_PreviewTextInput" TextChanged="Octaves_TextChanged" Background="#FF443939" BorderBrush="#FF423131" Foreground="White"/>
+        <Label Content="Seed:" FontFamily="pack://application:,,,/Frontend/GUI/Fonts/#Alagard" HorizontalAlignment="Left" Margin="446,261,0,0" VerticalAlignment="Top" Width="72" FontSize="18" Foreground="White"/>
+        <Button x:Name="Generate" BorderThickness="0" Template="{DynamicResource GenerateTemplate}" HorizontalAlignment="Left" Margin="368,530,0,0" VerticalAlignment="Top" Height="47" Width="189" FontSize="20" Click="Generate_Click">
             <Button.Style>
                 <Style TargetType ="{x:Type Button}">
                     <Setter Property="Background">
@@ -88,7 +88,7 @@
                 </Style>
             </Button.Style>
         </Button>
-        <Button x:Name="SimSettings" BorderThickness="0" Template="{DynamicResource SimSettingsTemplate}" HorizontalAlignment="Left" Margin="925,19,0,0" VerticalAlignment="Top" Height="47" Width="189" FontSize="20" Click="SimSettings_Click">
+        <Button x:Name="SimSettings" BorderThickness="0" Template="{DynamicResource SimSettingsTemplate}" HorizontalAlignment="Left" Margin="573,530,0,0" VerticalAlignment="Top" Height="47" Width="189" FontSize="20" Click="SimSettings_Click">
             <Button.Style>
                 <Style TargetType ="{x:Type Button}">
                     <Setter Property="Background">
@@ -104,8 +104,14 @@
                 </Style>
             </Button.Style>
         </Button>
-        <TextBox x:Name="SeaLevel" HorizontalAlignment="Left" Margin="500,37,0,0" Text="0" VerticalAlignment="Top" Width="115" Height="28" FontSize="18" PreviewTextInput="SeaLevel_PreviewTextInput"  TextChanged="SeaLevel_TextChanged"/>
-        <TextBox x:Name="TreeLine" HorizontalAlignment="Left" Margin="620,36,0,0" Text="0.8" VerticalAlignment="Top" Width="115" Height="28" FontSize="18" PreviewTextInput="TreeLine_PreviewTextInput" TextChanged="TreeLine_TextChanged"/>
+        <TextBox x:Name="SeaLevel" HorizontalAlignment="Left" Margin="562,393,0,0" Text="0" VerticalAlignment="Top" Width="115" Height="28" FontSize="18" PreviewTextInput="SeaLevel_PreviewTextInput"  TextChanged="SeaLevel_TextChanged" Background="#FF443939" BorderBrush="#FF423131" Foreground="White"/>
+        <TextBox x:Name="TreeLine" HorizontalAlignment="Left" Margin="562,426,0,0" Text="0.8" VerticalAlignment="Top" Width="115" Height="28" FontSize="18" PreviewTextInput="TreeLine_PreviewTextInput" TextChanged="TreeLine_TextChanged" Background="#FF443939" BorderBrush="#FF423131" Foreground="White"/>
+        <Label Content="Amp:" FontFamily="pack://application:,,,/Frontend/GUI/Fonts/#Alagard" HorizontalAlignment="Left" Margin="446,294,0,0" VerticalAlignment="Top" Width="70" FontSize="18" Foreground="White"/>
+        <Label Content="Freq:" FontFamily="pack://application:,,,/Frontend/GUI/Fonts/#Alagard" HorizontalAlignment="Left" Margin="446,327,0,0" VerticalAlignment="Top" Width="70" FontSize="18" Foreground="White"/>
+        <Label Content="Octaves:" FontFamily="pack://application:,,,/Frontend/GUI/Fonts/#Alagard" HorizontalAlignment="Left" Margin="448,360,0,0" VerticalAlignment="Top" Width="80" FontSize="18" Foreground="White"/>
+        <Label Content="Sea Level:" FontFamily="pack://application:,,,/Frontend/GUI/Fonts/#Alagard" HorizontalAlignment="Left" Margin="448,393,0,0" VerticalAlignment="Top" Width="96" FontSize="18" Foreground="White"/>
+        <Label Content="Tree Line:" FontFamily="pack://application:,,,/Frontend/GUI/Fonts/#Alagard" HorizontalAlignment="Left" Margin="448,426,0,0" VerticalAlignment="Top" Width="96" FontSize="18" Foreground="White"/>
+        <Label Content="Terrain Settings" FontFamily="pack://application:,,,/Frontend/GUI/Fonts/#Alagard" HorizontalAlignment="Center" Margin="0,133,0,0" VerticalAlignment="Top" Width="378" FontSize="48" Height="58" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="White"/>
 
 
     </Grid>
