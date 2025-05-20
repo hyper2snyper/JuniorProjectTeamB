@@ -144,7 +144,7 @@ namespace JuniorProject.Backend.Agents
                 return;
 
             // Find the largest terrain percentage of the tile and set as the biome
-            string biome = this.pos.terrainPercentages.Aggregate((l, r) => l.Value > r.Value ? l : r).Key;
+            string biome = this.pos.primaryBiome;
             string resource;
 
             switch (template.name)
