@@ -50,10 +50,6 @@ namespace JuniorProject.Backend.WorldData
 
         public void TakeTurn()
         {
-            foreach (string s in nations.Keys)
-            {
-                Debug.Print($"{s} : {nations[s].money}");
-            }
             /* uncomment when ready
             
             RespondToTrades();

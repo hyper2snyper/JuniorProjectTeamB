@@ -242,15 +242,5 @@ namespace JuniorProject.Backend.WorldData
             }
 
         }
-        public int GetBiomeResources(string biomeName, string resourceName)
-        {
-            return biomeList[biomeName].resourceData[resourceName];
-        }
-
-        public Dictionary<string, int> GetBiomeResources(string biomeName)
-        {
-            if (biomeList.ContainsKey(biomeName)) { return biomeList[biomeName].resourceData; }
-            else { return null; }
-        }
     }
 }

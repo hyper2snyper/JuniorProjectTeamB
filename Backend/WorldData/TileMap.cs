@@ -22,7 +22,6 @@ namespace JuniorProject.Backend.WorldData
             public bool coast = false;
 
             public string primaryBiome;
-            public Dictionary<string, int> tileResources = new Dictionary<string, int>();
 
             List<Mob> occupants = new List<Mob>();
             public List<Mob> Occupants
@@ -192,28 +191,21 @@ namespace JuniorProject.Backend.WorldData
                     }
                     if (landTypes.Keys.Count == 0) tile.impassible = true;
                     float totalLandPercentage = 0;
+                    float highestBiomePercent = 0;
                     foreach (string landType in landTypes.Keys)
                     {
                         float relativePercentage = landTypes[landType] / (float)(tileSize * tileSize);
+                        if (relativePercentage > highestBiomePercent)
+                        {
+                            tile.primaryBiome = landType;
+                            highestBiomePercent = relativePercentage;
+                        }
                         totalLandPercentage += relativePercentage;
                         tile.terrainPercentages.Add(landType, relativePercentage);
                     }
                     if (totalLandPercentage < 0.3) tile.impassible = true;
                     tile.movementCost = movementCostTotal / (float)(tileSize * tileSize);
                     tiles[tileX, tileY] = tile;
-
-                    string mainBiome = "";
-                    foreach (var item1 in tile.terrainPercentages)
-                    {
-                        foreach (var item2 in tile.terrainPercentages)
-                        {
-                            if (item1.Value > item2.Value) mainBiome = item1.Key;
-                            else if (item2.Value > item1.Value) mainBiome = item2.Key;
-                        }
-                    }
-                    tile.primaryBiome = mainBiome;
-                    if (map.GetBiomeResources(tile.primaryBiome) != null) { tile.tileResources = map.GetBiomeResources(tile.primaryBiome); }
-                    else { foreach (var item in map.GetBiomeResources("Forest")) { tile.tileResources[item.Key] = 0; } }
                 }
             }
             ClientCommunicator.RegisterData<TileMap>("TileMap", this);
@@ -243,10 +235,6 @@ namespace JuniorProject.Backend.WorldData
             ClientCommunicator.RegisterData<Vector2Int>("mapPixelSize", mapPixelSize);
             ClientCommunicator.RegisterData<int>("tileSize", tileSize);
             ClientCommunicator.RegisterData<TileMap>("TileMap", this);
-        }
-        public Dictionary<string, int> GetTileResource(int xPos, int yPos)
-        {
-            return (tiles[xPos, yPos].tileResources);
         }
     }
 }

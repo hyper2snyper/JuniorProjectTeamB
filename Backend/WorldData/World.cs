@@ -48,7 +48,6 @@ namespace JuniorProject.Backend.WorldData
 
         public void Update(ulong tickCount)
         {
-            // TODO: HAVE THE EconomyManager take its turn
             foreach (Nation nation in nations.Values)
             {
                 nation.TakeTurn(tickCount);
