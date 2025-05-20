@@ -1,8 +1,8 @@
-using JuniorProject.Backend.Agents.Objectives;
+﻿using JuniorProject.Backend.Agents.Objectives;
 using JuniorProject.Backend.Helpers;
 using JuniorProject.Backend.WorldData;
 using JuniorProject.Frontend.Components;
-﻿using JuniorProject.Backend.WorldData;
+using JuniorProject.Backend.WorldData;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,8 +27,6 @@ namespace JuniorProject.Backend.Agents
         public List<TileMap.Tile> territory = new List<TileMap.Tile>();
 
         public List<TileMap.Tile> desiredLand = new List<TileMap.Tile>();
-
-        NationResources resources = new NationResources();
 
         Timer<ulong> calculationTimer = new Timer<ulong>(0, 10);
 
@@ -230,10 +228,6 @@ namespace JuniorProject.Backend.Agents
                 }
             }
             mobsToRemove.Clear();
-
-            Console.WriteLine(name, "\n");
-            resources.TakeTurn();
-            
         }
 
         public void PopulateDrawablesList(ref List<GenericDrawable> genericDrawables)
@@ -280,21 +274,11 @@ namespace JuniorProject.Backend.Agents
             territory.Add(tile);
             if (desiredLand.Contains(tile))
                 desiredLand.Remove(tile);
-
-            foreach (var element in world.map.tiles[tile.pos.X, tile.pos.Y].tileResources)
-            {
-                resources.generationRates[element.Key] += element.Value;
-            }
         }
 
         public void RemoveTerritory(TileMap.Tile tile)
         {
             territory.Remove(tile);
-
-            foreach (var element in world.map.tiles[tile.pos.X, tile.pos.Y].tileResources)
-            {
-                resources.generationRates[element.Key] -= element.Value;
-            }
         }
 
         public void AddBuilding(Building building)

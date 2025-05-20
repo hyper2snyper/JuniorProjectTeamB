@@ -201,7 +201,7 @@ namespace JuniorProject.Backend.WorldData
                     if (totalLandPercentage < 0.3) tile.impassible = true;
                     tile.movementCost = movementCostTotal / (float)(tileSize * tileSize);
                     tiles[tileX, tileY] = tile;
-                    
+
                     string mainBiome = "";
                     foreach (var item1 in tile.terrainPercentages)
                     {
@@ -212,7 +212,7 @@ namespace JuniorProject.Backend.WorldData
                         }
                     }
                     tile.primaryBiome = mainBiome;
-                    if( map.GetBiomeResources(tile.primaryBiome) != null){ tile.tileResources = map.GetBiomeResources(tile.primaryBiome); }
+                    if (map.GetBiomeResources(tile.primaryBiome) != null) { tile.tileResources = map.GetBiomeResources(tile.primaryBiome); }
                     else { foreach (var item in map.GetBiomeResources("Forest")) { tile.tileResources[item.Key] = 0; } }
                 }
             }

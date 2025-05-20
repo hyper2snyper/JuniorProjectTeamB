@@ -151,7 +151,7 @@ namespace JuniorProject.Frontend.Components
             images.Add(tileImage);
             titles.Add("Tile");
             information.Add(getTileInformation(ref tile));
-            
+
             string resInfo = $"";
             foreach (var element in tileMap.GetTileResource(tile.pos.X, tile.pos.Y))
             {
@@ -163,10 +163,10 @@ namespace JuniorProject.Frontend.Components
 
             foreach (Mob m in tile.Occupants)
             {
-            images.Add(tileImage);
-            titles.Add("Resources");
-            information.Add(resInfo);
-            
+                images.Add(tileImage);
+                titles.Add("Resources");
+                information.Add(resInfo);
+
                 Controls.Image mobImage = new Controls.Image
                 {
                     Width = getPreloadedSprite(m.GetSprite()).Width,

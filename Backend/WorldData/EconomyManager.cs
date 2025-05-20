@@ -1,30 +1,118 @@
 ﻿using JuniorProject.Backend.Agents;
-using System;
-using System.Data.SQLite;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace JuniorProject.Backend.WorldData
 {
     class EconomyManager
     {
-
-        Dictionary<string, int> resourceValues = new Dictionary<string, int>();
-
-        public EconomyManager()
+        struct Trade
         {
-            SQLiteDataReader results = DatabaseManager.ReadDB("SELECT * FROM Resources;");
-            while (results.Read())
+            string initiator;
+            string resource;
+            int resourceAmount;
+            int price;
+        }
+
+        struct Demand
+        {
+            string resource;
+            int demand;
+        }
+
+        struct Resource
+        {
+            int price;
+            int totalResource;
+            int priceLevel;
+        }
+
+        public Dictionary<string, Nation> nations;
+        Dictionary<string, Demand> demands; // Key is nation name
+
+        Dictionary<string, Resource> resources; // Key is resource name
+
+        List<Trade> potentialTrades;
+
+        static readonly string[] resourceTypes = { "Food", "Iron", "Wood" };
+
+        public EconomyManager() { }
+
+        public void Initialize(ref Dictionary<string, Nation> nations)
+        {
+            this.nations = nations;
+            demands = new Dictionary<string, Demand>();
+            resources = new Dictionary<string, Resource>();
+
+            foreach (string r in resourceTypes)
             {
-                resourceValues[results.GetString(1)] = 100;
+                /* TODO: Read flat, initial price from database and intiialize the resources and demands dictionaries */
             }
         }
 
-        void CalcResourcePrice(string resourceType, int resourceDemand)
+        public void TakeTurn()
         {
-            resourceValues[resourceType] *= ((resourceDemand - 5) / 20) + 1;
+            foreach (string s in nations.Keys)
+            {
+                Debug.Print($"{s} : {nations[s].money}");
+            }
+            /* uncomment when ready
+            
+            RespondToTrades();
+            CalculateDemands();
+            InitiatePotentialTrades();
+
+             */
+        }
+
+        /* --------- MAIN FUNCTIONS ---------------- */
+        void CalculateDemands()
+        {
+            foreach (Nation n in nations.Values)
+            {
+                /* 
+                  TODO: Demand = 1 - (Nation Resource / Total Resource in World)
+                */
+            }
+        }
+
+        void InitiatePotentialTrades()
+        {
+            foreach (string nation in demands.Keys)
+            {
+                /* 
+                 TODO: Check if nation's demand is over the criteria demand set in the database
+                If so, append trade to potentialTrades
+                 */
+            }
+        }
+
+        void RespondToTrades()
+        {
+            foreach (Trade t in potentialTrades)
+            {
+                // TODO: Implement, ensure initiator is not the trader
+                // Find nation with demand that meets criteria to accept trade.
+            }
+        }
+
+
+        /* ------ HELPER FUNCTIONS --------- */
+        int CalculateResourceTotal(string resource)
+        {
+            // Update totalResources dictionary
+            return 0;
+        }
+
+        void CheckToUpdatePrice(string resource)
+        {
+            /* 
+             TODO: Retrieve current price of resource and update it with +/- percentage from database.
+
+            Calculate if the price needs to be updated using the percent resource scale from database and the the current price point level (which starts at 1)
+            I think it's possible, but I'm not entirely sure.
+
+            If the calculated pricepoint level is not the same as the current one, update the price point depending if it's below or above.
+            Update price with flat update price from database
+             */
         }
     }
 }
