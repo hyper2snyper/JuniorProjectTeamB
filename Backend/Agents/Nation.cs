@@ -18,7 +18,6 @@ namespace JuniorProject.Backend.Agents
 
         World world;
         public World World { set { world = value; } }
-        EconomyManager economy;
 
         public List<Unit> units = new List<Unit>();
 
