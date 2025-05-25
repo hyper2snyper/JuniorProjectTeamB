@@ -96,8 +96,12 @@ namespace JuniorProject.Backend.WorldData
         /* ------ HELPER FUNCTIONS --------- */
         int CalculateResourceTotal(string resource)
         {
-            // Update totalResources dictionary
-            return 0;
+            int total = 0;
+            foreach (var n in nations)
+            {
+                total += n.Value.ownedResources[resource];
+            }
+            return total;
         }
 
         void CheckToUpdatePrice(string resource)
