@@ -22,6 +22,7 @@ namespace JuniorProject.Backend.WorldData
             public bool coast = false;
 
             public string primaryBiome;
+            public Dictionary<string, int> tileResources = new Dictionary<string, int>();
 
             List<Mob> occupants = new List<Mob>();
             public List<Mob> Occupants
@@ -203,6 +204,17 @@ namespace JuniorProject.Backend.WorldData
                         totalLandPercentage += relativePercentage;
                         tile.terrainPercentages.Add(landType, relativePercentage);
                     }
+                    if (map.GetBiomeResources(tile.primaryBiome) != null) 
+                    {
+                        tile.tileResources = map.GetBiomeResources(tile.primaryBiome);
+                    }
+                    else
+                    {
+                        foreach (var item in map.GetBiomeResources("Forest"))
+                        {
+                            tile.tileResources[item.Key] = 0;
+                        }
+                    }
                     if (totalLandPercentage < 0.3) tile.impassible = true;
                     tile.movementCost = movementCostTotal / (float)(tileSize * tileSize);
                     tiles[tileX, tileY] = tile;
@@ -235,6 +247,11 @@ namespace JuniorProject.Backend.WorldData
             ClientCommunicator.RegisterData<Vector2Int>("mapPixelSize", mapPixelSize);
             ClientCommunicator.RegisterData<int>("tileSize", tileSize);
             ClientCommunicator.RegisterData<TileMap>("TileMap", this);
+        }
+
+        public Dictionary<string, int> GetTileResource(int xPos, int yPos)
+        {
+            return (tiles[xPos, yPos].tileResources);
         }
     }
 }

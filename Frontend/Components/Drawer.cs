@@ -152,6 +152,18 @@ namespace JuniorProject.Frontend.Components
             titles.Add("Tile");
             information.Add(getTileInformation(ref tile));
 
+            string resInfo = $"";
+            foreach (var element in tileMap.GetTileResource(tile.pos.X, tile.pos.Y))
+            {
+                resInfo += element.Key.ToString();
+                resInfo += " -> ";
+                resInfo += element.Value.ToString();
+                resInfo += "\n";
+            }
+            images.Add(tileImage);
+            titles.Add("Resources");
+            information.Add(resInfo);
+
             foreach (Mob m in tile.Occupants)
             {
                 images.Add(tileImage);
