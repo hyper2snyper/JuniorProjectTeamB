@@ -14,14 +14,15 @@ namespace JuniorProject.Backend.WorldData
 
         struct Demand
         {
-            string resource;
-            int demand;
+            public Dictionary<string, int> resourceDemands = new Dictionary<string, int>();
+
+            public Demand(){}
         }
 
         struct Resource
         {
             int price;
-            int totalResource;
+            public int totalResource;
             int priceLevel;
         }
 
@@ -62,11 +63,12 @@ namespace JuniorProject.Backend.WorldData
         /* --------- MAIN FUNCTIONS ---------------- */
         void CalculateDemands()
         {
-            foreach (Nation n in nations.Values)
+            foreach (var n in nations)
             {
-                /* 
-                  TODO: Demand = 1 - (Nation Resource / Total Resource in World)
-                */
+                foreach (string r in resourceTypes)
+                {
+                    demands[n.Key].resourceDemands[r] = 1 - (n.Value.ownedResources[r] / resources[r].totalResource);
+                }
             }
         }
 
