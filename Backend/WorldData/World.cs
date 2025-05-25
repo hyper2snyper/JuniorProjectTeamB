@@ -33,7 +33,7 @@ namespace JuniorProject.Backend.WorldData
             nations.Add("Red", new Nation("Team Red", "Red", 0, this));
             nations.Add("Green", new Nation("Team Green", "Green", 1, this));
             nations.Add("Yellow", new Nation("Team Yellow", "Yellow", 2, this));
-            economyManager.Initialize(ref nations);
+            economyManager.Initialize(ref nations, seed);
         }
 
         public void FreeWorld()
@@ -53,7 +53,7 @@ namespace JuniorProject.Backend.WorldData
                 nation.TakeTurn(tickCount);
                 RedrawAction?.Invoke();
             }
-            economyManager.TakeTurn();
+            economyManager.TakeTurn(tickCount);
         }
 
         public void SaveWorld(string location)

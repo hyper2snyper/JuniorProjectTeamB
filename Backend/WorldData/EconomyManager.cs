@@ -2,27 +2,35 @@
 
 namespace JuniorProject.Backend.WorldData
 {
-    class EconomyManager
+    public class EconomyManager
     {
         struct Trade
         {
-            string initiator;
-            string resource;
-            int resourceAmount;
-            int price;
+            public Trade(string i, string r, int rA, int p)
+            {
+                initiator = i;
+                resource = r;
+                resourceAmount = rA;
+                price = p;
+            }
+
+            public string initiator;
+            public string resource;
+            public int resourceAmount;
+            public int price;
         }
 
         struct Demand
         {
-            string resource;
-            int demand;
+            public string resource;
+            public int demand;
         }
 
         struct Resource
         {
-            int price;
-            int totalResource;
-            int priceLevel;
+            public int price;
+            public int totalResource;
+            public int priceLevel; // integer to keep track of updating the price (starts at 0 and goes up or down 1 depending on amount of resource)
         }
 
         public Dictionary<string, Nation> nations;
@@ -32,15 +40,18 @@ namespace JuniorProject.Backend.WorldData
 
         List<Trade> potentialTrades;
 
+        int seedHashCode; // potentially use for "ambiguity"
+
         static readonly string[] resourceTypes = { "Food", "Iron", "Wood" };
 
         public EconomyManager() { }
 
-        public void Initialize(ref Dictionary<string, Nation> nations)
+        public void Initialize(ref Dictionary<string, Nation> nations, string seed)
         {
             this.nations = nations;
             demands = new Dictionary<string, Demand>();
             resources = new Dictionary<string, Resource>();
+            seedHashCode = seed.GetHashCode();
 
             foreach (string r in resourceTypes)
             {
@@ -48,11 +59,12 @@ namespace JuniorProject.Backend.WorldData
             }
         }
 
-        public void TakeTurn()
+        public void TakeTurn(ulong tickCount)
         {
             /* uncomment when ready
+             * 
             
-            RespondToTrades();
+            RespondToTrades(tickCount);
             CalculateDemands();
             InitiatePotentialTrades();
 
@@ -72,22 +84,53 @@ namespace JuniorProject.Backend.WorldData
 
         void InitiatePotentialTrades()
         {
-            foreach (string nation in demands.Keys)
+            const double demandThresholdToInitiateTrade = 0.6; // TODO: arbritrary number currently; implement and receive from database
+
+            foreach (var nationDemand in demands)
             {
-                /* 
-                 TODO: Check if nation's demand is over the criteria demand set in the database
-                If so, append trade to potentialTrades
-                 */
+                string nation = nationDemand.Key;
+                Demand demand = nationDemand.Value;
+
+                if (demand.demand > demandThresholdToInitiateTrade)
+                {
+                    int totalResourcesWanted = CalculateWantedResourceTotal(demand.resource, nation);
+                    potentialTrades.Add(new Trade(nation, demand.resource, totalResourcesWanted, CalculateTradePrice(totalResourcesWanted, demand.resource)));
+                }
             }
         }
 
-        void RespondToTrades()
+        void RespondToTrades(ulong tickCount)
         {
             foreach (Trade t in potentialTrades)
             {
                 // TODO: Implement, ensure initiator is not the trader
                 // Find nation with demand that meets criteria to accept trade.
+                List<string> possibleNations = new List<string>();
+
+                foreach (var n in nations)
+                {
+                    string name = n.Key;
+                    if (name == t.initiator) continue;
+
+                    var nation = n.Value;
+
+                    if (nation.resources[t.resource] > t.resourceAmount)
+                    {
+                        possibleNations.Add(name);
+                    }
+                }
+
+                if (possibleNations.Count == 0) continue;
+                if (possibleNations.Count == 1)
+                {
+                    AcceptTrade(t, nations[possibleNations[0]]);
+                }
+
+                // Scramble index out of possibleNations to have some variety even though it's deterministic, otherwise I'm afraid it will only go to one nation or something 
+                int acceptingNationIndex = (int)tickCount % possibleNations.Count;
+                AcceptTrade(t, nations[possibleNations[acceptingNationIndex]]);
             }
+            potentialTrades.Clear();
         }
 
 
@@ -95,7 +138,27 @@ namespace JuniorProject.Backend.WorldData
         int CalculateResourceTotal(string resource)
         {
             // Update totalResources dictionary
+
+
             return 0;
+        }
+
+        int CalculateTradePrice(int totalResources, string resource)
+        {
+            return totalResources * resources[resource].price;
+        }
+
+        int CalculateWantedResourceTotal(string resource, string nation)
+        {
+            /* 
+               Offset nation's demand by a certain %
+            */
+
+            const double offsetResourcePercentage = 0.05; // TODO: arbritrary number currently; implement and receive from database
+
+            double newNationDemand = 1 - (demands[nation].demand - offsetResourcePercentage);
+
+            return (int)(newNationDemand * resources[resource].totalResource);
         }
 
         void CheckToUpdatePrice(string resource)
@@ -109,6 +172,15 @@ namespace JuniorProject.Backend.WorldData
             If the calculated pricepoint level is not the same as the current one, update the price point depending if it's below or above.
             Update price with flat update price from database
              */
+        }
+
+        void AcceptTrade(Trade trade, Nation acceptingNation)
+        {
+            acceptingNation.resources[trade.resource] -= trade.resourceAmount;
+            acceptingNation.resources["Gold"] += trade.price;
+
+            nations[trade.initiator].resources[trade.resource] += trade.resourceAmount;
+            nations[trade.initiator].resources["Gold"] -= trade.price;
         }
     }
 }

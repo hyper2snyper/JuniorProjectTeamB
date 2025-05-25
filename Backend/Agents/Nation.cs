@@ -24,6 +24,7 @@ namespace JuniorProject.Backend.Agents
         public Building? capital;
         public List<Building> buildings = new List<Building>();
         public List<TileMap.Tile> territory = new List<TileMap.Tile>();
+        public Dictionary<string, int> resources = new Dictionary<string, int>();
 
         public List<TileMap.Tile> desiredLand = new List<TileMap.Tile>();
 
