@@ -78,7 +78,7 @@ namespace JuniorProject.Backend.WorldData
                 Dictionary<string, int> resourceDemands = new Dictionary<string, int>();
                 foreach (string r in resourceTypes)
                 {
-                    resourceDemands[r] = 1 - (n.ownedResources[r] / resources[r].totalResource);
+                    resourceDemands[r] = 1 - (n.resources[r] / resources[r].totalResource);
                 }
                 d.resource = resourceDemands.MaxBy(entry => entry.Value).Key;
                 d.demand = resourceDemands.Values.Max();
@@ -144,7 +144,7 @@ namespace JuniorProject.Backend.WorldData
             int total = 0;
             foreach (var n in nations)
             {
-                total += n.Value.ownedResources[resource];
+                total += n.Value.resources[resource];
             }
             return total;
         }
