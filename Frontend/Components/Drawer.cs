@@ -154,7 +154,6 @@ namespace JuniorProject.Frontend.Components
 
             foreach (Mob m in tile.Occupants)
             {
-                images.Add(tileImage);
                 Controls.Image mobImage = new Controls.Image
                 {
                     Width = getPreloadedSprite(m.GetSprite()).Width,

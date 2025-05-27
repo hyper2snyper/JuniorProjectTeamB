@@ -53,7 +53,7 @@ namespace JuniorProject.Backend.WorldData
                 nation.TakeTurn(tickCount);
                 RedrawAction?.Invoke();
             }
-            economyManager.TakeTurn();
+            economyManager.TakeTurn(tickCount);
         }
 
         public void SaveWorld(string location)
