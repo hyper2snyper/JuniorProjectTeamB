@@ -40,18 +40,15 @@ namespace JuniorProject.Backend.WorldData
 
         List<Trade> potentialTrades;
 
-        int seedHashCode; // potentially use for "ambiguity"
-
         static readonly string[] resourceTypes = { "Food", "Iron", "Wood" };
 
         public EconomyManager() { }
 
-        public void Initialize(ref Dictionary<string, Nation> nations, string seed)
+        public void Initialize(ref Dictionary<string, Nation> nations)
         {
             this.nations = nations;
             demands = new Dictionary<string, Demand>();
             resources = new Dictionary<string, Resource>();
-            seedHashCode = seed.GetHashCode();
 
             foreach (string r in resourceTypes)
             {
