@@ -23,12 +23,25 @@ namespace JuniorProject.Backend.WorldData
 
         struct Demand
         {
+            public Demand(string resource, int demand)
+            { 
+                this.resource = resource;
+                this.demand = demand;
+            }
+
             public string resource;
             public int demand;
         }
 
         struct Resource
         {
+            public Resource(int price, int totalResource, int priceLevel)
+            {
+                this.price = price;
+                this.totalResource = totalResource;
+                this.priceLevel = priceLevel;
+            }
+
             public int price;
             public int totalResource;
             public int priceLevel; // integer to keep track of updating the price (starts at 0 and goes up or down 1 depending on amount of resource)
@@ -41,7 +54,7 @@ namespace JuniorProject.Backend.WorldData
 
         List<Trade> potentialTrades;
 
-        static readonly string[] resourceTypes = { "Food", "Iron", "Wood" };
+        static readonly string[] resourceTypes = { "Food", "Iron", "Wood", "Gold" };
 
         public EconomyManager() { }
 
@@ -50,23 +63,25 @@ namespace JuniorProject.Backend.WorldData
             this.nations = nations;
             demands = new Dictionary<string, Demand>();
             resources = new Dictionary<string, Resource>();
+            potentialTrades = new List<Trade>();
 
-            foreach (string r in resourceTypes)
+            foreach (string type in resourceTypes)
             {
-                /* TODO: Read flat, initial price from database and intiialize the resources and demands dictionaries */
+                resources[type] = new Resource(5, 150, 0); // Read initial price & have a set initial value of total resource from database
+
+                foreach (var n in nations.Values)
+                {
+                    demands[n.color] = new Demand(type, 0); // Initializing demands
+                    n.resources[type] = 50; // arbritray number, pull from database later
+                }
             }
         }
 
         public void TakeTurn(ulong tickCount)
         {
-            /* uncomment when ready
-             * 
-            
             RespondToTrades(tickCount);
             CalculateDemands();
             InitiatePotentialTrades();
-
-             */
         }
 
         /* --------- MAIN FUNCTIONS ---------------- */
@@ -74,7 +89,7 @@ namespace JuniorProject.Backend.WorldData
         {
             foreach (var n in nations.Values)
             {
-                Demand d = demands[n.name];
+                Demand d = demands[n.color];
                 Dictionary<string, int> resourceDemands = new Dictionary<string, int>();
                 foreach (string r in resourceTypes)
                 {
@@ -82,7 +97,7 @@ namespace JuniorProject.Backend.WorldData
                 }
                 d.resource = resourceDemands.MaxBy(entry => entry.Value).Key;
                 d.demand = resourceDemands.Values.Max();
-                demands[n.name] = d;
+                demands[n.color] = d;
             }
         }
 
@@ -118,7 +133,7 @@ namespace JuniorProject.Backend.WorldData
 
                     var nation = n.Value;
 
-                    if (nation.resources[t.resource] > t.resourceAmount)
+                    if (nation.resources[t.resource] > t.resourceAmount && ShouldAcceptTrade(tickCount))
                     {
                         possibleNations.Add(name);
                     }
@@ -139,6 +154,14 @@ namespace JuniorProject.Backend.WorldData
 
 
         /* ------ HELPER FUNCTIONS --------- */
+        bool ShouldAcceptTrade(ulong tickCount)
+        {
+            // TODO: Implement relations between nations perhaps? This might be a bit tricker to implement, but we can start off with implementing an algorithim 
+            // that uses the tick rate to accept trade or not
+
+            return (tickCount % 2 == 0);
+        }
+
         int CalculateResourceTotal(string resource)
         {
             int total = 0;
@@ -187,6 +210,8 @@ namespace JuniorProject.Backend.WorldData
 
             nations[trade.initiator].resources[trade.resource] += trade.resourceAmount;
             nations[trade.initiator].resources["Gold"] -= trade.price;
+
+            Debug.Print($"COMPLETED TRADE: {acceptingNation.color} : {trade.resourceAmount} {trade.resource} -> {trade.initiator} for {trade.price} gold");
         }
     }
 }
