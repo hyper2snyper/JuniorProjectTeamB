@@ -18,13 +18,13 @@ namespace JuniorProject.Backend.Agents
 
         World world;
         public World World { set { world = value; } }
-        public Dictionary<string, int> ownedResources = new Dictionary<string, int>();
 
         public List<Unit> units = new List<Unit>();
 
         public Building? capital;
         public List<Building> buildings = new List<Building>();
         public List<TileMap.Tile> territory = new List<TileMap.Tile>();
+        public Dictionary<string, int> resources = new Dictionary<string, int>();
 
         public List<TileMap.Tile> desiredLand = new List<TileMap.Tile>();
 
