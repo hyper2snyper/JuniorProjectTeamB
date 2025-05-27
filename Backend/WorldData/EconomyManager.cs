@@ -1,4 +1,5 @@
 ﻿using JuniorProject.Backend.Agents;
+using JuniorProject.Properties;
 
 namespace JuniorProject.Backend.WorldData
 {
@@ -71,11 +72,17 @@ namespace JuniorProject.Backend.WorldData
         /* --------- MAIN FUNCTIONS ---------------- */
         void CalculateDemands()
         {
-            foreach (Nation n in nations.Values)
+            foreach (var n in nations.Values)
             {
-                /* 
-                  TODO: Demand = 1 - (Nation Resource / Total Resource in World)
-                */
+                Demand d = demands[n.name];
+                Dictionary<string, int> resourceDemands = new Dictionary<string, int>();
+                foreach (string r in resourceTypes)
+                {
+                    resourceDemands[r] = 1 - (n.resources[r] / resources[r].totalResource);
+                }
+                d.resource = resourceDemands.MaxBy(entry => entry.Value).Key;
+                d.demand = resourceDemands.Values.Max();
+                demands[n.name] = d;
             }
         }
 
@@ -134,10 +141,12 @@ namespace JuniorProject.Backend.WorldData
         /* ------ HELPER FUNCTIONS --------- */
         int CalculateResourceTotal(string resource)
         {
-            // Update totalResources dictionary
-
-
-            return 0;
+            int total = 0;
+            foreach (var n in nations)
+            {
+                total += n.Value.resources[resource];
+            }
+            return total;
         }
 
         int CalculateTradePrice(int totalResources, string resource)
