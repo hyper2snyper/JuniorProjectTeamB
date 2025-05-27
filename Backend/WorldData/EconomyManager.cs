@@ -1,4 +1,5 @@
 ﻿using JuniorProject.Backend.Agents;
+using JuniorProject.Properties;
 
 namespace JuniorProject.Backend.WorldData
 {
@@ -14,9 +15,8 @@ namespace JuniorProject.Backend.WorldData
 
         struct Demand
         {
-            public Dictionary<string, int> resourceDemands = new Dictionary<string, int>();
-
-            public Demand(){}
+            public string resource { get; set; }
+            public int demand {  get; set; }
         }
 
         struct Resource
@@ -63,12 +63,17 @@ namespace JuniorProject.Backend.WorldData
         /* --------- MAIN FUNCTIONS ---------------- */
         void CalculateDemands()
         {
-            foreach (var n in nations)
+            foreach (var n in nations.Values)
             {
+                Demand d = demands[n.name];
+                Dictionary<string, int> resourceDemands = new Dictionary<string, int>();
                 foreach (string r in resourceTypes)
                 {
-                    demands[n.Key].resourceDemands[r] = 1 - (n.Value.ownedResources[r] / resources[r].totalResource);
+                    resourceDemands[r] = 1 - (n.ownedResources[r] / resources[r].totalResource);
                 }
+                d.resource = resourceDemands.MaxBy(entry => entry.Value).Key;
+                d.demand = resourceDemands.Values.Max();
+                demands[n.name] = d;
             }
         }
 
