@@ -88,19 +88,20 @@
             <RowDefinition Height="*" />
 
         </Grid.RowDefinitions>
-        <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.RowSpan="2" HorizontalAlignment="Right" Width="791" Margin="0,0,0,-475">
+        <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.RowSpan="2" HorizontalAlignment="Right" Width="791">
             <Grid Margin="0,0,7,0" Height="1804">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="1804"/>
+                    <RowDefinition Height="1435.64"/>
+                    <RowDefinition Height="368.36"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
-                <Border x:Name="Border2_Copy" BorderBrush="White" BorderThickness="1" Margin="284,84,296,1587"/>
-                <Border x:Name="Border7" BorderBrush="White" BorderThickness="1" Margin="50,247,532,1430"/>
-                <Border x:Name="Border5" BorderBrush="White" BorderThickness="1" Margin="283,247,296,1430"/>
-                <Border x:Name="Border3" BorderBrush="White" BorderThickness="1" Margin="507,82,67,1589"/>
-                <Border x:Name="Border" BorderBrush="White" BorderThickness="1" Margin="50,84,532,1587"/>
+                <Border x:Name="Border2_Copy" BorderBrush="White" BorderThickness="1" Margin="284,84,296,1219"/>
+                <Border x:Name="Border7" BorderBrush="White" BorderThickness="1" Margin="50,247,532,1062"/>
+                <Border x:Name="Border5" BorderBrush="White" BorderThickness="1" Margin="283,247,296,1062"/>
+                <Border x:Name="Border3" BorderBrush="White" BorderThickness="1" Margin="507,82,67,1221"/>
+                <Border x:Name="Border" BorderBrush="White" BorderThickness="1" Margin="50,84,532,1219"/>
                 <TextBlock HorizontalAlignment="Left" Margin="319,255,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="22" Width="116" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Cannoneer Options"/></TextBlock>
-                <TextBlock HorizontalAlignment="Left" Margin="335,93,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="27" Width="96" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Soldier Options"/></TextBlock>
+                <TextBlock HorizontalAlignment="Center" Margin="0,93,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="27" Width="96" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Soldier Options"/></TextBlock>
                 <TextBlock HorizontalAlignment="Left" Margin="64,129,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="18" Width="93" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Attack Damage"/></TextBlock>
                 <TextBlock HorizontalAlignment="Left" Margin="64,157,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="18" Width="80" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Attack Range"/></TextBlock>
                 <TextBlock HorizontalAlignment="Left" Margin="103,95,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="27" Width="98" Foreground="#FFF9F4F4"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Archer Options"/></TextBlock>
@@ -134,36 +135,36 @@
                 <TextBox x:Name="SoldierD" PreviewTextInput="NumberOnlyInput" HorizontalAlignment="Left" Margin="406,130,0,0" TextWrapping="Wrap" Text="1" VerticalAlignment="Top" Width="53" />
                 <TextBox x:Name="SoldierR" PreviewTextInput="NumberOnlyInput" HorizontalAlignment="Left" Margin="406,157,0,0" TextWrapping="Wrap" Text="1" VerticalAlignment="Top" Width="53" />
                 <TextBox x:Name="SoldierH" PreviewTextInput="NumberOnlyInput" HorizontalAlignment="Left" Margin="406,183,0,0" TextWrapping="Wrap" Text="5" VerticalAlignment="Top" Width="53" />
-                <Border x:Name="Border5_Copy3" BorderBrush="White" BorderThickness="1" Margin="47,445,532,1284"/>
+                <Border x:Name="Border5_Copy3" BorderBrush="White" BorderThickness="1" Margin="47,445,532,916"/>
                 <TextBlock HorizontalAlignment="Left" Margin="89,453,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="22" Width="116" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Capital Options"/></TextBlock>
                 <TextBox x:Name="CapitialCost" PreviewTextInput="FloatOnlyInput" HorizontalAlignment="Left" Margin="170,479,0,0" TextWrapping="Wrap" Text="3" VerticalAlignment="Top" Width="53" />
                 <TextBlock HorizontalAlignment="Left" Margin="68,480,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="88" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Building Cost"/></TextBlock>
-                <Border x:Name="Border5_Copy1" BorderBrush="White" BorderThickness="1" Margin="279,445,296,1284"/>
+                <Border x:Name="Border5_Copy1" BorderBrush="White" BorderThickness="1" Margin="279,445,296,916"/>
                 <TextBlock HorizontalAlignment="Left" Margin="317,453,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="22" Width="116" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="House Options"/></TextBlock>
                 <TextBox x:Name="HouseCost" PreviewTextInput="FloatOnlyInput" HorizontalAlignment="Left" Margin="398,479,0,0" TextWrapping="Wrap" Text="6" VerticalAlignment="Top" Width="53" />
                 <TextBlock HorizontalAlignment="Left" Margin="296,480,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="88" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Building Cost"/></TextBlock>
-                <Border x:Name="Border5_Copy2" BorderBrush="White" BorderThickness="1" Margin="497,445,67,1284"/>
+                <Border x:Name="Border5_Copy2" BorderBrush="White" BorderThickness="1" Margin="497,445,67,916"/>
                 <TextBlock HorizontalAlignment="Left" Margin="541,453,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="22" Width="116" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Mine Options"/></TextBlock>
                 <TextBox x:Name="MineCost" PreviewTextInput="FloatOnlyInput" HorizontalAlignment="Left" Margin="622,479,0,0" TextWrapping="Wrap" Text="9" VerticalAlignment="Top" Width="53" />
                 <TextBlock HorizontalAlignment="Left" Margin="520,480,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="88" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Building Cost"/></TextBlock>
-                <Border x:Name="Border5_Copy4" BorderBrush="White" BorderThickness="1" Margin="46,527,532,1202"/>
+                <Border x:Name="Border5_Copy4" BorderBrush="White" BorderThickness="1" Margin="46,527,532,834"/>
                 <TextBlock HorizontalAlignment="Left" Margin="91,535,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="22" Width="116" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Barracks Options"/></TextBlock>
                 <TextBox x:Name="BarrackCost" PreviewTextInput="FloatOnlyInput" HorizontalAlignment="Left" Margin="171,561,0,0" TextWrapping="Wrap" Text="12" VerticalAlignment="Top" Width="53" />
                 <TextBlock HorizontalAlignment="Left" Margin="70,562,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="88" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Building Cost"/></TextBlock>
-                <Border x:Name="Border5_Copy5" BorderBrush="White" BorderThickness="1" Margin="279,528,296,1201"/>
+                <Border x:Name="Border5_Copy5" BorderBrush="White" BorderThickness="1" Margin="279,528,296,833"/>
                 <TextBlock HorizontalAlignment="Left" Margin="317,536,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="22" Width="116" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Smith Options"/></TextBlock>
                 <TextBox x:Name="SmithCost" PreviewTextInput="FloatOnlyInput" HorizontalAlignment="Left" Margin="398,562,0,0" TextWrapping="Wrap" Text="15" VerticalAlignment="Top" Width="53" />
                 <TextBlock HorizontalAlignment="Left" Margin="296,563,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="88" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Building Cost"/></TextBlock>
-                <Border x:Name="Border5_Copy6" BorderBrush="White" BorderThickness="1" Margin="497,528,67,1201"/>
+                <Border x:Name="Border5_Copy6" BorderBrush="White" BorderThickness="1" Margin="497,528,67,833"/>
                 <TextBlock HorizontalAlignment="Left" Margin="541,536,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="22" Width="116" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Farm Options"/></TextBlock>
                 <TextBox x:Name="FarmCost" PreviewTextInput="FloatOnlyInput" HorizontalAlignment="Left" Margin="622,562,0,0" TextWrapping="Wrap" Text="18" VerticalAlignment="Top" Width="53" />
                 <TextBlock HorizontalAlignment="Left" Margin="520,563,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="88" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Building Cost"/></TextBlock>
                 <Label Content="Building Options" HorizontalAlignment="Left" Margin="312,408,0,0" VerticalAlignment="Top" Width="137" Foreground="White" FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold"/>
                 <Label Content="Unit Options" HorizontalAlignment="Left" Margin="324,50,0,0" VerticalAlignment="Top" Width="137" Foreground="White" FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold"/>
-                <Border x:Name="Border7_Copy" BorderBrush="White" BorderThickness="1" Margin="154,1005,413,616"/>
-                <Border x:Name="Border5_Copy7" BorderBrush="White" BorderThickness="1" Margin="383,1006,176,615"/>
-                <Border x:Name="Border2_Copy1" BorderBrush="White" BorderThickness="1" Margin="385,790,177,817"/>
-                <Border x:Name="Border_Copy1" BorderBrush="White" BorderThickness="1" Margin="154,790,413,817" RenderTransformOrigin="0.5,0.5">
+                <Border x:Name="Border7_Copy" BorderBrush="White" BorderThickness="1" Margin="154,1005,413,248"/>
+                <Border x:Name="Border5_Copy7" BorderBrush="White" BorderThickness="1" Margin="383,1006,176,247"/>
+                <Border x:Name="Border2_Copy1" BorderBrush="White" BorderThickness="1" Margin="385,790,177,449"/>
+                <Border x:Name="Border_Copy1" BorderBrush="White" BorderThickness="1" Margin="154,790,413,449" RenderTransformOrigin="0.5,0.5">
                     <Border.RenderTransform>
                         <TransformGroup>
                             <ScaleTransform/>
@@ -223,9 +224,102 @@
                 <TextBox x:Name="FoodH" PreviewTextInput="NumberOnlyInput" HorizontalAlignment="Left" Margin="514,907,0,0" TextWrapping="Wrap" Text="50" VerticalAlignment="Top" Width="55" />
                 <TextBlock HorizontalAlignment="Left" Margin="411,910,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="80" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Food"/></TextBlock>
                 <TextBox x:Name="PortCost" PreviewTextInput="FloatOnlyInput" HorizontalAlignment="Left" Margin="168,651,0,0" TextWrapping="Wrap" Text="18" VerticalAlignment="Top" Width="53" />
-                <Border x:Name="Border5_Copy" BorderBrush="White" BorderThickness="1" Margin="46,617,532,1112"/>
+                <Border x:Name="Border5_Copy" BorderBrush="White" BorderThickness="1" Margin="46,617,532,744"/>
                 <TextBlock HorizontalAlignment="Left" Margin="70,652,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="88" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Building Cost"/></TextBlock>
                 <TextBlock HorizontalAlignment="Left" Margin="91,625,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="22" Width="116" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Port Options"/></TextBlock>
+
+
+                <Label Content="Resource Economy Options" HorizontalAlignment="Left" Margin="291,1227,0,0" VerticalAlignment="Top" Width="168" Foreground="White" FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold"/>
+                <Border x:Name="Border_Copy" BorderBrush="White" BorderThickness="1" Margin="159,1263,408,308" RenderTransformOrigin="0.5,0.5" Grid.RowSpan="2">
+                    <Border.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform/>
+                            <SkewTransform AngleX="0"/>
+                            <RotateTransform/>
+                            <TranslateTransform X="0"/>
+                        </TransformGroup>
+                    </Border.RenderTransform>
+                </Border>
+                <TextBlock HorizontalAlignment="Left" Margin="214,1276,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="20" Width="106" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Food Options"/></TextBlock>
+                <Border x:Name="Border7_Copy1" BorderBrush="White" BorderThickness="1" Margin="154,1005,413,248"/>
+                <TextBlock HorizontalAlignment="Left" Margin="179,1054,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="18" Width="89" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Wood"/></TextBlock>
+                <TextBox x:Name="FoodResourceStartPrice" PreviewTextInput="NumberOnlyInput" HorizontalAlignment="Left" Margin="297,1330,0,0" TextWrapping="Wrap" Text="10" VerticalAlignment="Top" Width="53" />
+                <TextBox x:Name="FoodResourceScalePercAmount" PreviewTextInput="NumberOnlyInput"  HorizontalAlignment="Left" Margin="297,1356,0,0" TextWrapping="Wrap" Text="0.1" VerticalAlignment="Top" Width="53" />
+                <TextBox x:Name="FoodResourceStart" PreviewTextInput="NumberOnlyInput"  HorizontalAlignment="Left" Margin="297,1301,0,0" TextWrapping="Wrap" Text="100" VerticalAlignment="Top" Width="53" />
+                <TextBlock HorizontalAlignment="Left" Margin="173,1303,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="13" Width="77" Foreground="White" Text="Start Amount" FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold"/>
+                <TextBlock HorizontalAlignment="Left" Margin="173,1332,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="18" Width="68" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Start Price"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="171,1359,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="77" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Price Scale %"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="171,1383,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="17" Width="127" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Demand Init Trade %"/></TextBlock>
+                <TextBox x:Name="FoodResourceDemandPercInit" PreviewTextInput="NumberOnlyInput" HorizontalAlignment="Left" Margin="297,1384,0,0" TextWrapping="Wrap" Text="0.6" VerticalAlignment="Top" Width="53" />
+                <TextBlock HorizontalAlignment="Left" Margin="168,1409,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="29" Width="128" Foreground="White" RenderTransformOrigin="0.47,0.381" Grid.RowSpan="2"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Demand Acc. Trade %"/></TextBlock>
+                <TextBox x:Name="FoodResourceDemandPercAcc" PreviewTextInput="NumberOnlyInput"  HorizontalAlignment="Left" Margin="297,1408,0,0" TextWrapping="Wrap" Text="0.3" VerticalAlignment="Top" Width="53" />
+                <TextBlock HorizontalAlignment="Left" Margin="174,2,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="13" Width="76" Foreground="White" Grid.Row="1"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Accept %"/></TextBlock>
+                <TextBox x:Name="FoodResourceChanceAccept" PreviewTextInput="NumberOnlyInput"  HorizontalAlignment="Left" Margin="297,0,0,0" TextWrapping="Wrap" Text="0.85" VerticalAlignment="Top" Width="53" Grid.Row="1" />
+                <TextBlock HorizontalAlignment="Left" Margin="173,25,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="13" Width="123" Foreground="White" Grid.Row="1"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Offset Demand % By"/></TextBlock>
+                <TextBox x:Name="FoodResourceOffsetDemand" PreviewTextInput="NumberOnlyInput"  HorizontalAlignment="Left" Margin="296,23,0,0" TextWrapping="Wrap" Text="0.05" VerticalAlignment="Top" Width="53" Grid.Row="1" />
+                <Border x:Name="Border_Copy2" BorderBrush="White" BorderThickness="1" Margin="414,1263,153,308" RenderTransformOrigin="0.5,0.5" Grid.RowSpan="2">
+                    <Border.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform/>
+                            <SkewTransform AngleX="0"/>
+                            <RotateTransform/>
+                            <TranslateTransform X="0"/>
+                        </TransformGroup>
+                    </Border.RenderTransform>
+                </Border>
+                <TextBlock HorizontalAlignment="Left" Margin="469,1276,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="20" Width="106" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Wood Options"/></TextBlock>
+                <TextBox x:Name="WoodResourceStartPrice" PreviewTextInput="NumberOnlyInput" HorizontalAlignment="Left" Margin="552,1330,0,0" TextWrapping="Wrap" Text="10" VerticalAlignment="Top" Width="53" />
+                <TextBox x:Name="WoodResourceScalePercAmount" PreviewTextInput="NumberOnlyInput"  HorizontalAlignment="Left" Margin="552,1356,0,0" TextWrapping="Wrap" Text="0.1" VerticalAlignment="Top" Width="53" />
+                <TextBox x:Name="WoodResourceStart" PreviewTextInput="NumberOnlyInput"  HorizontalAlignment="Left" Margin="552,1301,0,0" TextWrapping="Wrap" Text="100" VerticalAlignment="Top" Width="53" />
+                <TextBlock HorizontalAlignment="Left" Margin="428,1303,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="13" Width="77" Foreground="White" Text="Start Amount" FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold"/>
+                <TextBlock HorizontalAlignment="Left" Margin="428,1332,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="18" Width="68" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Start Price"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="426,1359,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="19" Width="77" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Price Scale %"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="426,1383,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="17" Width="127" Foreground="White"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Demand Init Trade %"/></TextBlock>
+                <TextBox x:Name="WoodResourceDemandPercInit" PreviewTextInput="NumberOnlyInput" HorizontalAlignment="Left" Margin="552,1384,0,0" TextWrapping="Wrap" Text="0.6" VerticalAlignment="Top" Width="53" />
+                <TextBlock HorizontalAlignment="Left" Margin="423,1409,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="29" Width="128" Foreground="White" RenderTransformOrigin="0.47,0.381" Grid.RowSpan="2"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Demand Acc. Trade %"/></TextBlock>
+                <TextBox x:Name="WoodResourceDemandPercAcc" PreviewTextInput="NumberOnlyInput"  HorizontalAlignment="Left" Margin="552,1408,0,0" TextWrapping="Wrap" Text="0.3" VerticalAlignment="Top" Width="53" />
+                <TextBlock HorizontalAlignment="Left" Margin="429,1,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="13" Width="76" Foreground="White" Grid.Row="1"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Accept %"/></TextBlock>
+                <TextBox x:Name="WoodResourceChanceAccept" PreviewTextInput="NumberOnlyInput"  HorizontalAlignment="Left" Margin="552,1435,0,0" TextWrapping="Wrap" Text="0.85" VerticalAlignment="Top" Width="53" Grid.RowSpan="2" />
+                <TextBlock HorizontalAlignment="Left" Margin="428,24,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="13" Width="123" Foreground="White" Grid.Row="1"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Offset Demand % By"/></TextBlock>
+                <TextBox x:Name="WoodResourceOffsetDemand" PreviewTextInput="NumberOnlyInput"  HorizontalAlignment="Left" Margin="551,22,0,0" TextWrapping="Wrap" Text="0.05" VerticalAlignment="Top" Width="53" Grid.Row="1" />
+                <Border x:Name="Border_Copy3" BorderBrush="White" BorderThickness="1" Margin="162,79,405,56" RenderTransformOrigin="0.5,0.5" Grid.Row="1">
+                    <Border.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform/>
+                            <SkewTransform AngleX="0"/>
+                            <RotateTransform/>
+                            <TranslateTransform X="0"/>
+                        </TransformGroup>
+                    </Border.RenderTransform>
+                </Border>
+                <TextBlock HorizontalAlignment="Left" Margin="216,92,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="20" Width="106" Foreground="White" Grid.Row="1"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Iron Options"/></TextBlock>
+                <TextBox x:Name="IronResourceStartPrice" PreviewTextInput="NumberOnlyInput" HorizontalAlignment="Left" Margin="300,146,0,0" TextWrapping="Wrap" Text="10" VerticalAlignment="Top" Width="52" Grid.Row="1" />
+                <TextBox x:Name="IronResourceScalePercAmount" PreviewTextInput="NumberOnlyInput"  HorizontalAlignment="Left" Margin="300,172,0,0" TextWrapping="Wrap" Text="0.1" VerticalAlignment="Top" Width="52" Grid.Row="1" />
+                <TextBox x:Name="IronResourceStart" PreviewTextInput="NumberOnlyInput"  HorizontalAlignment="Left" Margin="300,117,0,0" TextWrapping="Wrap" Text="100" VerticalAlignment="Top" Width="52" Grid.Row="1" />
+                <TextBlock HorizontalAlignment="Left" Margin="176,119,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="13" Width="88" Foreground="White" Text="Start Amount" FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Grid.Row="1"/>
+                <TextBlock HorizontalAlignment="Left" Margin="176,148,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="18" Width="68" Foreground="White" Grid.Row="1"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Start Price"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="174,0,0,0" TextWrapping="Wrap" VerticalAlignment="Center" Height="19" Width="95" Foreground="White" Grid.Row="1"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Price Scale %"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Margin="174,199,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="17" Width="126" Foreground="White" Grid.Row="1"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Demand Init Trade %"/></TextBlock>
+                <TextBox x:Name="IronResourceDemandPercInit" PreviewTextInput="NumberOnlyInput" HorizontalAlignment="Left" Margin="300,200,0,0" TextWrapping="Wrap" Text="0.6" VerticalAlignment="Top" Width="52" Grid.Row="1" />
+                <TextBlock HorizontalAlignment="Left" Margin="170,225,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="29" Width="128" Foreground="White" RenderTransformOrigin="0.47,0.381" Grid.Row="1"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Demand Acc. Trade %"/></TextBlock>
+                <TextBox x:Name="IronResourceDemandPercAcc" PreviewTextInput="NumberOnlyInput"  HorizontalAlignment="Left" Margin="300,224,0,0" TextWrapping="Wrap" Text="0.3" VerticalAlignment="Top" Width="52" Grid.Row="1" />
+                <TextBlock HorizontalAlignment="Left" Margin="176,253,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="13" Width="76" Foreground="White" Grid.Row="1"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Accept %"/></TextBlock>
+                <TextBox x:Name="IronResourceChanceAccept" PreviewTextInput="NumberOnlyInput"  HorizontalAlignment="Left" Margin="300,251,0,0" TextWrapping="Wrap" Text="0.85" VerticalAlignment="Top" Width="52" Grid.Row="1" />
+                <TextBlock HorizontalAlignment="Left" Margin="176,276,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="13" Width="122" Foreground="White" Grid.Row="1"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Offset Demand % By"/></TextBlock>
+                <TextBox x:Name="IronResourceOffsetDemand" PreviewTextInput="NumberOnlyInput"  HorizontalAlignment="Left" Margin="298,274,0,0" TextWrapping="Wrap" Text="0.05" VerticalAlignment="Top" Width="54" Grid.Row="1" />
+                <Border x:Name="Border_Copy4" BorderBrush="White" BorderThickness="1" Margin="416,81,151,204" RenderTransformOrigin="0.5,0.5" Grid.Row="1">
+                    <Border.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform/>
+                            <SkewTransform AngleX="0"/>
+                            <RotateTransform/>
+                            <TranslateTransform X="0"/>
+                        </TransformGroup>
+                    </Border.RenderTransform>
+                </Border>
+                <TextBlock HorizontalAlignment="Left" Margin="470,94,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="20" Width="106" Foreground="White" Grid.Row="1"><Run FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Text="Gold Options"/></TextBlock>
+                <TextBox x:Name="GoldResourceStart" PreviewTextInput="NumberOnlyInput"  HorizontalAlignment="Left" Margin="554,119,0,0" TextWrapping="Wrap" Text="100" VerticalAlignment="Top" Width="52" Grid.Row="1" />
+                <TextBlock HorizontalAlignment="Left" Margin="430,121,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="13" Width="93" Foreground="White" Text="Start Amount" FontFamily="pack://application:,,,/Frontend/gui/Fonts/#Alagard" FontWeight="Bold" Grid.Row="1"/>
             </Grid>
         </ScrollViewer>
         <Button Template="{DynamicResource SaveTemplate}" BorderThickness="0" Margin="667,265,24,0" VerticalAlignment="Top" Height="40" Click="SavedClicked">
