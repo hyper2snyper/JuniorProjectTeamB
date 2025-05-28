@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Data.SQLite;
 
 namespace JuniorProject.Backend.Agents
 {
@@ -45,6 +46,12 @@ namespace JuniorProject.Backend.Agents
 
         public Nation(string name, string color, int quadrant, World world) : this(name, color, world)
         {
+            SQLiteDataReader resourceResults = DatabaseManager.ReadDB("SELECT * FROM Resources;");
+            while (resourceResults.Read())
+            {
+                resources[resourceResults.GetString(0)] = resourceResults.GetInt32(1);
+            }
+
             PlaceStart(quadrant);
         }
 
@@ -206,6 +213,8 @@ namespace JuniorProject.Backend.Agents
                     AddUnit(new Unit("Soldier", "", this, world.map, capital.pos));
                 }
             }
+
+            capital.TakeTurn(tick);
             foreach (Building building in buildings)
             {
                 building.TakeTurn(tick);
@@ -283,12 +292,16 @@ namespace JuniorProject.Backend.Agents
 
         public void AddBuilding(Building building)
         {
-            if (building.nation != null)
+            if (resources["Wood"] >= building.template.cost)
             {
-                building.nation.RemoveBuilding(building);
+                resources["Wood"] -= building.template.cost;
+                if (building.nation != null)
+                {
+                    building.nation.RemoveBuilding(building);
+                }
+                buildings.Add(building);
+                building.nation = this;
             }
-            buildings.Add(building);
-            building.nation = this;
         }
 
         public void RemoveBuilding(Building building)
@@ -302,8 +315,12 @@ namespace JuniorProject.Backend.Agents
 
         public void AddUnit(Unit unit)
         {
-            units.Add(unit);
-            unit.name = $"{color}{unit.unitType.name}{units.Count}";
+            if (resources["Iron"] >= unit.unitType.cost)
+            {
+                resources["Iron"] -= unit.unitType.cost;
+                units.Add(unit);
+                unit.name = $"{color}{unit.unitType.name}{units.Count}";
+            }
         }
 
         public void RemoveUnit(Unit unit)

@@ -152,18 +152,32 @@ namespace JuniorProject.Backend.Agents
                 case "House":
                     break;
                 case "Capital":
+                    string[] capitalResources = { "Food", "Iron", "Wood", "Gold" };
+                    foreach (var r in capitalResources)
+                    {
+                        double gatherRate = GetGatherRate(biome, r);
+                        nation.resources[r] += (int)Math.Round(gatherRate);
+                    }
                     break;
                 case "Barracks":
                     break;
                 case "Mine":
+                    string[] mineResources = { "Iron", "Gold" };
+                    foreach (var r in mineResources)
+                    {
+                        double gatherRate = GetGatherRate(biome, r);
+                        nation.resources[r] += (int)Math.Round(gatherRate);
+                    }
                     break;
                 case "Smith":
                     break;
                 case "Farm":
-                    resource = "Food";
-                    double gatherRate = GetGatherRate(biome, resource);
-                    nation.resources[resource] += (int)Math.Round(gatherRate);
-                    nation.money += (int)Math.Round(gatherRate);
+                    string[] farmResources = { "Food", "Wood" };
+                    foreach (var r in farmResources)
+                    {
+                        double gatherRate = GetGatherRate(biome, r);
+                        nation.resources[r] += (int)Math.Round(gatherRate);
+                    }
                     break;
                 case "Port":
                     break;

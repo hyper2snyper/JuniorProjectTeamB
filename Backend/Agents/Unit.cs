@@ -31,6 +31,9 @@ namespace JuniorProject.Backend.Agents
             [JsonPropertyName("Sprite")]
             public string sprite { get; set; }
 
+            [JsonPropertyName("Cost")]
+            public int cost { get; set; }
+
         }
 
         public static Dictionary<string, UnitTemplate> unitTemplates;
@@ -49,6 +52,7 @@ namespace JuniorProject.Backend.Agents
                 template.attackRange = results.GetInt32(3);
                 template.maxHealth = results.GetInt32(4);
                 template.sprite = results.GetString(5);
+                template.cost = results.GetInt32(6);
                 unitTemplates.Add(template.name, template);
             }
         }
@@ -153,10 +157,14 @@ namespace JuniorProject.Backend.Agents
 
         public override void TakeTurn(ulong tick)
         {
-            base.TakeTurn(tick);
-            if (objective != null)
+            if (nation.resources["Food"] >= unitType.cost)
             {
-                objective = objective.PerformTurn(tick);
+                nation.resources["Food"] -= unitType.cost;
+                base.TakeTurn(tick);
+                if (objective != null)
+                {
+                    objective = objective.PerformTurn(tick);
+                }
             }
         }
 
