@@ -162,6 +162,7 @@ namespace JuniorProject.Backend.Agents
                 case "Farm":
                     resource = "Food";
                     double gatherRate = GetGatherRate(biome, resource);
+                    nation.resources[resource] += (int)Math.Round(gatherRate);
                     nation.money += (int)Math.Round(gatherRate);
                     break;
                 case "Port":

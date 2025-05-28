@@ -5,7 +5,7 @@ namespace JuniorProject.Backend.WorldData
 {
     public class EconomyManager
     {
-        struct Trade
+        class Trade
         {
             public Trade(string i, string r, int rA, int p)
             {
@@ -21,52 +21,77 @@ namespace JuniorProject.Backend.WorldData
             public int price;
         }
 
-        struct Demand
+        class Demand
         {
+            public Demand(string resource, int demand)
+            { 
+                this.resource = resource;
+                this.demand = demand;
+            }
+
             public string resource;
             public int demand;
         }
 
-        struct Resource
+        class Resource
         {
+            public Resource(int price, int totalResource, int priceLevel)
+            {
+                this.price = price;
+                this.totalResource = totalResource;
+                this.priceLevel = priceLevel;
+                this.initialTotalResource = totalResource;
+            }
+
             public int price;
             public int totalResource;
             public int priceLevel; // integer to keep track of updating the price (starts at 0 and goes up or down 1 depending on amount of resource)
+            public int initialTotalResource;
         }
 
         public Dictionary<string, Nation> nations;
-        Dictionary<string, Demand> demands; // Key is nation name
+        Dictionary<(string, string), Demand> demands; // Key is (nation name, resource type)
 
         Dictionary<string, Resource> resources; // Key is resource name
 
         List<Trade> potentialTrades;
 
-        static readonly string[] resourceTypes = { "Food", "Iron", "Wood" };
+        static readonly string[] resourceTypes = { "Food", "Iron", "Wood", "Gold" };
 
         public EconomyManager() { }
 
         public void Initialize(ref Dictionary<string, Nation> nations)
         {
             this.nations = nations;
-            demands = new Dictionary<string, Demand>();
+            demands = new Dictionary<(string, string), Demand>();
             resources = new Dictionary<string, Resource>();
+            potentialTrades = new List<Trade>();
 
-            foreach (string r in resourceTypes)
+            foreach (string type in resourceTypes)
             {
-                /* TODO: Read flat, initial price from database and intiialize the resources and demands dictionaries */
+                using var results = DatabaseManager.ReadDB($"SELECT InitialPrice, InitialStartingAmount FROM Resources WHERE ResourceName='{type}'");
+                int startingAmount = 0;
+                while (results.Read()) {
+                    int initialPrice = results.GetInt32(0);
+                    startingAmount = results.GetInt32(1);
+                    resources[type] = new Resource(initialPrice, startingAmount * 3, 0); // multiply by 3, there's three teams
+                }
+
+                foreach (var n in nations.Values)
+                {
+                    demands[(n.color, type)] = new Demand(type, startingAmount / (startingAmount * 3)); // Initializing demands
+                    n.resources[type] = startingAmount;
+                }
             }
         }
 
         public void TakeTurn(ulong tickCount)
         {
-            /* uncomment when ready
-             * 
-            
             RespondToTrades(tickCount);
+            UpdateResourceValues();
             CalculateDemands();
             InitiatePotentialTrades();
-
-             */
+            Print();
         }
 
         /* --------- MAIN FUNCTIONS ---------------- */
@@ -74,31 +99,29 @@ namespace JuniorProject.Backend.WorldData
         {
             foreach (var n in nations.Values)
             {
-                Demand d = demands[n.name];
-                Dictionary<string, int> resourceDemands = new Dictionary<string, int>();
-                foreach (string r in resourceTypes)
-                {
-                    resourceDemands[r] = 1 - (n.resources[r] / resources[r].totalResource);
+                foreach (string r in resourceTypes) {
+                    demands[(n.color, r)].demand = (1 - (n.resources[r] / resources[r].totalResource));
                 }
-                d.resource = resourceDemands.MaxBy(entry => entry.Value).Key;
-                d.demand = resourceDemands.Values.Max();
-                demands[n.name] = d;
             }
         }
 
         void InitiatePotentialTrades()
         {
-            const double demandThresholdToInitiateTrade = 0.6; // TODO: arbritrary number currently; implement and receive from database
-
             foreach (var nationDemand in demands)
             {
-                string nation = nationDemand.Key;
-                Demand demand = nationDemand.Value;
+                (string, string) key = nationDemand.Key;
+                string nation = key.Item1;
+                string resouceType = key.Item2;
 
-                if (demand.demand > demandThresholdToInitiateTrade)
+                using var results = DatabaseManager.ReadDB($"SELECT DemandPercentToinitiateTrade FROM Resources WHERE ResourceName='{demands[(nation, resouceType)].resource}'");
+                while (results.Read())
                 {
-                    int totalResourcesWanted = CalculateWantedResourceTotal(demand.resource, nation);
-                    potentialTrades.Add(new Trade(nation, demand.resource, totalResourcesWanted, CalculateTradePrice(totalResourcesWanted, demand.resource)));
+                    double demandThresholdToInitiateTrade = results.GetDouble(0);
+                    if (demands[(nation, resouceType)].demand > demandThresholdToInitiateTrade)
+                    {
+                        int totalResourcesWanted = CalculateWantedResourceTotal(demands[(nation, resouceType)].resource, nation);
+                        potentialTrades.Add(new Trade(nation, demands[(nation, resouceType)].resource, totalResourcesWanted, CalculateTradePrice(totalResourcesWanted, demands[(nation, resouceType)].resource)));
+                    }
                 }
             }
         }
@@ -107,8 +130,6 @@ namespace JuniorProject.Backend.WorldData
         {
             foreach (Trade t in potentialTrades)
             {
-                // TODO: Implement, ensure initiator is not the trader
-                // Find nation with demand that meets criteria to accept trade.
                 List<string> possibleNations = new List<string>();
 
                 foreach (var n in nations)
@@ -118,7 +139,7 @@ namespace JuniorProject.Backend.WorldData
 
                     var nation = n.Value;
 
-                    if (nation.resources[t.resource] > t.resourceAmount)
+                    if (nation.resources[t.resource] > t.resourceAmount && ShouldAcceptTrade(tickCount, t.resource, demands[(name, t.resource)].demand))
                     {
                         possibleNations.Add(name);
                     }
@@ -137,8 +158,42 @@ namespace JuniorProject.Backend.WorldData
             potentialTrades.Clear();
         }
 
+        void UpdateResourceValues() {
+            foreach (string r in resourceTypes) {
+                resources[r].totalResource = CalculateResourceTotal(r);
+                UpdatePrice(r);
+            }
+        }
+
 
         /* ------ HELPER FUNCTIONS --------- */
+        void Print()
+        {
+            Debug.Print("\n----RESOURCES----");
+            foreach (string r in resourceTypes)
+            {
+                Debug.Print($"Type: {r} | Price: {resources[r].price} | Total: {resources[r].totalResource}");
+            }
+        }
+
+        bool ShouldAcceptTrade(ulong tickCount, string resource, double acceptingNationDemand)
+        {
+            using var results = DatabaseManager.ReadDB($"SELECT ChanceToAcceptTrade, DemandPercentToAcceptTrade FROM Resources WHERE ResourceName='{resource}'");
+
+            while (results.Read()) {
+                double chanceToAccept = results.GetDouble(0);
+                double demandThreshold = results.GetDouble(1);
+
+                if (acceptingNationDemand > demandThreshold) return false;
+
+                double value = Math.Abs(Math.Sin(tickCount * 12.9898) * 43758.5453) % 1.0; // Have not checked if this works yet
+                return value < chanceToAccept;
+            }
+
+            Debug.Print("ERROR!!! Cannot read from database to decide to accept trade, returning false");
+            return false;
+        }
+
         int CalculateResourceTotal(string resource)
         {
             int total = 0;
@@ -156,28 +211,38 @@ namespace JuniorProject.Backend.WorldData
 
         int CalculateWantedResourceTotal(string resource, string nation)
         {
-            /* 
-               Offset nation's demand by a certain %
-            */
-
-            const double offsetResourcePercentage = 0.05; // TODO: arbritrary number currently; implement and receive from database
-
-            double newNationDemand = 1 - (demands[nation].demand - offsetResourcePercentage);
-
-            return (int)(newNationDemand * resources[resource].totalResource);
+            using var results = DatabaseManager.ReadDB($"SELECT OffsetDemandPercentBy FROM Resources WHERE ResourceName='{resource}'");
+            while (results.Read())
+            {
+                double offset = results.GetDouble(0);
+                double newNationDemand = 1 - (demands[(nation, resource)].demand - offset);
+                return (int)(newNationDemand * resources[resource].totalResource);
+            }
+            Debug.Print("ERROR!!! Cannot read from database to decide to accept trade, returning false");
+            return 0;
         }
 
-        void CheckToUpdatePrice(string resource)
+        void UpdatePrice(string resource)
         {
-            /* 
-             TODO: Retrieve current price of resource and update it with +/- percentage from database.
+            // TODO: Tweak with these settings a bit to get it working once resources are able to be generated and consumed
+            using var results = DatabaseManager.ReadDB($"SELECT ScalePercentAmount, InitialPrice FROM Resources WHERE ResourceName='{resource}'");
+            while (results.Read())
+            {
+                double scalePercent = results.GetDouble(0);
+                double threshold = resources[resource].totalResource * scalePercent;
+                int delta = resources[resource].totalResource - resources[resource].initialTotalResource;
+                int priceLevelChange = (int)(delta / threshold);
 
-            Calculate if the price needs to be updated using the percent resource scale from database and the the current price point level (which starts at 1)
-            I think it's possible, but I'm not entirely sure.
+                int priceChange = priceLevelChange - resources[resource].priceLevel;
+                if (priceChange != 0)
+                {
+                    int initialPrice = results.GetInt32(1);
+                    int newPrice = (priceChange * 1 ) + resources[resource].price;
+                    resources[resource].price = Math.Max(initialPrice, newPrice);
+                    resources[resource].priceLevel = priceLevelChange;
 
-            If the calculated pricepoint level is not the same as the current one, update the price point depending if it's below or above.
-            Update price with flat update price from database
-             */
+                }
+            }
         }
 
         void AcceptTrade(Trade trade, Nation acceptingNation)
@@ -187,6 +252,8 @@ namespace JuniorProject.Backend.WorldData
 
             nations[trade.initiator].resources[trade.resource] += trade.resourceAmount;
             nations[trade.initiator].resources["Gold"] -= trade.price;
+
+            Debug.Print($"COMPLETED TRADE: {acceptingNation.color} : {trade.resourceAmount} {trade.resource} -> {trade.initiator} for {trade.price} gold");
         }
     }
 }

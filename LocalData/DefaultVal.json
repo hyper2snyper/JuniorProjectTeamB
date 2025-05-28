@@ -205,5 +205,58 @@
       "HasColor": true,
       "Capital": 0
     }
+  ],
+  "Resources": [
+    {
+      "ResourceName": "Wood",
+      "InitialStartingAmount": 100,
+      "InitialPrice": 5,
+      "ScalePercentAmount": 0.1,
+      "DemandPercentToInitiateTrade": 0.6,
+      "DemandPercentToAcceptTrade": 0.3,
+      "ChanceToAcceptTrade": 0.85,
+      "OffsetDemandPercentBy": 0.05
+    },
+    {
+      "ResourceName": "Iron",
+      "InitialStartingAmount": 50,
+      "InitialPrice": 10,
+      "ScalePercentAmount": 0.1,
+      "DemandPercentToInitiateTrade": 0.6,
+      "DemandPercentToAcceptTrade": 0.3,
+      "ChanceToAcceptTrade": 0.85,
+      "OffsetDemandPercentBy": 0.05
+    },
+    {
+      "ResourceName": "Stone",
+      "InitialStartingAmount": 0,
+      "InitialPrice": 0,
+      "ScalePercentAmount": 0,
+      "DemandPercentToInitiateTrade": 0,
+      "DemandPercentToAcceptTrade": 0,
+      "ChanceToAcceptTrade": 0,
+      "OffsetDemandPercentBy": 0
+    },
+    {
+      "ResourceName": "Food",
+      "InitialStartingAmount": 100,
+      "InitialPrice": 10,
+      "ScalePercentAmount": 0.1,
+      "DemandPercentToInitiateTrade": 0.6,
+      "DemandPercentToAcceptTrade": 0.3,
+      "ChanceToAcceptTrade": 0.85,
+      "OffsetDemandPercentBy": 0.05
+    },
+    {
+      "ResourceName": "Gold",
+      "InitialStartingAmount": 250,
+      "InitialPrice": 0,
+      "ScalePercentAmount": 0,
+      "DemandPercentToInitiateTrade": 0,
+      "DemandPercentToAcceptTrade": 0,
+      "ChanceToAcceptTrade": 0,
+      "OffsetDemandPercentBy": 0
+    }
   ]
+
 }
