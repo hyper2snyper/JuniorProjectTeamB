@@ -207,14 +207,8 @@ namespace JuniorProject.Backend.Agents
             {
                 Debug.Print("Calculating Objectives");
                 CalculateObjectives();
-                if (money >= 50 && units.Count < maxUnits)
-                {
-                    money -= 50;
-                    AddUnit(new Unit("Soldier", "", this, world.map, capital.pos));
-                }
+                CheckToAddUnit("Soldier");
             }
-
-            capital.TakeTurn(tick);
             foreach (Building building in buildings)
             {
                 building.TakeTurn(tick);
@@ -313,14 +307,19 @@ namespace JuniorProject.Backend.Agents
             }
         }
 
+        public void CheckToAddUnit(string type)
+        {
+            if (resources["Iron"] >= Unit.unitTemplates[type].ironCost && units.Count < maxUnits)
+            {
+                resources["Iron"] -= Unit.unitTemplates[type].ironCost;
+                AddUnit(new Unit(type, "", this, world.map, capital.pos));
+            }
+        }
+
         public void AddUnit(Unit unit)
         {
-            if (resources["Iron"] >= unit.unitType.cost)
-            {
-                resources["Iron"] -= unit.unitType.cost;
-                units.Add(unit);
-                unit.name = $"{color}{unit.unitType.name}{units.Count}";
-            }
+            units.Add(unit);
+            unit.name = $"{color}{unit.unitType.name}{units.Count}";
         }
 
         public void RemoveUnit(Unit unit)

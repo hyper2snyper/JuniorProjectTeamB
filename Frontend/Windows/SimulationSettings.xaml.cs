@@ -80,7 +80,7 @@ namespace JuniorProject.Frontend.Windows
                         DemandPercentToInitiateTrade = demandPercentToInitiateTrade,
                         DemandPercentToAcceptTrade = demandPercentToAcceptTrade,
                         OffsetDemandPercentBy = offsetDemandPercentBy,
-                        ChanceToAcceptTrade= chanceToAcceptTrade,
+                        ChanceToAcceptTrade = chanceToAcceptTrade,
                     };
                 }
             }
@@ -128,7 +128,7 @@ namespace JuniorProject.Frontend.Windows
             }
 
             public static void SaveResourcesTemplate()
-            { 
+            {
                 foreach (var template in resourcesTemplate.Values)
                 {
                     DatabaseManager.WriteDB(
@@ -183,11 +183,11 @@ namespace JuniorProject.Frontend.Windows
         {
 
             // Units
-            SaveUnit("Archer", ArcherD, ArcherR, ArcherH);
-            SaveUnit("Soldier", SoldierD, SoldierR, SoldierH);
-            SaveUnit("Catapult", CatapultD, CatapultR, CatapultH);
-            SaveUnit("Cannoneer", CannonD, CannonR, CannonH);
-            SaveUnit("Cavalier", CavalierD, CavalierR, CavalierH);
+            SaveUnit("Archer", ArcherD, ArcherR, ArcherH, ArcherIronCost, ArcherFoodCost);
+            SaveUnit("Soldier", SoldierD, SoldierR, SoldierH, SoldierIronCost, SoldierFoodCost);
+            SaveUnit("Catapult", CatapultD, CatapultR, CatapultH, CatapultIronCost, CatapultFoodCost);
+            SaveUnit("Cannoneer", CannonD, CannonR, CannonH, CannoneerIronCost, CannoneerFoodCost);
+            SaveUnit("Cavalier", CavalierD, CavalierR, CavalierH, CavalierIronCost, CavalierFoodCost);
             SaveUnits();
 
 
@@ -246,11 +246,11 @@ namespace JuniorProject.Frontend.Windows
                 Unit.LoadUnitTemplates();
                 unitTemplates = new Dictionary<string, Unit.UnitTemplate>(Unit.unitTemplates);
 
-                LoadUnit("Archer", ArcherD, ArcherR, ArcherH);
-                LoadUnit("Soldier", SoldierD, SoldierR, SoldierH);
-                LoadUnit("Catapult", CatapultD, CatapultR, CatapultH);
-                LoadUnit("Cannoneer", CannonD, CannonR, CannonH);
-                LoadUnit("Cavalier", CavalierD, CavalierR, CavalierH);
+                LoadUnit("Archer", ArcherD, ArcherR, ArcherH, ArcherIronCost, ArcherFoodCost);
+                LoadUnit("Soldier", SoldierD, SoldierR, SoldierH, SoldierIronCost, SoldierFoodCost);
+                LoadUnit("Catapult", CatapultD, CatapultR, CatapultH, CatapultIronCost, CatapultFoodCost);
+                LoadUnit("Cannoneer", CannonD, CannonR, CannonH, CannoneerIronCost, CannoneerFoodCost);
+                LoadUnit("Cavalier", CavalierD, CavalierR, CavalierH, CavalierIronCost, CavalierFoodCost);
             }
 
             if (buildingTemplates == null)
@@ -278,7 +278,7 @@ namespace JuniorProject.Frontend.Windows
             }
 
             if (resourceTemplate == null)
-            { 
+            {
                 ResourceTemplate.LoadResourcesTemplate();
                 LoadResource("Gold", GoldResourceStart, null, null, null, null, null, null);
                 LoadResource("Food", FoodResourceStart, FoodResourceStartPrice, FoodResourceScalePercAmount, FoodResourceDemandPercInit, FoodResourceDemandPercAcc, FoodResourceChanceAccept, FoodResourceOffsetDemand);
@@ -289,25 +289,31 @@ namespace JuniorProject.Frontend.Windows
 
 
 
-        private void LoadUnit(string name, TextBox dmg, TextBox rng, TextBox hp)
+        private void LoadUnit(string name, TextBox dmg, TextBox rng, TextBox hp, TextBox ironCost, TextBox foodCost)
         {
             if (!unitTemplates.ContainsKey(name)) return;
             var u = unitTemplates[name];
             dmg.Text = u.attackDamage.ToString();
             rng.Text = u.attackRange.ToString();
             hp.Text = u.maxHealth.ToString();
+            ironCost.Text = u.ironCost.ToString();
+            foodCost.Text = u.foodCost.ToString();
         }
-        private void SaveUnit(string name, TextBox dmg, TextBox rng, TextBox hp)
+        private void SaveUnit(string name, TextBox dmg, TextBox rng, TextBox hp, TextBox ic, TextBox fc)
         {
             if (int.TryParse(dmg.Text, out int damage) &&
                 int.TryParse(rng.Text, out int range) &&
-                int.TryParse(hp.Text, out int health))
+                int.TryParse(hp.Text, out int health) &&
+                    int.TryParse(ic.Text, out int ironCost) &&
+                        int.TryParse(fc.Text, out int fcCost))
             {
                 if (unitTemplates.TryGetValue(name, out var localTemplate))
                 {
                     localTemplate.attackDamage = damage;
                     localTemplate.attackRange = range;
                     localTemplate.maxHealth = health;
+                    localTemplate.ironCost = ironCost;
+                    localTemplate.foodCost = fcCost;
                 }
 
                 if (Unit.unitTemplates.TryGetValue(name, out var globalTemplate))
@@ -315,6 +321,8 @@ namespace JuniorProject.Frontend.Windows
                     globalTemplate.attackDamage = damage;
                     globalTemplate.attackRange = range;
                     globalTemplate.maxHealth = health;
+                    globalTemplate.ironCost = ironCost;
+                    globalTemplate.foodCost = fcCost;
                 }
             }
         }
@@ -374,7 +382,8 @@ namespace JuniorProject.Frontend.Windows
                     resourceTemplate.InitialStartingAmount = amount;
                 }
 
-                if (resourceName == "Gold") {
+                if (resourceName == "Gold")
+                {
                     ResourceTemplate.SaveResourcesTemplate();
                     return;
                 } // Don't set other values for Gold
@@ -428,9 +437,9 @@ namespace JuniorProject.Frontend.Windows
         private void LoadResource(string resourceName, TextBox startAmount, TextBox startPrice, TextBox priceScalePercent, TextBox demandInitTradePercent, TextBox demandAcceptTradePercent, TextBox acceptPercent, TextBox offsetDemandPercentBy)
         {
             if (ResourceTemplate.resourcesTemplate.TryGetValue(resourceName, out var resource))
-            { 
+            {
                 startAmount.Text = resource.InitialStartingAmount.ToString();
-                
+
                 if (resourceName == "Gold") return; // Don't set other values for Gold
 
                 startPrice.Text = resource.InitialPrice.ToString();
@@ -467,11 +476,11 @@ namespace JuniorProject.Frontend.Windows
                 resourceTemplate = new Dictionary<string, ResourceTemplate>(ResourceTemplate.resourcesTemplate);
 
                 // Update UI
-                LoadUnit("Archer", ArcherD, ArcherR, ArcherH);
-                LoadUnit("Soldier", SoldierD, SoldierR, SoldierH);
-                LoadUnit("Catapult", CatapultD, CatapultR, CatapultH);
-                LoadUnit("Cannoneer", CannonD, CannonR, CannonH);
-                LoadUnit("Cavalier", CavalierD, CavalierR, CavalierH);
+                LoadUnit("Archer", ArcherD, ArcherR, ArcherH, ArcherIronCost, ArcherFoodCost);
+                LoadUnit("Soldier", SoldierD, SoldierR, SoldierH, SoldierIronCost, SoldierFoodCost);
+                LoadUnit("Catapult", CatapultD, CatapultR, CatapultH, CatapultIronCost, CatapultFoodCost);
+                LoadUnit("Cannoneer", CannonD, CannonR, CannonH, CannoneerIronCost, CannoneerFoodCost);
+                LoadUnit("Cavalier", CavalierD, CavalierR, CavalierH, CavalierIronCost, CavalierFoodCost);
 
                 LoadBuilding("Capital", CapitialCost);
                 LoadBuilding("House", HouseCost);

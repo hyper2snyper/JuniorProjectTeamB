@@ -204,7 +204,7 @@ namespace JuniorProject.Backend.WorldData
                         totalLandPercentage += relativePercentage;
                         tile.terrainPercentages.Add(landType, relativePercentage);
                     }
-                    if (map.GetBiomeResources(tile.primaryBiome) != null) 
+                    if (map.GetBiomeResources(tile.primaryBiome) != null)
                     {
                         tile.tileResources = map.GetBiomeResources(tile.primaryBiome);
                     }
