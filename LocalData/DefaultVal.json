@@ -7,7 +7,9 @@
       "AttackRange": 1,
       "MaxHealth": 5,
       "Sprite": "Soldier",
-      "Flags": 0
+      "Flags": 0,
+      "IronCost": 10,
+      "FoodCost":  25
     },
     {
       "UnitType": "Archer",
@@ -16,7 +18,9 @@
       "AttackRange": 2,
       "MaxHealth": 3,
       "Sprite": "Archer",
-      "Flags": 0
+      "Flags": 0,
+      "IronCost": 10,
+      "FoodCost": 25
     },
     {
       "UnitType": "Cavalier",
@@ -25,7 +29,9 @@
       "AttackRange": 1,
       "MaxHealth": 8,
       "Sprite": "Cavalier",
-      "Flags": 0
+      "Flags": 0,
+      "IronCost": 10,
+      "FoodCost": 25
     },
     {
       "UnitType": "Catapult",
@@ -34,7 +40,9 @@
       "AttackRange": 3,
       "MaxHealth": 10,
       "Sprite": "Catapult",
-      "Flags": 0
+      "Flags": 0,
+      "IronCost": 10,
+      "FoodCost": 25
     },
     {
       "UnitType": "Cannoneer",
@@ -43,7 +51,9 @@
       "AttackRange": 5,
       "MaxHealth": 8,
       "Sprite": "Cannoneer",
-      "Flags": 0
+      "Flags": 0,
+      "IronCost": 10,
+      "FoodCost": 25
     }
   ],
   "BiomeResource": [

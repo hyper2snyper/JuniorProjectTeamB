@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Data.SQLite;
 
 namespace JuniorProject.Backend.Agents
 {
@@ -45,6 +46,12 @@ namespace JuniorProject.Backend.Agents
 
         public Nation(string name, string color, int quadrant, World world) : this(name, color, world)
         {
+            SQLiteDataReader resourceResults = DatabaseManager.ReadDB("SELECT * FROM Resources;");
+            while (resourceResults.Read())
+            {
+                resources[resourceResults.GetString(0)] = resourceResults.GetInt32(1);
+            }
+
             PlaceStart(quadrant);
         }
 
@@ -200,11 +207,7 @@ namespace JuniorProject.Backend.Agents
             {
                 Debug.Print("Calculating Objectives");
                 CalculateObjectives();
-                if (money >= 50 && units.Count < maxUnits)
-                {
-                    money -= 50;
-                    AddUnit(new Unit("Soldier", "", this, world.map, capital.pos));
-                }
+                CheckToAddUnit("Soldier");
             }
             foreach (Building building in buildings)
             {
@@ -283,12 +286,16 @@ namespace JuniorProject.Backend.Agents
 
         public void AddBuilding(Building building)
         {
-            if (building.nation != null)
+            if (resources["Wood"] >= building.template.cost)
             {
-                building.nation.RemoveBuilding(building);
+                resources["Wood"] -= building.template.cost;
+                if (building.nation != null)
+                {
+                    building.nation.RemoveBuilding(building);
+                }
+                buildings.Add(building);
+                building.nation = this;
             }
-            buildings.Add(building);
-            building.nation = this;
         }
 
         public void RemoveBuilding(Building building)
@@ -297,6 +304,15 @@ namespace JuniorProject.Backend.Agents
             if (building == capital)
             {
                 DeleteNation();
+            }
+        }
+
+        public void CheckToAddUnit(string type)
+        {
+            if (resources["Iron"] >= Unit.unitTemplates[type].ironCost && units.Count < maxUnits)
+            {
+                resources["Iron"] -= Unit.unitTemplates[type].ironCost;
+                AddUnit(new Unit(type, "", this, world.map, capital.pos));
             }
         }
 

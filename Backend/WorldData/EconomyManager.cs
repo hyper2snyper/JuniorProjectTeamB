@@ -24,7 +24,7 @@ namespace JuniorProject.Backend.WorldData
         class Demand
         {
             public Demand(string resource, int demand)
-            { 
+            {
                 this.resource = resource;
                 this.demand = demand;
             }
@@ -71,7 +71,8 @@ namespace JuniorProject.Backend.WorldData
             {
                 using var results = DatabaseManager.ReadDB($"SELECT InitialPrice, InitialStartingAmount FROM Resources WHERE ResourceName='{type}'");
                 int startingAmount = 0;
-                while (results.Read()) {
+                while (results.Read())
+                {
                     int initialPrice = results.GetInt32(0);
                     startingAmount = results.GetInt32(1);
                     resources[type] = new Resource(initialPrice, startingAmount * 3, 0); // multiply by 3, there's three teams
@@ -99,7 +100,8 @@ namespace JuniorProject.Backend.WorldData
         {
             foreach (var n in nations.Values)
             {
-                foreach (string r in resourceTypes) {
+                foreach (string r in resourceTypes)
+                {
                     demands[(n.color, r)].demand = (1 - (n.resources[r] / resources[r].totalResource));
                 }
             }
@@ -158,8 +160,10 @@ namespace JuniorProject.Backend.WorldData
             potentialTrades.Clear();
         }
 
-        void UpdateResourceValues() {
-            foreach (string r in resourceTypes) {
+        void UpdateResourceValues()
+        {
+            foreach (string r in resourceTypes)
+            {
                 resources[r].totalResource = CalculateResourceTotal(r);
                 UpdatePrice(r);
             }
@@ -180,7 +184,8 @@ namespace JuniorProject.Backend.WorldData
         {
             using var results = DatabaseManager.ReadDB($"SELECT ChanceToAcceptTrade, DemandPercentToAcceptTrade FROM Resources WHERE ResourceName='{resource}'");
 
-            while (results.Read()) {
+            while (results.Read())
+            {
                 double chanceToAccept = results.GetDouble(0);
                 double demandThreshold = results.GetDouble(1);
 
@@ -237,7 +242,7 @@ namespace JuniorProject.Backend.WorldData
                 if (priceChange != 0)
                 {
                     int initialPrice = results.GetInt32(1);
-                    int newPrice = (priceChange * 1 ) + resources[resource].price;
+                    int newPrice = (priceChange * 1) + resources[resource].price;
                     resources[resource].price = Math.Max(initialPrice, newPrice);
                     resources[resource].priceLevel = priceLevelChange;
 
