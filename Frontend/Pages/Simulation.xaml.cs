@@ -71,9 +71,10 @@ namespace JuniorProject
             }
         }
 
-        private void RefreshClicked(object sender, RoutedEventArgs e)
+        private void HistoryClicked(object sender, RoutedEventArgs e)
         {
-
+            HistoryWindow historyWindow = new HistoryWindow();
+            historyWindow.Show();
         }
 
         public void SetGridlines(object sender, RoutedEventArgs e)
@@ -83,15 +84,17 @@ namespace JuniorProject
 
         private void StartClicked(object sender, RoutedEventArgs e)
         {
-
+            if (ClientCommunicator.GetData<bool>("Paused")) {
+                ClientCommunicator.CallAction("TogglePause");
+            }
         }
 
         private void PauseClicked(object sender, RoutedEventArgs e)
         {
-            Debug.Print("Pause Clicked.");
-            ClientCommunicator.CallAction("TogglePause");
-            //PauseButton.Content = ClientCommunicator.GetData<bool>("Paused") ? "Pause" : "Unpause";
-
+            if (!ClientCommunicator.GetData<bool>("Paused"))
+            {
+                ClientCommunicator.CallAction("TogglePause");
+            }
         }
 
         private void StepClicked(object sender, RoutedEventArgs e)

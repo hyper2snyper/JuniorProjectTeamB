@@ -80,7 +80,7 @@
     {
       "BiomeID": "Grassland",
       "ResourceID": "Gold",
-      "GatherRate": 0
+      "GatherRate": 25
     },
     {
       "BiomeID": "Highlands",
@@ -105,7 +105,7 @@
     {
       "BiomeID": "Highlands",
       "ResourceID": "Gold",
-      "GatherRate": 30
+      "GatherRate": 25
     },
     {
       "BiomeID": "Forest",
@@ -130,7 +130,7 @@
     {
       "BiomeID": "Forest",
       "ResourceID": "Gold",
-      "GatherRate": 0
+      "GatherRate": 25
     },
     {
       "BiomeID": "HighlandsForest",
@@ -155,7 +155,7 @@
     {
       "BiomeID": "HighlandsForest",
       "ResourceID": "Gold",
-      "GatherRate": 10
+      "GatherRate": 25
     }
   ],
   "Buildings": [

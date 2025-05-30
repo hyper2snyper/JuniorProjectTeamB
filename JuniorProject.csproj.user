@@ -50,6 +50,9 @@
     <Page Update="Frontend\MainWindow.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Update="Frontend\Windows\HistoryWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Frontend\Windows\SimulationSettings.xaml">
       <SubType>Designer</SubType>
     </Page>

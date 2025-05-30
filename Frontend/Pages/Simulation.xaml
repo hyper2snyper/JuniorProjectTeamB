@@ -102,7 +102,7 @@
                 <Trigger Property="IsMouseOver" Value="true">
                     <Setter TargetName="border" Property="Background">
                         <Setter.Value>
-                            <ImageBrush ImageSource="/Frontend/gui/Buttons/SaveButtonHover.png"/>
+                            <ImageBrush ImageSource="/Frontend/gui/Buttons/PauseButtonHover.png"/>
                         </Setter.Value>
                     </Setter>
                 </Trigger>
@@ -136,7 +136,7 @@
                 <Trigger Property="IsMouseOver" Value="true">
                     <Setter TargetName="border" Property="Background">
                         <Setter.Value>
-                            <ImageBrush ImageSource="/Frontend/gui/Buttons/BackButtonHover.png"/>
+                            <ImageBrush ImageSource="/Frontend/gui/Buttons/HistoryButtonHover.png"/>
                         </Setter.Value>
                     </Setter>
                 </Trigger>
@@ -164,12 +164,12 @@
     <Grid>
         <Border BorderBrush="Black" BorderThickness="2" Margin="0,10,0,0" Padding="5" Width="875" Height="45" HorizontalAlignment="Center" VerticalAlignment="Top">
             <StackPanel Orientation="Horizontal" >
-                <Button Template="{DynamicResource RefreshTemplate}" BorderThickness ="0" Height="32" Width="90" Click="RefreshClicked">
+                <Button Template="{DynamicResource StartTemplate}" BorderThickness ="0" Height="32" Width="105" Margin="10, 0" VerticalAlignment="Top" Click="StartClicked">
                     <Button.Style>
                         <Style TargetType ="{x:Type Button}">
                             <Setter Property="Background">
                                 <Setter.Value>
-                                    <ImageBrush x:Name="RefreshButtonBrush" ImageSource="/Frontend/gui/Buttons/RefreshButton.png"/>
+                                    <ImageBrush x:Name="StartButtonBrush" ImageSource="/FrontEnd/gui/Buttons/StartButton.png"/>
                                 </Setter.Value>
                             </Setter>
                             <Style.Triggers>
@@ -180,12 +180,12 @@
                         </Style>
                     </Button.Style>
                 </Button>
-                <Button Template="{DynamicResource StartTemplate}" BorderThickness ="0" Height="32" Width="105" Margin="10, 0" VerticalAlignment="Top" Click="StartClicked">
+                <Button Template="{DynamicResource PauseTemplate}" BorderThickness="0" Height="32" Width="115" Click="PauseClicked">
                     <Button.Style>
                         <Style TargetType ="{x:Type Button}">
                             <Setter Property="Background">
                                 <Setter.Value>
-                                    <ImageBrush x:Name="StartButtonBrush" ImageSource="/FrontEnd/gui/Buttons/StartButton.png"/>
+                                    <ImageBrush x:Name="PauseButtonBrush" ImageSource="/FrontEnd/gui/Buttons/PauseButton.png"/>
                                 </Setter.Value>
                             </Setter>
                             <Style.Triggers>
@@ -212,12 +212,28 @@
                         </Style>
                     </Button.Style>
                 </Button>
-                <Button Template="{DynamicResource PauseTemplate}" BorderThickness="0" Height="32" Margin="10, 0" VerticalAlignment="Top" Width="115" Click="PauseClicked">
+                <Button Template="{DynamicResource SimSettingsTemplate}" BorderThickness="0" Height="32" Width="112" Click="SettingsClicked">
                     <Button.Style>
                         <Style TargetType ="{x:Type Button}">
                             <Setter Property="Background">
                                 <Setter.Value>
-                                    <ImageBrush x:Name="PauseButtonBrush" ImageSource="/FrontEnd/gui/Buttons/PauseButton.png"/>
+                                    <ImageBrush x:Name="BackButtonBrush" ImageSource="/FrontEnd/gui/Buttons/SimSettingsButton.png"/>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Opacity" Value="0.8"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+                <Button Template="{DynamicResource RefreshTemplate}" BorderThickness ="0" Height="32" Width="90" Click="HistoryClicked">
+                    <Button.Style>
+                        <Style TargetType ="{x:Type Button}">
+                            <Setter Property="Background">
+                                <Setter.Value>
+                                    <ImageBrush x:Name="RefreshButtonBrush" ImageSource="/Frontend/gui/Buttons/HistoryButton.png"/>
                                 </Setter.Value>
                             </Setter>
                             <Style.Triggers>
@@ -250,22 +266,6 @@
                             <Setter Property="Background">
                                 <Setter.Value>
                                     <ImageBrush x:Name="BackButtonBrush" ImageSource="/FrontEnd/gui/Buttons/BackButton.png"/>
-                                </Setter.Value>
-                            </Setter>
-                            <Style.Triggers>
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter Property="Opacity" Value="0.8"/>
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Button.Style>
-                </Button>
-                <Button Template="{DynamicResource SimSettingsTemplate}" BorderThickness="0" Height="32" Width="112" Click="SettingsClicked">
-                    <Button.Style>
-                        <Style TargetType ="{x:Type Button}">
-                            <Setter Property="Background">
-                                <Setter.Value>
-                                    <ImageBrush x:Name="BackButtonBrush" ImageSource="/FrontEnd/gui/Buttons/SimSettingsButton.png"/>
                                 </Setter.Value>
                             </Setter>
                             <Style.Triggers>

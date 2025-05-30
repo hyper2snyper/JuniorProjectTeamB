@@ -5,7 +5,7 @@ namespace JuniorProject.Backend.WorldData
 {
     public class EconomyManager
     {
-        class Trade
+        public class Trade
         {
             public Trade(string i, string r, int rA, int p)
             {
@@ -33,7 +33,7 @@ namespace JuniorProject.Backend.WorldData
             public int demand;
         }
 
-        class Resource
+        public class Resource
         {
             public Resource(int price, int totalResource, int priceLevel)
             {
@@ -56,6 +56,10 @@ namespace JuniorProject.Backend.WorldData
 
         List<Trade> potentialTrades;
 
+        Dictionary<ulong, List<Resource>> itemsHistory; // Keep track of resources and their values every X ticks (putting it as 5 ticks initially)
+        const int TICK_INTERVAL_FOR_ITEM_HISTORY = 5;
+        List<Trade> tradesHistory; // Keep track of trades
+
         static readonly string[] resourceTypes = { "Food", "Iron", "Wood", "Gold" };
 
         public EconomyManager() { }
@@ -66,6 +70,8 @@ namespace JuniorProject.Backend.WorldData
             demands = new Dictionary<(string, string), Demand>();
             resources = new Dictionary<string, Resource>();
             potentialTrades = new List<Trade>();
+            itemsHistory = new Dictionary<ulong, List<Resource>>();
+            tradesHistory = new List<Trade>();
 
             foreach (string type in resourceTypes)
             {
@@ -84,6 +90,9 @@ namespace JuniorProject.Backend.WorldData
                     n.resources[type] = startingAmount;
                 }
             }
+
+            ClientCommunicator.RegisterData<Dictionary<ulong, List<Resource>>>("itemsHistory", itemsHistory);
+            ClientCommunicator.RegisterData<List<Trade>>("tradesHistory", tradesHistory);
         }
 
         public void TakeTurn(ulong tickCount)
@@ -93,9 +102,23 @@ namespace JuniorProject.Backend.WorldData
             CalculateDemands();
             InitiatePotentialTrades();
             Print();
+            if (tickCount % TICK_INTERVAL_FOR_ITEM_HISTORY == 0) { 
+                ArchiveResourceInformation(tickCount);
+            }
+            ClientCommunicator.UpdateData<Dictionary<ulong, List<Resource>>>("itemsHistory", itemsHistory);
+            ClientCommunicator.UpdateData<List<Trade>>("tradesHistory", tradesHistory);
         }
 
         /* --------- MAIN FUNCTIONS ---------------- */
+        void ArchiveResourceInformation(ulong tickCount)
+        {
+            List<Resource> resourceList = new List<Resource>();
+            foreach (var resource in resources)
+            {
+                resourceList.Add(resource.Value);
+            }
+            itemsHistory.Add(tickCount, resourceList);
+        }
         void CalculateDemands()
         {
             foreach (var n in nations.Values)
@@ -178,6 +201,7 @@ namespace JuniorProject.Backend.WorldData
             {
                 Debug.Print($"Type: {r} | Price: {resources[r].price} | Total: {resources[r].totalResource}");
             }
+            Debug.Print($"Total Trades: {tradesHistory.Count()} | Total Archived Items: {itemsHistory.Count()}");
         }
 
         bool ShouldAcceptTrade(ulong tickCount, string resource, double acceptingNationDemand)
@@ -257,6 +281,8 @@ namespace JuniorProject.Backend.WorldData
 
             nations[trade.initiator].resources[trade.resource] += trade.resourceAmount;
             nations[trade.initiator].resources["Gold"] -= trade.price;
+
+            tradesHistory.Add(trade);
 
             Debug.Print($"COMPLETED TRADE: {acceptingNation.color} : {trade.resourceAmount} {trade.resource} -> {trade.initiator} for {trade.price} gold");
         }
