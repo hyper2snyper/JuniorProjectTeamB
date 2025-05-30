@@ -35,14 +35,16 @@ namespace JuniorProject.Backend.WorldData
 
         public class Resource
         {
-            public Resource(int price, int totalResource, int priceLevel)
+            public Resource(int price, int totalResource, int priceLevel, string name)
             {
                 this.price = price;
                 this.totalResource = totalResource;
                 this.priceLevel = priceLevel;
                 this.initialTotalResource = totalResource;
+                this.name = name;
             }
 
+            public string name;
             public int price;
             public int totalResource;
             public int priceLevel; // integer to keep track of updating the price (starts at 0 and goes up or down 1 depending on amount of resource)
@@ -81,7 +83,7 @@ namespace JuniorProject.Backend.WorldData
                 {
                     int initialPrice = results.GetInt32(0);
                     startingAmount = results.GetInt32(1);
-                    resources[type] = new Resource(initialPrice, startingAmount * 3, 0); // multiply by 3, there's three teams
+                    resources[type] = new Resource(initialPrice, startingAmount * 3, 0, type); // multiply by 3, there's three teams
                 }
 
                 foreach (var n in nations.Values)
@@ -115,7 +117,7 @@ namespace JuniorProject.Backend.WorldData
             List<Resource> resourceList = new List<Resource>();
             foreach (var resource in resources)
             {
-                resourceList.Add(resource.Value);
+                resourceList.Add(new Resource(resource.Value.price, resource.Value.totalResource, resource.Value.priceLevel, resource.Value.name));
             }
             itemsHistory.Add(tickCount, resourceList);
         }
