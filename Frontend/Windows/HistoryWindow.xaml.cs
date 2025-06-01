@@ -77,7 +77,6 @@ namespace JuniorProject.Frontend.Windows
         };
         public ISeries[] ResourceAmountSeries => ResourceLines.Values.ToArray();
 
-        // Nation resource pie chart series
         public ISeries[] NationResourceSeries => NationResourceSlices.ToArray();
 
         public ViewModel()
@@ -93,18 +92,15 @@ namespace JuniorProject.Frontend.Windows
             var tradesHistory = ClientCommunicator.GetData<List<EconomyManager.Trade>>("tradesHistory");
             var nationResources = ClientCommunicator.GetData<Dictionary<string, Dictionary<string, int>>>("nationResources");
 
-            // Update resource amounts
             if (itemsHistory != null)
             {
                 var sorted = itemsHistory.OrderBy(kvp => kvp.Key);
 
-                // Clear existing data
                 foreach (var line in ResourceLines.Values)
                 {
                     line.Values = new List<int>();
                 }
 
-                // Update resource amounts
                 foreach (var (_, resourceList) in sorted)
                 {
                     foreach (var resource in resourceList)
@@ -117,17 +113,13 @@ namespace JuniorProject.Frontend.Windows
                 }
             }
 
-            // Update nation resources for pie chart
             if (nationResources != null)
             {
-                // Update available nations list
                 AvailableNations = nationResources.Keys.ToList();
                 OnPropertyChanged(nameof(AvailableNations));
 
-                // Clear existing pie slices
                 NationResourceSlices.Clear();
 
-                // Create pie slices for the selected resource
                 if (!string.IsNullOrEmpty(SelectedResource))
                 {
                     foreach (var nationData in nationResources)
@@ -139,7 +131,6 @@ namespace JuniorProject.Frontend.Windows
                         {
                             int resourceAmount = resources[SelectedResource];
 
-                            // Only add nations with non-zero resources
                             if (resourceAmount > 0)
                             {
                                 var pieSeries = new PieSeries<int>
@@ -154,7 +145,6 @@ namespace JuniorProject.Frontend.Windows
                     }
                 }
 
-                // Notify that the pie chart data has changed
                 OnPropertyChanged(nameof(NationResourceSlices));
                 OnPropertyChanged(nameof(NationResourceSeries));
             }
@@ -212,17 +202,6 @@ namespace JuniorProject.Frontend.Windows
                 default:
                     CurrentSeries = NationResourceSeries;
                     break;
-            }
-
-            // Debug output to help troubleshoot
-            Debug.Print($"Tab Index: {SelectedTabIndex}, Series Count: {CurrentSeries?.Length ?? 0}");
-            if (SelectedTabIndex == 0)
-            {
-                Debug.Print($"Pie Chart Slices: {NationResourceSlices.Count}");
-                foreach (var slice in NationResourceSlices)
-                {
-                    Debug.Print($"  - {slice.Name}: {slice.Values?.FirstOrDefault()}");
-                }
             }
         }
 

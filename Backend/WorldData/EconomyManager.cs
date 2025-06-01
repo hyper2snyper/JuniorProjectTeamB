@@ -1,13 +1,18 @@
 ﻿using JuniorProject.Backend.Agents;
+using JuniorProject.Backend.Helpers;
 using JuniorProject.Properties;
+using System.Diagnostics;
+using System.Windows.Documents;
+using System.Xml.Linq;
 using static JuniorProject.Backend.WorldData.EconomyManager;
 
 namespace JuniorProject.Backend.WorldData
 {
-    public class EconomyManager
+    public class EconomyManager : Serializable
     {
-        public class Trade
+        public class Trade : Serializable
         {
+            public Trade() { }
             public Trade(string i, string r, int rA, int p)
             {
                 initiator = i;
@@ -21,6 +26,24 @@ namespace JuniorProject.Backend.WorldData
             public int resourceAmount;
             public int price;
             public bool accepted; // distinguish between accepted/initiated trades for HistoryWindow
+
+            public override void SerializeFields()
+            {
+                SerializeField<string>(initiator);
+                SerializeField<string>(resource);
+                SerializeField<int>(resourceAmount);
+                SerializeField<int>(price);
+                SerializeField<bool>(accepted);
+            }
+
+            public override void DeserializeFields()
+            {
+                initiator = DeserializeField<string>();
+                resource = DeserializeField<string>();
+                resourceAmount = DeserializeField<int>();
+                price = DeserializeField<int>();
+                accepted = DeserializeField<bool>();
+            }
         }
 
         public class Demand
@@ -35,8 +58,9 @@ namespace JuniorProject.Backend.WorldData
             public float demand;
         }
 
-        public class Resource
+        public class Resource : Serializable
         {
+            public Resource() { }
             public Resource(int price, int totalResource, int priceLevel, string name)
             {
                 this.price = price;
@@ -51,6 +75,24 @@ namespace JuniorProject.Backend.WorldData
             public int totalResource;
             public int priceLevel; // integer to keep track of updating the price (starts at 0 and goes up or down 1 depending on amount of resource)
             public int initialTotalResource;
+
+            public override void SerializeFields()
+            {
+                SerializeField<string>(name);
+                SerializeField<int>(price);
+                SerializeField<int>(totalResource);
+                SerializeField<int>(priceLevel);
+                SerializeField<int>(initialTotalResource);
+            }
+
+            public override void DeserializeFields()
+            {
+                name = DeserializeField<string>();
+                price = DeserializeField<int>();
+                totalResource = DeserializeField<int>();
+                priceLevel = DeserializeField<int>();
+                initialTotalResource = DeserializeField<int>();
+            }
         }
 
         public Dictionary<string, Nation> nations;
@@ -67,11 +109,14 @@ namespace JuniorProject.Backend.WorldData
 
         static readonly string[] resourceTypes = { "Food", "Iron", "Wood", "Gold" };
 
-        public EconomyManager() { }
-
-        public void Initialize(ref Dictionary<string, Nation> nations)
+        public EconomyManager() 
         {
-            this.nations = nations;
+
+        }
+
+        public void Initialize()
+        {
+            nations = ClientCommunicator.GetData<World>("World").nations;
             demands = new Dictionary<(string, string), Demand>();
             resources = new Dictionary<string, Resource>();
             potentialTrades = new List<Trade>();
@@ -103,10 +148,11 @@ namespace JuniorProject.Backend.WorldData
 
         public void TakeTurn(ulong tickCount)
         {
+            nations = ClientCommunicator.GetData<World>("World").nations;
             RespondToTrades(tickCount);
             UpdateResourceValues();
             CalculateDemands();
-            if (tickCount > 100) {
+            if (tickCount > 1) {
                 InitiatePotentialTrades();
             }
             //Print();
@@ -315,6 +361,29 @@ namespace JuniorProject.Backend.WorldData
             tradesHistory.Add(trade);
 
             Debug.Print($"COMPLETED TRADE: {acceptingNation.color} : {trade.resourceAmount} {trade.resource} -> {trade.initiator} for {trade.price} gold");
+        }
+
+        public override void SerializeFields()
+        {
+            //SerializeField<ulong, List<Resource>>(itemsHistory);
+            SerializeField<Trade>(tradesHistory);
+            //SerializeField(nationResources);
+        }
+
+        public override void DeserializeFields()
+        {
+            // Dictionary<ulong, List<Resource>> itemsHistory; // Keep track of resources and their values every X ticks (putting it as 5 ticks initially)
+            // List<Trade> tradesHistory;
+            // Dictionary<string, Dictionary<string, int>> nationResources = new Dictionary<string, Dictionary<string, int>>();
+
+            //itemsHistory = DeserializeDictionary<ulong, List<Resource>>();
+            tradesHistory = DeserializeList<Trade>();
+            //nationResources = DeserializeDictionary<string, Dictionary<string, int>>();
+
+            ClientCommunicator.RegisterData<Dictionary<ulong, List<Resource>>>("itemsHistory", itemsHistory); // make this available to HistoryWindow
+            ClientCommunicator.RegisterData<List<Trade>>("tradesHistory", tradesHistory); // make this available to HistoryWindow 
+            ClientCommunicator.RegisterData<Dictionary<string, Dictionary<string, int>>>("nationResources", nationResources); // make this available to HistoryWindow
+
         }
     }
 }
