@@ -16,15 +16,17 @@ namespace JuniorProject.Frontend.Windows
 {
     public class ViewModel : INotifyPropertyChanged
     {
-        public Dictionary<string, ISeries[]> AllPricesSeries { get; set; } = new()
+        public Dictionary<string, LineSeries<double>> PriceLines { get; private set; } = new()
         {
-            { "Resource Alpha", new ISeries[] { new LineSeries<double> { Values = new double[] { }, Name = "Alpha Price" } } },
-            { "Resource Beta", new ISeries[] { new LineSeries<double> { Values = new double[] { }, Name = "Beta Price" } } },
-            { "Resource Gamma", new ISeries[] { new LineSeries<double> { Values = new double[] { }, Name = "Gamma Price" } } },
-            { "Resource Delta", new ISeries[] { new LineSeries<double> { Values = new double[] { }, Name = "Delta Price" } } }
+            { "Food", new LineSeries<double> { Values = new List<double>(), Name = "Food" } },
+            { "Wood", new LineSeries<double> { Values = new List<double>(), Name = "Wood" } },
+            { "Iron", new LineSeries<double> { Values = new List<double>(), Name = "Iron" } },
+            { "Gold", new LineSeries<double> { Values = new List<double>(), Name = "Gold" } }
         };
 
-        public List<string> AvailableResources { get; set; } = new() { "Resource Alpha", "Resource Beta", "Resource Gamma", "Resource Delta" };
+        public Dictionary<string, ISeries[]> AllPricesSeries { get; set; } = new();
+
+        public List<string> AvailableResources { get; set; } = new() { "Food", "Wood", "Iron", "Gold" };
 
         private string _selectedResource;
         public string SelectedResource
@@ -74,6 +76,12 @@ namespace JuniorProject.Frontend.Windows
         {
             _selectedResource = AvailableResources[0];
             _selectedTabIndex = 0;
+
+            foreach (var resource in AvailableResources)
+            {
+                AllPricesSeries[resource] = new ISeries[] { PriceLines[resource] };
+            }
+
             _currentSeries = AllPricesSeries[_selectedResource];
         }
 
@@ -84,42 +92,51 @@ namespace JuniorProject.Frontend.Windows
 
             var sorted = itemsHistory.OrderBy(kvp => kvp.Key);
 
+            // Clear existing data
             foreach (var line in ResourceLines.Values)
             {
                 line.Values = new List<int>();
+            }
+
+            foreach (var line in PriceLines.Values)
+            {
+                line.Values = new List<double>();
             }
 
             foreach (var (_, resourceList) in sorted)
             {
                 foreach (var resource in resourceList)
                 {
-                    if (ResourceLines.TryGetValue(resource.name, out var line) && line.Values is List<int> values)
+                    if (ResourceLines.TryGetValue(resource.name, out var resourceLine) && resourceLine.Values is List<int> resourceValues)
                     {
-                        values.Add(resource.totalResource);
+                        resourceValues.Add(resource.totalResource);
+                    }
+
+                    if (PriceLines.TryGetValue(resource.name, out var priceLine) && priceLine.Values is List<double> priceValues)
+                    {
+                        priceValues.Add(resource.price);
                     }
                 }
             }
 
-            if (SelectedTabIndex == 1)
-            {
-                CurrentSeries = ResourceAmountSeries;
-            }
+
+            UpdateCurrentSeries();
         }
 
         private void UpdateCurrentSeries()
         {
             switch (SelectedTabIndex)
             {
-                case 0:
+                case 0: // Prices tab
                     if (AllPricesSeries.ContainsKey(SelectedResource))
                         CurrentSeries = AllPricesSeries[SelectedResource];
                     else
                         CurrentSeries = AllPricesSeries[AvailableResources[0]];
                     break;
-                case 1:
+                case 1: // All resources tab
                     CurrentSeries = ResourceAmountSeries;
                     break;
-                case 2:
+                case 2: // Trades tab
                     CurrentSeries = TradesSeries;
                     break;
                 default:
