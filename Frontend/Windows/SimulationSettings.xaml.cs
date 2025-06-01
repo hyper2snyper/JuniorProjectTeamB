@@ -9,6 +9,10 @@ using JuniorProject.Backend.Agents;
 using JuniorProject.Frontend.Windows;
 using System.Data.Entity.Core.Common.CommandTrees.ExpressionBuilder;
 using static JuniorProject.Backend.Agents.BiomeResources;
+using System.Text.Json.Serialization;
+using System.Data.SQLite;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace JuniorProject.Frontend.Windows
 {
@@ -17,10 +21,146 @@ namespace JuniorProject.Frontend.Windows
     /// </summary>
     public partial class SimulationSettings : Window
     {
+        class ResourceTemplate
+        {
+            [JsonPropertyName("ResourceName")]
+            public string ResourceName { get; set; }
+
+            [JsonPropertyName("InitialStartingAmount")]
+            public int? InitialStartingAmount { get; set; }
+
+            [JsonPropertyName("InitialPrice")]
+            public int? InitialPrice { get; set; }
+
+            [JsonPropertyName("ScalePercentAmount")]
+            public double? ScalePercentAmount { get; set; }
+
+            [JsonPropertyName("DemandPercentToInitiateTrade")]
+            public double? DemandPercentToInitiateTrade { get; set; }
+
+            [JsonPropertyName("DemandPercentToAcceptTrade")]
+            public double? DemandPercentToAcceptTrade { get; set; }
+
+            [JsonPropertyName("ChanceToAcceptTrade")]
+            public double? ChanceToAcceptTrade { get; set; }
+
+            [JsonPropertyName("OffsetDemandPercentBy")]
+            public double? OffsetDemandPercentBy { get; set; }
+
+            public static Dictionary<string, ResourceTemplate> resourcesTemplate = new();
+
+            public static void LoadResourcesTemplate()
+            {
+                if (resourcesTemplate == null)
+                    resourcesTemplate = new Dictionary<string, ResourceTemplate>();
+                else if (resourcesTemplate.Count > 0)
+                    return;
+
+                resourcesTemplate.Clear();
+
+                using var results = DatabaseManager.ReadDB("SELECT * FROM Resources");
+
+                while (results.Read())
+                {
+                    var resource = results.GetString(0);
+                    var initialStartingAmount = results.GetInt32(1);
+                    var initialPrice = results.GetInt32(2);
+                    var scalePercentAmount = results.GetDouble(3);
+                    var demandPercentToInitiateTrade = results.GetDouble(4);
+                    var demandPercentToAcceptTrade = results.GetDouble(5);
+                    var chanceToAcceptTrade = results.GetDouble(6);
+                    var offsetDemandPercentBy = results.GetDouble(7);
+
+                    resourcesTemplate[resource] = new ResourceTemplate
+                    {
+                        ResourceName = resource,
+                        InitialStartingAmount = initialStartingAmount,
+                        InitialPrice = initialPrice,
+                        ScalePercentAmount = scalePercentAmount,
+                        DemandPercentToInitiateTrade = demandPercentToInitiateTrade,
+                        DemandPercentToAcceptTrade = demandPercentToAcceptTrade,
+                        OffsetDemandPercentBy = offsetDemandPercentBy,
+                        ChanceToAcceptTrade = chanceToAcceptTrade,
+                    };
+                }
+            }
+
+            public static void ResetResourcesFromJson(string jsonFilePath)
+            {
+                if (!File.Exists(jsonFilePath))
+                    throw new FileNotFoundException($"Default data JSON not found: {jsonFilePath}");
+
+                string json = File.ReadAllText(jsonFilePath);
+                var jsonData = JsonSerializer.Deserialize<Dictionary<string, List<ResourceTemplate>>>(json);
+
+                if (jsonData != null && jsonData.ContainsKey("Resources"))
+                {
+                    foreach (var res in jsonData["Resources"])
+                    {
+                        if (string.IsNullOrWhiteSpace(res.ResourceName) || string.IsNullOrWhiteSpace(res.ResourceName)) continue;
+
+                        DatabaseManager.WriteDB(
+                        @"UPDATE Resources SET 
+                            InitialStartingAmount = @initialStartingAmount,
+                            InitialPrice = @initialPrice,
+                            ScalePercentAmount = @scalePercentAmount,
+                            DemandPercentToInitiateTrade = @demandInitiate,
+                            DemandPercentToAcceptTrade = @demandAccept,
+                            ChanceToAcceptTrade = @chanceAccept,
+                            OffsetDemandPercentBy = @offsetDemand
+                          WHERE ResourceName = @resourceName",
+                        new Dictionary<string, object>
+                        {
+                            { "@initialStartingAmount", res.InitialStartingAmount },
+                            { "@initialPrice", res.InitialPrice },
+                            { "@scalePercentAmount", res.ScalePercentAmount },
+                            { "@demandInitiate", res.DemandPercentToInitiateTrade },
+                            { "@demandAccept", res.DemandPercentToAcceptTrade },
+                            { "@chanceAccept", res.ChanceToAcceptTrade },
+                            { "@offsetDemand", res.OffsetDemandPercentBy },
+                            { "@resourceName", res.ResourceName }
+                        });
+                    }
+
+                    resourcesTemplate = null;
+                    LoadResourcesTemplate();
+                }
+            }
+
+            public static void SaveResourcesTemplate()
+            {
+                foreach (var template in resourcesTemplate.Values)
+                {
+                    DatabaseManager.WriteDB(
+                    @"UPDATE Resources SET 
+                        InitialStartingAmount = @InitialStartingAmount,
+                        InitialPrice = @InitialPrice,
+                        ScalePercentAmount = @ScalePercentAmount,
+                        DemandPercentToInitiateTrade = @DemandPercentToInitiateTrade,
+                        DemandPercentToAcceptTrade = @DemandPercentToAcceptTrade,
+                        ChanceToAcceptTrade = @ChanceToAcceptTrade,
+                        OffsetDemandPercentBy = @OffsetDemandPercentBy
+                      WHERE ResourceName = @ResourceName",
+                    new Dictionary<string, object>
+                    {
+                        { "@InitialStartingAmount", template.InitialStartingAmount },
+                        { "@InitialPrice", template.InitialPrice },
+                        { "@ScalePercentAmount", template.ScalePercentAmount },
+                        { "@DemandPercentToInitiateTrade", template.DemandPercentToInitiateTrade },
+                        { "@DemandPercentToAcceptTrade", template.DemandPercentToAcceptTrade },
+                        { "@ChanceToAcceptTrade", template.ChanceToAcceptTrade },
+                        { "@OffsetDemandPercentBy", template.OffsetDemandPercentBy },
+                        { "@ResourceName", template.ResourceName }
+                    }
+                    );
+                }
+            }
+        }
 
         Dictionary<string, Unit.UnitTemplate> unitTemplates;
         Dictionary<string, Building.BuildingTemplate> buildingTemplates;
         Dictionary<(string Biome, string Resource), BiomeResourcesTemplate> biomeResourcesTemplate;
+        Dictionary<string, ResourceTemplate> resourceTemplate;
 
         public static readonly Regex intOnly = new Regex("[0-9]+");
         public static readonly Regex correctFloat = new Regex("^[0-9]*\\.?[0-9]*$");
@@ -43,11 +183,11 @@ namespace JuniorProject.Frontend.Windows
         {
 
             // Units
-            SaveUnit("Archer", ArcherD, ArcherR, ArcherH);
-            SaveUnit("Soldier", SoldierD, SoldierR, SoldierH);
-            SaveUnit("Catapult", CatapultD, CatapultR, CatapultH);
-            SaveUnit("Cannoneer", CannonD, CannonR, CannonH);
-            SaveUnit("Cavalier", CavalierD, CavalierR, CavalierH);
+            SaveUnit("Archer", ArcherD, ArcherR, ArcherH, ArcherIronCost, ArcherFoodCost);
+            SaveUnit("Soldier", SoldierD, SoldierR, SoldierH, SoldierIronCost, SoldierFoodCost);
+            SaveUnit("Catapult", CatapultD, CatapultR, CatapultH, CatapultIronCost, CatapultFoodCost);
+            SaveUnit("Cannoneer", CannonD, CannonR, CannonH, CannoneerIronCost, CannoneerFoodCost);
+            SaveUnit("Cavalier", CavalierD, CavalierR, CavalierH, CavalierIronCost, CavalierFoodCost);
             SaveUnits();
 
 
@@ -69,6 +209,12 @@ namespace JuniorProject.Frontend.Windows
             SaveBiome("Forest", GoldF, WoodF, StoneF, FoodF, IronF);
             SaveBiome("HighlandsForest", GoldHF, WoodHF, StoneHF, FoodHF, IronHF);
 
+
+            //Resources for economy
+            SaveResource("Wood", WoodResourceStart, WoodResourceStartPrice, WoodResourceScalePercAmount, WoodResourceDemandPercInit, WoodResourceDemandPercAcc, WoodResourceChanceAccept, WoodResourceOffsetDemand);
+            SaveResource("Gold", GoldResourceStart, null, null, null, null, null, null);
+            SaveResource("Iron", IronResourceStart, IronResourceStartPrice, IronResourceScalePercAmount, IronResourceDemandPercInit, IronResourceDemandPercAcc, IronResourceChanceAccept, IronResourceOffsetDemand);
+            SaveResource("Food", FoodResourceStart, FoodResourceStartPrice, FoodResourceScalePercAmount, FoodResourceDemandPercInit, FoodResourceDemandPercAcc, FoodResourceChanceAccept, FoodResourceOffsetDemand);
 
 
             Debug.Print("Saved!");
@@ -100,11 +246,11 @@ namespace JuniorProject.Frontend.Windows
                 Unit.LoadUnitTemplates();
                 unitTemplates = new Dictionary<string, Unit.UnitTemplate>(Unit.unitTemplates);
 
-                LoadUnit("Archer", ArcherD, ArcherR, ArcherH);
-                LoadUnit("Soldier", SoldierD, SoldierR, SoldierH);
-                LoadUnit("Catapult", CatapultD, CatapultR, CatapultH);
-                LoadUnit("Cannoneer", CannonD, CannonR, CannonH);
-                LoadUnit("Cavalier", CavalierD, CavalierR, CavalierH);
+                LoadUnit("Archer", ArcherD, ArcherR, ArcherH, ArcherIronCost, ArcherFoodCost);
+                LoadUnit("Soldier", SoldierD, SoldierR, SoldierH, SoldierIronCost, SoldierFoodCost);
+                LoadUnit("Catapult", CatapultD, CatapultR, CatapultH, CatapultIronCost, CatapultFoodCost);
+                LoadUnit("Cannoneer", CannonD, CannonR, CannonH, CannoneerIronCost, CannoneerFoodCost);
+                LoadUnit("Cavalier", CavalierD, CavalierR, CavalierH, CavalierIronCost, CavalierFoodCost);
             }
 
             if (buildingTemplates == null)
@@ -130,29 +276,44 @@ namespace JuniorProject.Frontend.Windows
                 LoadBiome("Forest", GoldF, WoodF, StoneF, FoodF, IronF);
                 LoadBiome("HighlandsForest", GoldHF, WoodHF, StoneHF, FoodHF, IronHF);
             }
+
+            if (resourceTemplate == null)
+            {
+                ResourceTemplate.LoadResourcesTemplate();
+                LoadResource("Gold", GoldResourceStart, null, null, null, null, null, null);
+                LoadResource("Food", FoodResourceStart, FoodResourceStartPrice, FoodResourceScalePercAmount, FoodResourceDemandPercInit, FoodResourceDemandPercAcc, FoodResourceChanceAccept, FoodResourceOffsetDemand);
+                LoadResource("Wood", WoodResourceStart, WoodResourceStartPrice, WoodResourceScalePercAmount, WoodResourceDemandPercInit, WoodResourceDemandPercAcc, WoodResourceChanceAccept, WoodResourceOffsetDemand);
+                LoadResource("Iron", IronResourceStart, IronResourceStartPrice, IronResourceScalePercAmount, IronResourceDemandPercInit, IronResourceDemandPercAcc, IronResourceChanceAccept, IronResourceOffsetDemand);
+            }
         }
 
 
 
-        private void LoadUnit(string name, TextBox dmg, TextBox rng, TextBox hp)
+        private void LoadUnit(string name, TextBox dmg, TextBox rng, TextBox hp, TextBox ironCost, TextBox foodCost)
         {
             if (!unitTemplates.ContainsKey(name)) return;
             var u = unitTemplates[name];
             dmg.Text = u.attackDamage.ToString();
             rng.Text = u.attackRange.ToString();
             hp.Text = u.maxHealth.ToString();
+            ironCost.Text = u.ironCost.ToString();
+            foodCost.Text = u.foodCost.ToString();
         }
-        private void SaveUnit(string name, TextBox dmg, TextBox rng, TextBox hp)
+        private void SaveUnit(string name, TextBox dmg, TextBox rng, TextBox hp, TextBox ic, TextBox fc)
         {
             if (int.TryParse(dmg.Text, out int damage) &&
                 int.TryParse(rng.Text, out int range) &&
-                int.TryParse(hp.Text, out int health))
+                int.TryParse(hp.Text, out int health) &&
+                    int.TryParse(ic.Text, out int ironCost) &&
+                        int.TryParse(fc.Text, out int fcCost))
             {
                 if (unitTemplates.TryGetValue(name, out var localTemplate))
                 {
                     localTemplate.attackDamage = damage;
                     localTemplate.attackRange = range;
                     localTemplate.maxHealth = health;
+                    localTemplate.ironCost = ironCost;
+                    localTemplate.foodCost = fcCost;
                 }
 
                 if (Unit.unitTemplates.TryGetValue(name, out var globalTemplate))
@@ -160,6 +321,8 @@ namespace JuniorProject.Frontend.Windows
                     globalTemplate.attackDamage = damage;
                     globalTemplate.attackRange = range;
                     globalTemplate.maxHealth = health;
+                    globalTemplate.ironCost = ironCost;
+                    globalTemplate.foodCost = fcCost;
                 }
             }
         }
@@ -210,7 +373,48 @@ namespace JuniorProject.Frontend.Windows
             }
         }
 
+        private void SaveResource(string resourceName, TextBox startAmount, TextBox startPrice, TextBox priceScalePercent, TextBox demandInitTradePercent, TextBox demandAcceptTradePercent, TextBox acceptPercent, TextBox offsetDemandPercentBy)
+        {
+            if (ResourceTemplate.resourcesTemplate.TryGetValue(resourceName, out var resourceTemplate))
+            {
+                if (int.TryParse(startAmount.Text, out int amount))
+                {
+                    resourceTemplate.InitialStartingAmount = amount;
+                }
 
+                if (resourceName == "Gold")
+                {
+                    ResourceTemplate.SaveResourcesTemplate();
+                    return;
+                } // Don't set other values for Gold
+
+                if (int.TryParse(startPrice.Text, out int price))
+                {
+                    resourceTemplate.InitialPrice = price;
+                }
+                if (double.TryParse(priceScalePercent.Text, out double priceScale))
+                {
+                    resourceTemplate.ScalePercentAmount = priceScale;
+                }
+                if (double.TryParse(demandInitTradePercent.Text, out double demandInit))
+                {
+                    resourceTemplate.DemandPercentToInitiateTrade = demandInit;
+                }
+                if (double.TryParse(demandAcceptTradePercent.Text, out double demandAccept))
+                {
+                    resourceTemplate.DemandPercentToAcceptTrade = demandAccept;
+                }
+                if (double.TryParse(acceptPercent.Text, out double acceptPerc))
+                {
+                    resourceTemplate.ChanceToAcceptTrade = acceptPerc;
+                }
+                if (double.TryParse(offsetDemandPercentBy.Text, out double offsetPercent))
+                {
+                    resourceTemplate.OffsetDemandPercentBy = offsetPercent;
+                }
+                ResourceTemplate.SaveResourcesTemplate();
+            }
+        }
 
         private void LoadBiome(string biomeName, TextBox gold, TextBox wood, TextBox stone, TextBox food, TextBox iron)
         {
@@ -230,6 +434,23 @@ namespace JuniorProject.Frontend.Windows
                 iron.Text = ironT.GatherRate.ToString();
         }
 
+        private void LoadResource(string resourceName, TextBox startAmount, TextBox startPrice, TextBox priceScalePercent, TextBox demandInitTradePercent, TextBox demandAcceptTradePercent, TextBox acceptPercent, TextBox offsetDemandPercentBy)
+        {
+            if (ResourceTemplate.resourcesTemplate.TryGetValue(resourceName, out var resource))
+            {
+                startAmount.Text = resource.InitialStartingAmount.ToString();
+
+                if (resourceName == "Gold") return; // Don't set other values for Gold
+
+                startPrice.Text = resource.InitialPrice.ToString();
+                priceScalePercent.Text = resource.ScalePercentAmount.ToString();
+                demandInitTradePercent.Text = resource.DemandPercentToInitiateTrade.ToString();
+                demandAcceptTradePercent.Text = resource.DemandPercentToAcceptTrade.ToString();
+                acceptPercent.Text = resource.ChanceToAcceptTrade.ToString();
+                offsetDemandPercentBy.Text = resource.OffsetDemandPercentBy.ToString();
+            }
+        }
+
         private void ResetClicked(object sender, RoutedEventArgs e)
         {
             try
@@ -240,23 +461,26 @@ namespace JuniorProject.Frontend.Windows
                 Unit.ResetUnitTemplatesFromJson(path);
                 Building.ResetBuildingTemplatesFromJson(path);
                 BiomeResources.ResetBiomeResourcesFromJson(path);
+                ResourceTemplate.ResetResourcesFromJson(path);
 
                 // Reload from DB to in-memory
                 Unit.LoadUnitTemplates();
                 Building.LoadBuildingTemplates();
                 BiomeResources.LoadBiomeResourcesTemplate();
+                ResourceTemplate.LoadResourcesTemplate();
 
                 // Refresh local cache
                 unitTemplates = new Dictionary<string, Unit.UnitTemplate>(Unit.unitTemplates);
                 buildingTemplates = new Dictionary<string, Building.BuildingTemplate>(Building.buildingTemplates);
                 biomeResourcesTemplate = new Dictionary<(string, string), BiomeResourcesTemplate>(BiomeResources.biomeResourcesTemplate);
+                resourceTemplate = new Dictionary<string, ResourceTemplate>(ResourceTemplate.resourcesTemplate);
 
                 // Update UI
-                LoadUnit("Archer", ArcherD, ArcherR, ArcherH);
-                LoadUnit("Soldier", SoldierD, SoldierR, SoldierH);
-                LoadUnit("Catapult", CatapultD, CatapultR, CatapultH);
-                LoadUnit("Cannoneer", CannonD, CannonR, CannonH);
-                LoadUnit("Cavalier", CavalierD, CavalierR, CavalierH);
+                LoadUnit("Archer", ArcherD, ArcherR, ArcherH, ArcherIronCost, ArcherFoodCost);
+                LoadUnit("Soldier", SoldierD, SoldierR, SoldierH, SoldierIronCost, SoldierFoodCost);
+                LoadUnit("Catapult", CatapultD, CatapultR, CatapultH, CatapultIronCost, CatapultFoodCost);
+                LoadUnit("Cannoneer", CannonD, CannonR, CannonH, CannoneerIronCost, CannoneerFoodCost);
+                LoadUnit("Cavalier", CavalierD, CavalierR, CavalierH, CavalierIronCost, CavalierFoodCost);
 
                 LoadBuilding("Capital", CapitialCost);
                 LoadBuilding("House", HouseCost);
@@ -270,6 +494,11 @@ namespace JuniorProject.Frontend.Windows
                 LoadBiome("Highlands", GoldH, WoodH, StoneH, FoodH, IronH);
                 LoadBiome("Forest", GoldF, WoodF, StoneF, FoodF, IronF);
                 LoadBiome("HighlandsForest", GoldHF, WoodHF, StoneHF, FoodHF, IronHF);
+
+                LoadResource("Gold", GoldResourceStart, null, null, null, null, null, null);
+                LoadResource("Food", FoodResourceStart, FoodResourceStartPrice, FoodResourceScalePercAmount, FoodResourceDemandPercInit, FoodResourceDemandPercAcc, FoodResourceChanceAccept, FoodResourceOffsetDemand);
+                LoadResource("Wood", WoodResourceStart, WoodResourceStartPrice, WoodResourceScalePercAmount, WoodResourceDemandPercInit, WoodResourceDemandPercAcc, WoodResourceChanceAccept, WoodResourceOffsetDemand);
+                LoadResource("Iron", IronResourceStart, IronResourceStartPrice, IronResourceScalePercAmount, IronResourceDemandPercInit, IronResourceDemandPercAcc, IronResourceChanceAccept, IronResourceOffsetDemand);
 
                 Debug.Print("All templates reset to default values.");
             }

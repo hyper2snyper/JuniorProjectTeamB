@@ -31,6 +31,11 @@ namespace JuniorProject.Backend.Agents
             [JsonPropertyName("Sprite")]
             public string sprite { get; set; }
 
+            [JsonPropertyName("IronCost")]
+            public int ironCost { get; set; }
+            [JsonPropertyName("FoodCost")]
+            public int foodCost { get; set; }
+
         }
 
         public static Dictionary<string, UnitTemplate> unitTemplates;
@@ -49,6 +54,8 @@ namespace JuniorProject.Backend.Agents
                 template.attackRange = results.GetInt32(3);
                 template.maxHealth = results.GetInt32(4);
                 template.sprite = results.GetString(5);
+                template.ironCost = results.GetInt32(7);
+                template.foodCost = results.GetInt32(8);
                 unitTemplates.Add(template.name, template);
             }
         }
@@ -58,14 +65,16 @@ namespace JuniorProject.Backend.Agents
             foreach (var template in unitTemplates.Values)
             {
                 DatabaseManager.WriteDB(
-                    "UPDATE Units SET AttackDamage=@dmg, AttackRange=@rng, MaxHealth=@hp WHERE UnitType=@name",
+                    "UPDATE Units SET AttackDamage=@dmg, AttackRange=@rng, MaxHealth=@hp, IronCost=@ironcost, FoodCost=@foodcost WHERE UnitType=@name",
                     new Dictionary<string, object>
                     {
                         {"@dmg", template.attackDamage},
                         {"@rng", template.attackRange},
                         {"@hp", template.maxHealth},
                         {"@name", template.name},
-                        {"@sprite", template.sprite }
+                        {"@sprite", template.sprite },
+                        { "@ironcost", template.ironCost},
+                        { "@foodcost", template.foodCost }
                     }
                 );
             }
@@ -86,8 +95,8 @@ namespace JuniorProject.Backend.Agents
                     if (string.IsNullOrWhiteSpace(unit.name)) continue;
 
                     DatabaseManager.WriteDB(
-                        "INSERT OR REPLACE INTO Units (UnitType, AttackDamage, AttackRange, MaxHealth, Sprite, Flags) " +
-                        "VALUES (@name, @dmg, @range, @health, @sprite, @flag)",
+                        "INSERT OR REPLACE INTO Units (UnitType, AttackDamage, AttackRange, MaxHealth, Sprite, Flags, IronCost, FoodCost) " +
+                        "VALUES (@name, @dmg, @range, @health, @sprite, @flag, @ironcost, @foodcost)",
                         new Dictionary<string, object>
                         {
                             { "@name", unit.name },
@@ -95,7 +104,9 @@ namespace JuniorProject.Backend.Agents
                             { "@range", unit.attackRange },
                             { "@health", unit.maxHealth },
                             { "@sprite", unit.sprite},
-                            { "@flag", "0"}
+                            { "@flag", "0"},
+                            { "@ironcost", unit.ironCost },
+                            { "@foodcost", unit.foodCost }
                         });
 
 
@@ -153,10 +164,15 @@ namespace JuniorProject.Backend.Agents
 
         public override void TakeTurn(ulong tick)
         {
-            base.TakeTurn(tick);
-            if (objective != null)
+            if (nation.resources["Food"] >= unitType.foodCost)
             {
-                objective = objective.PerformTurn(tick);
+                Debug.Print($"Foodcost: {unitType.foodCost}");
+                nation.resources["Food"] -= unitType.foodCost;
+                base.TakeTurn(tick);
+                if (objective != null)
+                {
+                    objective = objective.PerformTurn(tick);
+                }
             }
         }
 

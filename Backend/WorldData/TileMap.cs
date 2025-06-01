@@ -1,5 +1,7 @@
 ﻿using JuniorProject.Backend.Agents;
 using JuniorProject.Backend.Helpers;
+using System.Collections.Generic;
+using System.Data.SQLite;
 using System.Diagnostics;
 using System.Drawing;
 
@@ -18,6 +20,9 @@ namespace JuniorProject.Backend.WorldData
 
             public bool impassible = false;
             public bool coast = false;
+
+            public string primaryBiome;
+            public Dictionary<string, int> tileResources = new Dictionary<string, int>();
 
             List<Mob> occupants = new List<Mob>();
             public List<Mob> Occupants
@@ -67,6 +72,11 @@ namespace JuniorProject.Backend.WorldData
                 elevationAvg = DeserializeField<float>();
                 impassible = DeserializeField<bool>();
                 coast = DeserializeField<bool>();
+
+                if (terrainPercentages.Count() > 0)
+                {
+                    primaryBiome = terrainPercentages.Aggregate((x, y) => x.Value > y.Value ? x : y).Key; // serializing this causes a bug idk
+                }
             }
         }
 
@@ -187,11 +197,28 @@ namespace JuniorProject.Backend.WorldData
                     }
                     if (landTypes.Keys.Count == 0) tile.impassible = true;
                     float totalLandPercentage = 0;
+                    float highestBiomePercent = 0;
                     foreach (string landType in landTypes.Keys)
                     {
                         float relativePercentage = landTypes[landType] / (float)(tileSize * tileSize);
+                        if (relativePercentage > highestBiomePercent)
+                        {
+                            tile.primaryBiome = landType;
+                            highestBiomePercent = relativePercentage;
+                        }
                         totalLandPercentage += relativePercentage;
                         tile.terrainPercentages.Add(landType, relativePercentage);
+                    }
+                    if (map.GetBiomeResources(tile.primaryBiome) != null)
+                    {
+                        tile.tileResources = map.GetBiomeResources(tile.primaryBiome);
+                    }
+                    else
+                    {
+                        foreach (var item in map.GetBiomeResources("Forest"))
+                        {
+                            tile.tileResources[item.Key] = 0;
+                        }
                     }
                     if (totalLandPercentage < 0.3) tile.impassible = true;
                     tile.movementCost = movementCostTotal / (float)(tileSize * tileSize);
@@ -225,6 +252,11 @@ namespace JuniorProject.Backend.WorldData
             ClientCommunicator.RegisterData<Vector2Int>("mapPixelSize", mapPixelSize);
             ClientCommunicator.RegisterData<int>("tileSize", tileSize);
             ClientCommunicator.RegisterData<TileMap>("TileMap", this);
+        }
+
+        public Dictionary<string, int> GetTileResource(int xPos, int yPos)
+        {
+            return (tiles[xPos, yPos].tileResources);
         }
     }
 }

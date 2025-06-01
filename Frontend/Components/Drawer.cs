@@ -152,6 +152,18 @@ namespace JuniorProject.Frontend.Components
             titles.Add("Tile");
             information.Add(getTileInformation(ref tile));
 
+            string resInfo = $"";
+            foreach (var element in tileMap.GetTileResource(tile.pos.X, tile.pos.Y))
+            {
+                resInfo += element.Key.ToString();
+                resInfo += " -> ";
+                resInfo += element.Value.ToString();
+                resInfo += "\n";
+            }
+            images.Add(tileImage);
+            titles.Add("Resources");
+            information.Add(resInfo);
+
             foreach (Mob m in tile.Occupants)
             {
                 Controls.Image mobImage = new Controls.Image
@@ -174,7 +186,7 @@ namespace JuniorProject.Frontend.Components
 
         public string getTileInformation(ref TileMap.Tile t)
         {
-            return $"Movement Cost -> {t.movementCost}\nElevation Average -> {t.elevationAvg}\nImpassible? -> {t.impassible.ToString()}\nTeam -> {t.Owner?.name}";
+            return $"Movement Cost -> {t.movementCost}\nElevation Average -> {t.elevationAvg}\nImpassible? -> {t.impassible.ToString()}\nTeam -> {t.Owner?.name}\nPrimary Biome -> {t.primaryBiome}";
         }
 
         public Bitmap extractFromSprite(string name)

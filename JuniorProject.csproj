@@ -11,6 +11,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Frontend\gui\Buttons\HistoryButton.png" />
+    <None Remove="Frontend\gui\Buttons\HistoryButtonHover.png" />
     <None Remove="Frontend\gui\Buttons\LoadSimulationButton.png" />
     <None Remove="Frontend\gui\Buttons\LoadSimulationButtonHover.png" />
     <None Remove="Frontend\gui\Buttons\ResetButton.png" />
@@ -48,6 +50,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Frontend\gui\Buttons\HistoryButton.png" />
+    <Resource Include="Frontend\gui\Buttons\HistoryButtonHover.png" />
     <Resource Include="Frontend\gui\Buttons\LoadSimulationButton.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
@@ -66,6 +70,7 @@
 
   <ItemGroup>
     <PackageReference Include="FontAwesome.WPF" Version="4.7.0.9" />
+    <PackageReference Include="LiveChartsCore.SkiaSharpView.WPF" Version="2.0.0-rc5.4" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="System.Data.SQLite" Version="1.0.119" />
     <PackageReference Include="System.Drawing.Common" Version="9.0.2" />
