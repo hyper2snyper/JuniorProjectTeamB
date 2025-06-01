@@ -381,29 +381,23 @@ namespace JuniorProject.Backend.WorldData
 
         public override void SerializeFields()
         {
-            SerializeField<ulong, List<Resource>>(itemsHistory);
+            SerializeField<ulong, Resource>((Dictionary<ulong, List<Resource>>)itemsHistory);
             SerializeField<Trade>(tradesHistory);
             SerializeField<Trade>(potentialTrades);
             SerializeField<string, Resource>(resources);
             SerializeField<string, Demand>(demands);
             savedTick = currentTick;
             SerializeField<ulong>(savedTick);
-            //SerializeField(nationResources);
         }
 
         public override void DeserializeFields()
         {
-            // Dictionary<ulong, List<Resource>> itemsHistory; // Keep track of resources and their values every X ticks (putting it as 5 ticks initially)
-            // List<Trade> tradesHistory;
-            // Dictionary<string, Dictionary<string, int>> nationResources = new Dictionary<string, Dictionary<string, int>>();
-
             itemsHistory = DeserializeNestedDictionary<ulong, Resource>();
             tradesHistory = DeserializeList<Trade>();
             potentialTrades = DeserializeList<Trade>();
             resources = DeserializeDictionary<string, Resource>();
             demands = DeserializeDictionary<string, Demand>();
             savedTick = DeserializeField<ulong>();
-            //nationResources = DeserializeNestedDictionaryWithDictionary<string, string, int>();
 
             ClientCommunicator.RegisterData<Dictionary<ulong, List<Resource>>>("itemsHistory", itemsHistory); // make this available to HistoryWindow
             ClientCommunicator.RegisterData<List<Trade>>("tradesHistory", tradesHistory); // make this available to HistoryWindow 

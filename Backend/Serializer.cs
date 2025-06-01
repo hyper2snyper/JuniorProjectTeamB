@@ -73,11 +73,6 @@ namespace JuniorProject.Backend
                 SerializeField(v.Y);
                 return;
             }
-            if (objectToSerialize is List<EconomyManager.Resource> l) // leave this here : )
-            {
-                SerializeField<EconomyManager.Resource>(l);
-                return;
-            }
             if (Nullable.GetUnderlyingType(typeof(T)) != null && objectToSerialize == null)
             {
                 SerializeField(-1);
