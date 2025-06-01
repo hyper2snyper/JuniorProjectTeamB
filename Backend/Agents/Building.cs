@@ -189,6 +189,7 @@ namespace JuniorProject.Backend.Agents
 
         private double GetGatherRate(string biome, string resource)
         {
+            if (biome == null || resource == null) return 0;
             using (var reader = DatabaseManager.ReadDB(
                 $"SELECT GatherRate FROM BiomeResource WHERE BiomeID = '{biome}' AND ResourceID = '{resource}'"))
             {

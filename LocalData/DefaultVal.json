@@ -9,7 +9,7 @@
       "Sprite": "Soldier",
       "Flags": 0,
       "IronCost": 10,
-      "FoodCost":  25
+      "FoodCost":  15
     },
     {
       "UnitType": "Archer",
@@ -60,102 +60,102 @@
     {
       "BiomeID": "Grassland",
       "ResourceID": "Wood",
-      "GatherRate": 40
+      "GatherRate": 5
     },
     {
       "BiomeID": "Grassland",
       "ResourceID": "Iron",
-      "GatherRate": 10
+      "GatherRate": 5
     },
     {
       "BiomeID": "Grassland",
       "ResourceID": "Stone",
-      "GatherRate": 20
+      "GatherRate": 1
     },
     {
       "BiomeID": "Grassland",
       "ResourceID": "Food",
-      "GatherRate": 75
+      "GatherRate": 5
     },
     {
       "BiomeID": "Grassland",
       "ResourceID": "Gold",
-      "GatherRate": 0
+      "GatherRate": 25
     },
     {
       "BiomeID": "Highlands",
       "ResourceID": "Wood",
-      "GatherRate": 20
+      "GatherRate": 5
     },
     {
       "BiomeID": "Highlands",
       "ResourceID": "Iron",
-      "GatherRate": 60
+      "GatherRate": 7
     },
     {
       "BiomeID": "Highlands",
       "ResourceID": "Stone",
-      "GatherRate": 80
+      "GatherRate": 1
     },
     {
       "BiomeID": "Highlands",
       "ResourceID": "Food",
-      "GatherRate": 0
+      "GatherRate": 3
     },
     {
       "BiomeID": "Highlands",
       "ResourceID": "Gold",
-      "GatherRate": 30
+      "GatherRate": 25
     },
     {
       "BiomeID": "Forest",
       "ResourceID": "Wood",
-      "GatherRate": 70
+      "GatherRate": 7
     },
     {
       "BiomeID": "Forest",
       "ResourceID": "Iron",
-      "GatherRate": 0
+      "GatherRate": 2
     },
     {
       "BiomeID": "Forest",
       "ResourceID": "Stone",
-      "GatherRate": 10
+      "GatherRate": 1
     },
     {
       "BiomeID": "Forest",
       "ResourceID": "Food",
-      "GatherRate": 60
+      "GatherRate": 3
     },
     {
       "BiomeID": "Forest",
       "ResourceID": "Gold",
-      "GatherRate": 0
+      "GatherRate": 25
     },
     {
       "BiomeID": "HighlandsForest",
       "ResourceID": "Wood",
-      "GatherRate": 60
+      "GatherRate": 7
     },
     {
       "BiomeID": "HighlandsForest",
       "ResourceID": "Iron",
-      "GatherRate": 300
+      "GatherRate": 3
     },
     {
       "BiomeID": "HighlandsForest",
       "ResourceID": "Stone",
-      "GatherRate": 20
+      "GatherRate": 1
     },
     {
       "BiomeID": "HighlandsForest",
       "ResourceID": "Food",
-      "GatherRate": 55
+      "GatherRate": 4
     },
     {
       "BiomeID": "HighlandsForest",
       "ResourceID": "Gold",
-      "GatherRate": 10
+      "GatherRate": 25
     }
   ],
   "Buildings": [
@@ -229,7 +229,7 @@
     },
     {
       "ResourceName": "Iron",
-      "InitialStartingAmount": 50,
+      "InitialStartingAmount": 25,
       "InitialPrice": 10,
       "ScalePercentAmount": 0.1,
       "DemandPercentToInitiateTrade": 0.6,
@@ -249,7 +249,7 @@
     },
     {
       "ResourceName": "Food",
-      "InitialStartingAmount": 100,
+      "InitialStartingAmount": 50,
       "InitialPrice": 10,
       "ScalePercentAmount": 0.1,
       "DemandPercentToInitiateTrade": 0.6,
@@ -259,7 +259,7 @@
     },
     {
       "ResourceName": "Gold",
-      "InitialStartingAmount": 250,
+      "InitialStartingAmount": 150,
       "InitialPrice": 0,
       "ScalePercentAmount": 0,
       "DemandPercentToInitiateTrade": 0,

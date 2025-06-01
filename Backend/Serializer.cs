@@ -1,4 +1,5 @@
 ﻿using JuniorProject.Backend.Helpers;
+using JuniorProject.Backend.WorldData;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -70,6 +71,11 @@ namespace JuniorProject.Backend
             {
                 SerializeField(v.X);
                 SerializeField(v.Y);
+                return;
+            }
+            if (objectToSerialize is List<EconomyManager.Resource> l) // leave this here : )
+            {
+                SerializeField<EconomyManager.Resource>(l);
                 return;
             }
             if (Nullable.GetUnderlyingType(typeof(T)) != null && objectToSerialize == null)

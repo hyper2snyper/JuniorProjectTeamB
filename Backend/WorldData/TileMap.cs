@@ -72,6 +72,10 @@ namespace JuniorProject.Backend.WorldData
                 elevationAvg = DeserializeField<float>();
                 impassible = DeserializeField<bool>();
                 coast = DeserializeField<bool>();
+
+                if (terrainPercentages.Count() > 0) {
+                    primaryBiome = terrainPercentages.Aggregate((x, y) => x.Value > y.Value ? x : y).Key; // serializing this causes a bug idk
+                }
             }
         }
 
