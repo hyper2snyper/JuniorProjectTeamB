@@ -205,14 +205,6 @@ namespace JuniorProject.Frontend.Windows
             }
         }
 
-        public Dictionary<string, ColumnSeries<int>> InitiatedTradeColumns { get; private set; } = new()
-        {
-            { "Food", new ColumnSeries<int> { Values = new List<int>(), Name = "Food Initiated" } },
-            { "Wood", new ColumnSeries<int> { Values = new List<int>(), Name = "Wood Initiated" } },
-            { "Iron", new ColumnSeries<int> { Values = new List<int>(), Name = "Iron Initiated" } },
-            { "Gold", new ColumnSeries<int> { Values = new List<int>(), Name = "Gold Initiated" } }
-        };
-
         public Dictionary<string, ColumnSeries<int>> AcceptedTradeColumns { get; private set; } = new()
         {
             { "Food", new ColumnSeries<int> { Values = new List<int>(), Name = "Food Accepted" } },
@@ -221,7 +213,7 @@ namespace JuniorProject.Frontend.Windows
             { "Gold", new ColumnSeries<int> { Values = new List<int>(), Name = "Gold Accepted" } }
         };
 
-        public ISeries[] TradesSeries => InitiatedTradeColumns.Values.Concat(AcceptedTradeColumns.Values).ToArray();
+        public ISeries[] TradesSeries => AcceptedTradeColumns.Values.ToArray();
 
         public event PropertyChangedEventHandler? PropertyChanged;
         protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
