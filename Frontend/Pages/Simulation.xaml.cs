@@ -84,7 +84,8 @@ namespace JuniorProject
 
         private void StartClicked(object sender, RoutedEventArgs e)
         {
-            if (ClientCommunicator.GetData<bool>("Paused")) {
+            if (ClientCommunicator.GetData<bool>("Paused"))
+            {
                 ClientCommunicator.CallAction("TogglePause");
             }
         }

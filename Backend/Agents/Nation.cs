@@ -98,7 +98,7 @@ namespace JuniorProject.Backend.Agents
 
             if (tile.Occupants.Count <= 1)
             {
-                if (tile.terrainPercentages.ContainsKey("Grassland") && tile.terrainPercentages["Grassland"] >= 0.8f )
+                if (tile.terrainPercentages.ContainsKey("Grassland") && tile.terrainPercentages["Grassland"] >= 0.8f)
                 {
                     CheckToAddBuilding("Farm", tile);
                 }

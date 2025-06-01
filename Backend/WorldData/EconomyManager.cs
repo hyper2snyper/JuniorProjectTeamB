@@ -126,7 +126,7 @@ namespace JuniorProject.Backend.WorldData
         public ulong currentTick = 0;
         public ulong savedTick = 0;
 
-        public EconomyManager() 
+        public EconomyManager()
         {
 
         }
@@ -166,7 +166,8 @@ namespace JuniorProject.Backend.WorldData
         public void TakeTurn(ulong tickCount)
         {
             nations = ClientCommunicator.GetData<World>("World").nations;
-            if (savedTick != 0) {
+            if (savedTick != 0)
+            {
                 tickCount += savedTick;
             }
             currentTick = tickCount;
@@ -174,11 +175,13 @@ namespace JuniorProject.Backend.WorldData
             RespondToTrades(tickCount);
             UpdateResourceValues();
             CalculateDemands();
-            if (tickCount > 1) {
+            if (tickCount > 1)
+            {
                 InitiatePotentialTrades();
             }
             //Print();
-            if (tickCount % TICK_INTERVAL_FOR_ITEM_HISTORY == 0) { 
+            if (tickCount % TICK_INTERVAL_FOR_ITEM_HISTORY == 0)
+            {
                 ArchiveResourceInformation(tickCount);
             }
             ClientCommunicator.UpdateData<Dictionary<ulong, List<Resource>>>("itemsHistory", itemsHistory);
