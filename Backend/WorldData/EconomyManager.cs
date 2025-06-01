@@ -1,5 +1,6 @@
 ﻿using JuniorProject.Backend.Agents;
 using JuniorProject.Properties;
+using static JuniorProject.Backend.WorldData.EconomyManager;
 
 namespace JuniorProject.Backend.WorldData
 {
@@ -19,9 +20,10 @@ namespace JuniorProject.Backend.WorldData
             public string resource;
             public int resourceAmount;
             public int price;
+            public bool accepted; // distinguish between accepted/initiated trades for HistoryWindow
         }
 
-        class Demand
+        public class Demand
         {
             public Demand(string resource, int demand)
             {
@@ -30,7 +32,7 @@ namespace JuniorProject.Backend.WorldData
             }
 
             public string resource;
-            public int demand;
+            public float demand;
         }
 
         public class Resource
@@ -52,15 +54,16 @@ namespace JuniorProject.Backend.WorldData
         }
 
         public Dictionary<string, Nation> nations;
-        Dictionary<(string, string), Demand> demands; // Key is (nation name, resource type)
+        public Dictionary<(string, string), Demand> demands; // Key is (nation name, resource type)
 
         Dictionary<string, Resource> resources; // Key is resource name
 
-        List<Trade> potentialTrades;
+        public List<Trade> potentialTrades;
 
         Dictionary<ulong, List<Resource>> itemsHistory; // Keep track of resources and their values every X ticks (putting it as 5 ticks initially)
         const int TICK_INTERVAL_FOR_ITEM_HISTORY = 5;
         List<Trade> tradesHistory; // Keep track of trades
+        Dictionary<string, Dictionary<string, int>> nationResources = new Dictionary<string, Dictionary<string, int>>();
 
         static readonly string[] resourceTypes = { "Food", "Iron", "Wood", "Gold" };
 
@@ -95,6 +98,7 @@ namespace JuniorProject.Backend.WorldData
 
             ClientCommunicator.RegisterData<Dictionary<ulong, List<Resource>>>("itemsHistory", itemsHistory);
             ClientCommunicator.RegisterData<List<Trade>>("tradesHistory", tradesHistory);
+            ClientCommunicator.RegisterData<Dictionary<string, Dictionary<string, int>>>("nationResources", nationResources);
         }
 
         public void TakeTurn(ulong tickCount)
@@ -102,13 +106,16 @@ namespace JuniorProject.Backend.WorldData
             RespondToTrades(tickCount);
             UpdateResourceValues();
             CalculateDemands();
-            InitiatePotentialTrades();
-            Print();
+            if (tickCount > 100) {
+                InitiatePotentialTrades();
+            }
+            //Print();
             if (tickCount % TICK_INTERVAL_FOR_ITEM_HISTORY == 0) { 
                 ArchiveResourceInformation(tickCount);
             }
             ClientCommunicator.UpdateData<Dictionary<ulong, List<Resource>>>("itemsHistory", itemsHistory);
             ClientCommunicator.UpdateData<List<Trade>>("tradesHistory", tradesHistory);
+            UpdateNationResourcesData();
         }
 
         /* --------- MAIN FUNCTIONS ---------------- */
@@ -127,7 +134,7 @@ namespace JuniorProject.Backend.WorldData
             {
                 foreach (string r in resourceTypes)
                 {
-                    demands[(n.color, r)].demand = (1 - (n.resources[r] / resources[r].totalResource));
+                    demands[(n.color, r)].demand = (1 - ((float)n.resources[r] / (float)resources[r].totalResource));
                 }
             }
         }
@@ -148,17 +155,16 @@ namespace JuniorProject.Backend.WorldData
                     {
                         int totalResourcesWanted = CalculateWantedResourceTotal(demands[(nation, resouceType)].resource, nation);
                         potentialTrades.Add(new Trade(nation, demands[(nation, resouceType)].resource, totalResourcesWanted, CalculateTradePrice(totalResourcesWanted, demands[(nation, resouceType)].resource)));
+                        Debug.Print($"ADDED POTENTIAL TRADE: {nation} : <- {demands[(nation, resouceType)].resource} for {CalculateTradePrice(totalResourcesWanted, demands[(nation, resouceType)].resource)} gold");
                     }
                 }
             }
         }
-
         void RespondToTrades(ulong tickCount)
         {
             foreach (Trade t in potentialTrades)
             {
                 List<string> possibleNations = new List<string>();
-
                 foreach (var n in nations)
                 {
                     string name = n.Key;
@@ -203,7 +209,26 @@ namespace JuniorProject.Backend.WorldData
             {
                 Debug.Print($"Type: {r} | Price: {resources[r].price} | Total: {resources[r].totalResource}");
             }
-            Debug.Print($"Total Trades: {tradesHistory.Count()} | Total Archived Items: {itemsHistory.Count()}");
+            Debug.Print("\n----DEMANDS----");
+            foreach (var r in demands)
+            {
+                Debug.Print($"Nation: {r.Key.Item1} | Resource: {r.Key.Item2} | Demand: {r.Value.demand}");
+            }
+
+
+            //Debug.Print($"Total Trades: {tradesHistory.Count()} | Total Archived Items: {itemsHistory.Count()}");
+        }
+
+        void UpdateNationResourcesData()
+        {
+            var nationResourcesData = new Dictionary<string, Dictionary<string, int>>();
+
+            foreach (var nation in nations.Values)
+            {
+                nationResourcesData[nation.color] = new Dictionary<string, int>(nation.resources);
+            }
+
+            ClientCommunicator.UpdateData<Dictionary<string, Dictionary<string, int>>>("nationResources", nationResourcesData);
         }
 
         bool ShouldAcceptTrade(ulong tickCount, string resource, double acceptingNationDemand)
@@ -255,25 +280,27 @@ namespace JuniorProject.Backend.WorldData
 
         void UpdatePrice(string resource)
         {
+            // dynamic pricing is buggy, idrk if we wanna implement it xdddd
+
             // TODO: Tweak with these settings a bit to get it working once resources are able to be generated and consumed
-            using var results = DatabaseManager.ReadDB($"SELECT ScalePercentAmount, InitialPrice FROM Resources WHERE ResourceName='{resource}'");
-            while (results.Read())
-            {
-                double scalePercent = results.GetDouble(0);
-                double threshold = resources[resource].totalResource * scalePercent;
-                int delta = resources[resource].totalResource - resources[resource].initialTotalResource;
-                int priceLevelChange = (int)(delta / threshold);
+            //using var results = DatabaseManager.ReadDB($"SELECT ScalePercentAmount, InitialPrice FROM Resources WHERE ResourceName='{resource}'");
+            //while (results.Read())
+            //{
+            //    double scalePercent = results.GetDouble(0);
+            //    double threshold = resources[resource].totalResource * scalePercent;
+            //    int delta = resources[resource].totalResource - resources[resource].initialTotalResource;
+            //    int priceLevelChange = (int)(delta / threshold);
 
-                int priceChange = priceLevelChange - resources[resource].priceLevel;
-                if (priceChange != 0)
-                {
-                    int initialPrice = results.GetInt32(1);
-                    int newPrice = (priceChange * 1) + resources[resource].price;
-                    resources[resource].price = Math.Max(initialPrice, newPrice);
-                    resources[resource].priceLevel = priceLevelChange;
+            //    int priceChange = priceLevelChange - resources[resource].priceLevel;
+            //    if (priceChange != 0)
+            //    {
+            //        int initialPrice = results.GetInt32(1);
+            //        int newPrice = (priceChange * 1) + resources[resource].price;
+            //        resources[resource].price = Math.Max(initialPrice, newPrice);
+            //        resources[resource].priceLevel = priceLevelChange;
 
-                }
-            }
+            //    }
+            //}
         }
 
         void AcceptTrade(Trade trade, Nation acceptingNation)
@@ -284,6 +311,7 @@ namespace JuniorProject.Backend.WorldData
             nations[trade.initiator].resources[trade.resource] += trade.resourceAmount;
             nations[trade.initiator].resources["Gold"] -= trade.price;
 
+            trade.accepted = true;
             tradesHistory.Add(trade);
 
             Debug.Print($"COMPLETED TRADE: {acceptingNation.color} : {trade.resourceAmount} {trade.resource} -> {trade.initiator} for {trade.price} gold");

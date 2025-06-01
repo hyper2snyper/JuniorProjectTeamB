@@ -11,22 +11,27 @@ using LiveChartsCore.SkiaSharpView;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using JuniorProject.Backend;
+using LiveChartsCore.SkiaSharpView.Painting;
+using SkiaSharp;
 
 namespace JuniorProject.Frontend.Windows
 {
     public class ViewModel : INotifyPropertyChanged
     {
-        public Dictionary<string, LineSeries<double>> PriceLines { get; private set; } = new()
+        // Nation resource pie chart properties
+        private List<PieSeries<int>> _nationResourceSlices = new();
+        public List<PieSeries<int>> NationResourceSlices
         {
-            { "Food", new LineSeries<double> { Values = new List<double>(), Name = "Food" } },
-            { "Wood", new LineSeries<double> { Values = new List<double>(), Name = "Wood" } },
-            { "Iron", new LineSeries<double> { Values = new List<double>(), Name = "Iron" } },
-            { "Gold", new LineSeries<double> { Values = new List<double>(), Name = "Gold" } }
-        };
-
-        public Dictionary<string, ISeries[]> AllPricesSeries { get; set; } = new();
+            get => _nationResourceSlices;
+            set
+            {
+                _nationResourceSlices = value;
+                OnPropertyChanged();
+            }
+        }
 
         public List<string> AvailableResources { get; set; } = new() { "Food", "Wood", "Iron", "Gold" };
+        public List<string> AvailableNations { get; set; } = new();
 
         private string _selectedResource;
         public string SelectedResource
@@ -72,54 +77,122 @@ namespace JuniorProject.Frontend.Windows
         };
         public ISeries[] ResourceAmountSeries => ResourceLines.Values.ToArray();
 
+        // Nation resource pie chart series
+        public ISeries[] NationResourceSeries => NationResourceSlices.ToArray();
+
         public ViewModel()
         {
             _selectedResource = AvailableResources[0];
             _selectedTabIndex = 0;
-
-            foreach (var resource in AvailableResources)
-            {
-                AllPricesSeries[resource] = new ISeries[] { PriceLines[resource] };
-            }
-
-            _currentSeries = AllPricesSeries[_selectedResource];
+            _currentSeries = new ISeries[0];
         }
 
         public void UpdateLiveData()
         {
             var itemsHistory = ClientCommunicator.GetData<Dictionary<ulong, List<EconomyManager.Resource>>>("itemsHistory");
-            if (itemsHistory == null) return;
+            var tradesHistory = ClientCommunicator.GetData<List<EconomyManager.Trade>>("tradesHistory");
+            var nationResources = ClientCommunicator.GetData<Dictionary<string, Dictionary<string, int>>>("nationResources");
 
-            var sorted = itemsHistory.OrderBy(kvp => kvp.Key);
-
-            // Clear existing data
-            foreach (var line in ResourceLines.Values)
+            // Update resource amounts
+            if (itemsHistory != null)
             {
-                line.Values = new List<int>();
-            }
+                var sorted = itemsHistory.OrderBy(kvp => kvp.Key);
 
-            foreach (var line in PriceLines.Values)
-            {
-                line.Values = new List<double>();
-            }
-
-            foreach (var (_, resourceList) in sorted)
-            {
-                foreach (var resource in resourceList)
+                // Clear existing data
+                foreach (var line in ResourceLines.Values)
                 {
-                    if (ResourceLines.TryGetValue(resource.name, out var resourceLine) && resourceLine.Values is List<int> resourceValues)
-                    {
-                        resourceValues.Add(resource.totalResource);
-                    }
+                    line.Values = new List<int>();
+                }
 
-                    if (PriceLines.TryGetValue(resource.name, out var priceLine) && priceLine.Values is List<double> priceValues)
+                // Update resource amounts
+                foreach (var (_, resourceList) in sorted)
+                {
+                    foreach (var resource in resourceList)
                     {
-                        priceValues.Add(resource.price);
+                        if (ResourceLines.TryGetValue(resource.name, out var resourceLine) && resourceLine.Values is List<int> resourceValues)
+                        {
+                            resourceValues.Add(resource.totalResource);
+                        }
                     }
                 }
             }
 
+            // Update nation resources for pie chart
+            if (nationResources != null)
+            {
+                // Update available nations list
+                AvailableNations = nationResources.Keys.ToList();
+                OnPropertyChanged(nameof(AvailableNations));
 
+                // Clear existing pie slices
+                NationResourceSlices.Clear();
+
+                // Create pie slices for the selected resource
+                if (!string.IsNullOrEmpty(SelectedResource))
+                {
+                    foreach (var nationData in nationResources)
+                    {
+                        string nationName = nationData.Key;
+                        var resources = nationData.Value;
+
+                        if (resources.ContainsKey(SelectedResource))
+                        {
+                            int resourceAmount = resources[SelectedResource];
+
+                            // Only add nations with non-zero resources
+                            if (resourceAmount > 0)
+                            {
+                                var pieSeries = new PieSeries<int>
+                                {
+                                    Values = new[] { resourceAmount },
+                                    Name = $"{nationName} ({resourceAmount})",
+                                    Fill = new SolidColorPaint(nationName == "Red" ? SKColors.Red : nationName == "Yellow" ? SKColors.Yellow : SKColors.Green)
+                                };
+                                NationResourceSlices.Add(pieSeries);
+                            }
+                        }
+                    }
+                }
+
+                // Notify that the pie chart data has changed
+                OnPropertyChanged(nameof(NationResourceSlices));
+                OnPropertyChanged(nameof(NationResourceSeries));
+            }
+
+            // Update trades
+            if (tradesHistory != null)
+            {
+                foreach (var column in AcceptedTradeColumns.Values)
+                {
+                    column.Values = new List<int>();
+                }
+
+                var acceptedTradeCounts = new Dictionary<string, int>
+                {
+                    { "Food", 0 },
+                    { "Wood", 0 },
+                    { "Iron", 0 },
+                };
+
+                foreach (var trade in tradesHistory)
+                {
+                    if (trade.accepted)
+                    {
+                        if (acceptedTradeCounts.ContainsKey(trade.resource))
+                        {
+                            acceptedTradeCounts[trade.resource]++;
+                        }
+                    }
+                }
+
+                foreach (var kvp in acceptedTradeCounts)
+                {
+                    if (AcceptedTradeColumns.TryGetValue(kvp.Key, out var column) && column.Values is List<int> values)
+                    {
+                        values.Add(kvp.Value);
+                    }
+                }
+            }
             UpdateCurrentSeries();
         }
 
@@ -127,11 +200,8 @@ namespace JuniorProject.Frontend.Windows
         {
             switch (SelectedTabIndex)
             {
-                case 0: // Prices tab
-                    if (AllPricesSeries.ContainsKey(SelectedResource))
-                        CurrentSeries = AllPricesSeries[SelectedResource];
-                    else
-                        CurrentSeries = AllPricesSeries[AvailableResources[0]];
+                case 0: // Nation Resources tab (formerly Prices tab)
+                    CurrentSeries = NationResourceSeries;
                     break;
                 case 1: // All resources tab
                     CurrentSeries = ResourceAmountSeries;
@@ -140,24 +210,39 @@ namespace JuniorProject.Frontend.Windows
                     CurrentSeries = TradesSeries;
                     break;
                 default:
-                    CurrentSeries = AllPricesSeries[AvailableResources[0]];
+                    CurrentSeries = NationResourceSeries;
                     break;
+            }
+
+            // Debug output to help troubleshoot
+            Debug.Print($"Tab Index: {SelectedTabIndex}, Series Count: {CurrentSeries?.Length ?? 0}");
+            if (SelectedTabIndex == 0)
+            {
+                Debug.Print($"Pie Chart Slices: {NationResourceSlices.Count}");
+                foreach (var slice in NationResourceSlices)
+                {
+                    Debug.Print($"  - {slice.Name}: {slice.Values?.FirstOrDefault()}");
+                }
             }
         }
 
-        public ISeries[] TradesSeries { get; set; } =
-        [
-            new LineSeries<int>
-            {
-                Values = new int[] { 5, 8, 3, 10, 7, 12 },
-                Name = "Buy Trades"
-            },
-            new LineSeries<int>
-            {
-                Values = new int[] { 4, 6, 2, 9, 6, 10 },
-                Name = "Sell Trades"
-            }
-        ];
+        public Dictionary<string, ColumnSeries<int>> InitiatedTradeColumns { get; private set; } = new()
+        {
+            { "Food", new ColumnSeries<int> { Values = new List<int>(), Name = "Food Initiated" } },
+            { "Wood", new ColumnSeries<int> { Values = new List<int>(), Name = "Wood Initiated" } },
+            { "Iron", new ColumnSeries<int> { Values = new List<int>(), Name = "Iron Initiated" } },
+            { "Gold", new ColumnSeries<int> { Values = new List<int>(), Name = "Gold Initiated" } }
+        };
+
+        public Dictionary<string, ColumnSeries<int>> AcceptedTradeColumns { get; private set; } = new()
+        {
+            { "Food", new ColumnSeries<int> { Values = new List<int>(), Name = "Food Accepted" } },
+            { "Wood", new ColumnSeries<int> { Values = new List<int>(), Name = "Wood Accepted" } },
+            { "Iron", new ColumnSeries<int> { Values = new List<int>(), Name = "Iron Accepted" } },
+            { "Gold", new ColumnSeries<int> { Values = new List<int>(), Name = "Gold Accepted" } }
+        };
+
+        public ISeries[] TradesSeries => InitiatedTradeColumns.Values.Concat(AcceptedTradeColumns.Values).ToArray();
 
         public event PropertyChangedEventHandler? PropertyChanged;
         protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)

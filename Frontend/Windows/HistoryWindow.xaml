@@ -12,39 +12,38 @@
     </Window.DataContext>
     <Grid>
         <TabControl SelectedIndex="{Binding SelectedTabIndex, Mode=TwoWay}">
-            <TabItem Header="Prices">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
+            <!-- Nation Resources Tab -->
+            <TabItem Header="Nation Resources">
+                <StackPanel>
+                    <!-- Resource selector -->
+                    <ComboBox 
+                ItemsSource="{Binding AvailableResources}" 
+                SelectedItem="{Binding SelectedResource, Mode=TwoWay}" 
+                Margin="10" />
 
-                    <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="5">
-                        <TextBlock Text="Select Resource: " VerticalAlignment="Center" Margin="0,0,5,0"/>
-                        <ComboBox ItemsSource="{Binding AvailableResources}"
-                                  SelectedItem="{Binding SelectedResource, Mode=TwoWay}"
-                                  Width="150"/>
-                    </StackPanel>
+                    <!-- Pie Chart -->
+                    <lvc:PieChart 
+                Series="{Binding CurrentSeries}" 
+                LegendPosition="Right"
+                Margin="10" Height="378" 
+                AnimationsSpeed="0:0:0" />
+                </StackPanel>
+            </TabItem>
 
-                    <lvc:CartesianChart
-                        Grid.Row="1"
-                        Series="{Binding CurrentSeries}">
-                    </lvc:CartesianChart>
-                </Grid>
+            <!-- All Resources Tab -->
+            <TabItem Header="All Resources">
+                <lvc:CartesianChart 
+            Series="{Binding ResourceAmountSeries}" 
+            LegendPosition="Right"
+            Margin="10" />
             </TabItem>
-            <TabItem Header="Resource Amount">
-                <Grid>
-                    <lvc:CartesianChart
-                        Series="{Binding CurrentSeries}">
-                    </lvc:CartesianChart>
-                </Grid>
-            </TabItem>
+
+            <!-- Trades Tab -->
             <TabItem Header="Trades">
-                <Grid>
-                    <lvc:CartesianChart
-                        Series="{Binding CurrentSeries}">
-                    </lvc:CartesianChart>
-                </Grid>
+                <lvc:CartesianChart 
+            Series="{Binding TradesSeries}" 
+            LegendPosition="Right"
+            Margin="10" />
             </TabItem>
         </TabControl>
     </Grid>

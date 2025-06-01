@@ -9,6 +9,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data.SQLite;
+using static JuniorProject.Backend.WorldData.EconomyManager;
+using static JuniorProject.Backend.WorldData.TileMap;
 
 namespace JuniorProject.Backend.Agents
 {
@@ -31,7 +33,6 @@ namespace JuniorProject.Backend.Agents
 
         Timer<ulong> calculationTimer = new Timer<ulong>(0, 10);
 
-        public int money = 0;
         public int maxUnits = 3;
 
         public List<Mob> mobsToRemove = new List<Mob>();
@@ -97,9 +98,9 @@ namespace JuniorProject.Backend.Agents
 
             if (tile.Occupants.Count <= 1)
             {
-                if (tile.terrainPercentages.ContainsKey("Grassland") && tile.terrainPercentages["Grassland"] >= 0.8f)
+                if (tile.terrainPercentages.ContainsKey("Grassland") && tile.terrainPercentages["Grassland"] >= 0.8f )
                 {
-                    AddBuilding(new Building("Farm", world.map, tile, this));
+                    CheckToAddBuilding("Farm", tile);
                 }
             }
 
@@ -286,16 +287,12 @@ namespace JuniorProject.Backend.Agents
 
         public void AddBuilding(Building building)
         {
-            if (resources["Wood"] >= building.template.cost)
+            if (building.nation != null)
             {
-                resources["Wood"] -= building.template.cost;
-                if (building.nation != null)
-                {
-                    building.nation.RemoveBuilding(building);
-                }
-                buildings.Add(building);
-                building.nation = this;
+                building.nation.RemoveBuilding(building);
             }
+            buildings.Add(building);
+            building.nation = this;
         }
 
         public void RemoveBuilding(Building building)
@@ -304,6 +301,22 @@ namespace JuniorProject.Backend.Agents
             if (building == capital)
             {
                 DeleteNation();
+            }
+        }
+
+        public void CheckToAddBuilding(string type, Tile tile)
+        {
+            using (var reader = DatabaseManager.ReadDB($"SELECT BuildingCost FROM Buildings WHERE BuildingName = '{type}'"))
+            {
+                if (reader.Read())
+                {
+                    int buildingCost = Convert.ToInt32(reader["BuildingCost"]);
+                    if (resources["Wood"] > buildingCost)
+                    {
+                        resources["Wood"] -= buildingCost;
+                        AddBuilding(new Building("Farm", world.map, tile, this));
+                    }
+                }
             }
         }
 
@@ -340,6 +353,12 @@ namespace JuniorProject.Backend.Agents
             territory.Clear();
             desiredLand.Clear();
             world.nations.Remove(color);
+
+            foreach (var r in resources)
+            {
+                world.economyManager.demands.Remove((color, r.Key));
+            }
+            world.economyManager.potentialTrades.RemoveAll((Trade t) => t.initiator == color);
         }
 
         public override void SerializeFields()

@@ -11,10 +11,9 @@ namespace JuniorProject.Backend.WorldData
         public TileMap map;
         public Dictionary<string, Nation> nations = new Dictionary<string, Nation>();
         public List<GenericDrawable> debugCircles = new List<GenericDrawable>();
+        public EconomyManager economyManager;
 
         public Action RedrawAction;
-
-        EconomyManager economyManager;
 
         public World()
         {
