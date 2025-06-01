@@ -2,6 +2,7 @@
 using JuniorProject.Backend.Helpers;
 using JuniorProject.Properties;
 using System.Diagnostics;
+using System.Security.AccessControl;
 using System.Windows.Documents;
 using System.Xml.Linq;
 using static JuniorProject.Backend.WorldData.EconomyManager;
@@ -46,8 +47,9 @@ namespace JuniorProject.Backend.WorldData
             }
         }
 
-        public class Demand
+        public class Demand : Serializable
         {
+            public Demand() { }
             public Demand(string resource, int demand)
             {
                 this.resource = resource;
@@ -56,6 +58,18 @@ namespace JuniorProject.Backend.WorldData
 
             public string resource;
             public float demand;
+
+            public override void SerializeFields()
+            {
+                SerializeField<string>(resource);
+                SerializeField<float>(demand);
+            }
+
+            public override void DeserializeFields()
+            {
+                resource = DeserializeField<string>();
+                demand = DeserializeField<float>();
+            }
         }
 
         public class Resource : Serializable
@@ -96,7 +110,7 @@ namespace JuniorProject.Backend.WorldData
         }
 
         public Dictionary<string, Nation> nations;
-        public Dictionary<(string, string), Demand> demands; // Key is (nation name, resource type)
+        public Dictionary<string, Demand> demands; // Key is nation-resource
 
         Dictionary<string, Resource> resources; // Key is resource name
 
@@ -109,6 +123,9 @@ namespace JuniorProject.Backend.WorldData
 
         static readonly string[] resourceTypes = { "Food", "Iron", "Wood", "Gold" };
 
+        public ulong currentTick = 0;
+        public ulong savedTick = 0;
+
         public EconomyManager() 
         {
 
@@ -117,7 +134,7 @@ namespace JuniorProject.Backend.WorldData
         public void Initialize()
         {
             nations = ClientCommunicator.GetData<World>("World").nations;
-            demands = new Dictionary<(string, string), Demand>();
+            demands = new Dictionary<string, Demand>();
             resources = new Dictionary<string, Resource>();
             potentialTrades = new List<Trade>();
             itemsHistory = new Dictionary<ulong, List<Resource>>();
@@ -136,7 +153,7 @@ namespace JuniorProject.Backend.WorldData
 
                 foreach (var n in nations.Values)
                 {
-                    demands[(n.color, type)] = new Demand(type, startingAmount / (startingAmount * 3)); // Initializing demands
+                    demands[$"{n.color}-{type}"] = new Demand(type, startingAmount / (startingAmount * 3)); // Initializing demands
                     n.resources[type] = startingAmount;
                 }
             }
@@ -149,6 +166,11 @@ namespace JuniorProject.Backend.WorldData
         public void TakeTurn(ulong tickCount)
         {
             nations = ClientCommunicator.GetData<World>("World").nations;
+            if (savedTick != 0) {
+                tickCount += savedTick;
+            }
+            currentTick = tickCount;
+
             RespondToTrades(tickCount);
             UpdateResourceValues();
             CalculateDemands();
@@ -180,7 +202,7 @@ namespace JuniorProject.Backend.WorldData
             {
                 foreach (string r in resourceTypes)
                 {
-                    demands[(n.color, r)].demand = (1 - ((float)n.resources[r] / (float)resources[r].totalResource));
+                    demands[$"{n.color}-{r}"].demand = (1 - ((float)n.resources[r] / (float)resources[r].totalResource));
                 }
             }
         }
@@ -189,19 +211,19 @@ namespace JuniorProject.Backend.WorldData
         {
             foreach (var nationDemand in demands)
             {
-                (string, string) key = nationDemand.Key;
-                string nation = key.Item1;
-                string resouceType = key.Item2;
+                string key = nationDemand.Key;
+                string nation = key.Split("-")[0];
+                string resouceType = key.Split("-")[1];
 
-                using var results = DatabaseManager.ReadDB($"SELECT DemandPercentToinitiateTrade FROM Resources WHERE ResourceName='{demands[(nation, resouceType)].resource}'");
+                using var results = DatabaseManager.ReadDB($"SELECT DemandPercentToinitiateTrade FROM Resources WHERE ResourceName='{demands[$"{nation}-{resouceType}"].resource}'");
                 while (results.Read())
                 {
                     double demandThresholdToInitiateTrade = results.GetDouble(0);
-                    if (demands[(nation, resouceType)].demand > demandThresholdToInitiateTrade)
+                    if (demands[$"{nation}-{resouceType}"].demand > demandThresholdToInitiateTrade)
                     {
-                        int totalResourcesWanted = CalculateWantedResourceTotal(demands[(nation, resouceType)].resource, nation);
-                        potentialTrades.Add(new Trade(nation, demands[(nation, resouceType)].resource, totalResourcesWanted, CalculateTradePrice(totalResourcesWanted, demands[(nation, resouceType)].resource)));
-                        Debug.Print($"ADDED POTENTIAL TRADE: {nation} : <- {demands[(nation, resouceType)].resource} for {CalculateTradePrice(totalResourcesWanted, demands[(nation, resouceType)].resource)} gold");
+                        int totalResourcesWanted = CalculateWantedResourceTotal(demands[$"{nation}-{resouceType}"].resource, nation);
+                        potentialTrades.Add(new Trade(nation, demands[$"{nation}-{resouceType}"].resource, totalResourcesWanted, CalculateTradePrice(totalResourcesWanted, demands[$"{nation}-{resouceType}"].resource)));
+                        Debug.Print($"ADDED POTENTIAL TRADE: {nation} : <- {demands[$"{nation}-{resouceType}"].resource} for {CalculateTradePrice(totalResourcesWanted, demands[$"{nation}-{resouceType}"].resource)} gold");
                     }
                 }
             }
@@ -215,10 +237,9 @@ namespace JuniorProject.Backend.WorldData
                 {
                     string name = n.Key;
                     if (name == t.initiator) continue;
-
                     var nation = n.Value;
 
-                    if (nation.resources[t.resource] > t.resourceAmount && ShouldAcceptTrade(tickCount, t.resource, demands[(name, t.resource)].demand))
+                    if (nation.resources[t.resource] > t.resourceAmount && ShouldAcceptTrade(tickCount, t.resource, demands[$"{nation.color}-{t.resource}"].demand))
                     {
                         possibleNations.Add(name);
                     }
@@ -255,14 +276,6 @@ namespace JuniorProject.Backend.WorldData
             {
                 Debug.Print($"Type: {r} | Price: {resources[r].price} | Total: {resources[r].totalResource}");
             }
-            Debug.Print("\n----DEMANDS----");
-            foreach (var r in demands)
-            {
-                Debug.Print($"Nation: {r.Key.Item1} | Resource: {r.Key.Item2} | Demand: {r.Value.demand}");
-            }
-
-
-            //Debug.Print($"Total Trades: {tradesHistory.Count()} | Total Archived Items: {itemsHistory.Count()}");
         }
 
         void UpdateNationResourcesData()
@@ -317,7 +330,7 @@ namespace JuniorProject.Backend.WorldData
             while (results.Read())
             {
                 double offset = results.GetDouble(0);
-                double newNationDemand = 1 - (demands[(nation, resource)].demand - offset);
+                double newNationDemand = 1 - (demands[$"{nation}-{resource}"].demand - offset);
                 return (int)(newNationDemand * resources[resource].totalResource);
             }
             Debug.Print("ERROR!!! Cannot read from database to decide to accept trade, returning false");
@@ -365,8 +378,13 @@ namespace JuniorProject.Backend.WorldData
 
         public override void SerializeFields()
         {
-            //SerializeField<ulong, List<Resource>>(itemsHistory);
+            SerializeField<ulong, List<Resource>>(itemsHistory);
             SerializeField<Trade>(tradesHistory);
+            SerializeField<Trade>(potentialTrades);
+            SerializeField<string, Resource>(resources);
+            SerializeField<string, Demand>(demands);
+            savedTick = currentTick;
+            SerializeField<ulong>(savedTick);
             //SerializeField(nationResources);
         }
 
@@ -376,14 +394,17 @@ namespace JuniorProject.Backend.WorldData
             // List<Trade> tradesHistory;
             // Dictionary<string, Dictionary<string, int>> nationResources = new Dictionary<string, Dictionary<string, int>>();
 
-            //itemsHistory = DeserializeDictionary<ulong, List<Resource>>();
+            itemsHistory = DeserializeNestedDictionary<ulong, Resource>();
             tradesHistory = DeserializeList<Trade>();
-            //nationResources = DeserializeDictionary<string, Dictionary<string, int>>();
+            potentialTrades = DeserializeList<Trade>();
+            resources = DeserializeDictionary<string, Resource>();
+            demands = DeserializeDictionary<string, Demand>();
+            savedTick = DeserializeField<ulong>();
+            //nationResources = DeserializeNestedDictionaryWithDictionary<string, string, int>();
 
             ClientCommunicator.RegisterData<Dictionary<ulong, List<Resource>>>("itemsHistory", itemsHistory); // make this available to HistoryWindow
             ClientCommunicator.RegisterData<List<Trade>>("tradesHistory", tradesHistory); // make this available to HistoryWindow 
             ClientCommunicator.RegisterData<Dictionary<string, Dictionary<string, int>>>("nationResources", nationResources); // make this available to HistoryWindow
-
         }
     }
 }

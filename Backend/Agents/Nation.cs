@@ -356,7 +356,7 @@ namespace JuniorProject.Backend.Agents
 
             foreach (var r in resources)
             {
-                world.economyManager.demands.Remove((color, r.Key));
+                world.economyManager.demands.Remove($"{color}-{r.Key}");
             }
             world.economyManager.potentialTrades.RemoveAll((Trade t) => t.initiator == color);
         }
@@ -373,7 +373,7 @@ namespace JuniorProject.Backend.Agents
             {
                 SerializeField(tile.pos);
             }
-
+            SerializeField<string, int>(resources);
         }
 
         public override void DeserializeFields()
@@ -397,7 +397,7 @@ namespace JuniorProject.Backend.Agents
             {
                 AddTerritory(world.map.getTile(DeserializeField<Vector2Int>()));
             }
-
+            resources = DeserializeDictionary<string, int>();
         }
     }
 }
