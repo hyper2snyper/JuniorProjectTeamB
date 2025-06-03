@@ -73,6 +73,11 @@ namespace JuniorProject.Backend
                 SerializeField(v.Y);
                 return;
             }
+            if(typeof(T).IsGenericType && typeof(T).GetGenericTypeDefinition() == typeof(List<>))
+            {
+                SerializeField(objectToSerialize);
+                return;
+            }
             if (Nullable.GetUnderlyingType(typeof(T)) != null && objectToSerialize == null)
             {
                 SerializeField(-1);

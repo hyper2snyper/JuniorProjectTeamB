@@ -31,14 +31,16 @@ namespace JuniorProject.Backend.Agents
             [JsonPropertyName("Sprite")]
             public string sprite { get; set; }
 
-
+            [Flags]
             public enum UnitFlags
             {
                 NONE = 0,
-                BUILDER = 1 << 1,
+                BUILDER = 1 << 0,
+                WARRIOR = 1 << 1,
+                RANGED = 1 << 2,
             }
             [JsonPropertyName("Flags")]
-            public int flags {  get; set; }
+            public UnitFlags flags {  get; set; }
             [JsonPropertyName("IronCost")]
             public int ironCost { get; set; }
             [JsonPropertyName("FoodCost")]
@@ -61,7 +63,7 @@ namespace JuniorProject.Backend.Agents
                 template.attackRange = results.GetInt32(3);
                 template.maxHealth = results.GetInt32(4);
                 template.sprite = results.GetString(5);
-                template.flags = results.GetInt32(6);
+                template.flags = (UnitTemplate.UnitFlags)results.GetInt32(6);
                 template.ironCost = results.GetInt32(7);
                 template.foodCost = results.GetInt32(8);
                 unitTemplates.Add(template.name, template);
@@ -172,15 +174,10 @@ namespace JuniorProject.Backend.Agents
 
         public override void TakeTurn(ulong tick)
         {
-            if (nation.resources["Food"] >= unitType.foodCost)
+            base.TakeTurn(tick);
+            if (objective != null)
             {
-                Debug.Print($"Foodcost: {unitType.foodCost}");
-                nation.resources["Food"] -= unitType.foodCost;
-                base.TakeTurn(tick);
-                if (objective != null)
-                {
-                    objective = objective.PerformTurn(tick);
-                }
+                objective = objective.PerformTurn(tick);
             }
         }
 
@@ -220,7 +217,10 @@ namespace JuniorProject.Backend.Agents
             if (tile.impassible) embarked = true;
             if (embarked && !tile.impassible) embarked = false;
             base.EnterTile(tile);
-            
+            if(unitType != null && unitType.flags.HasFlag(UnitTemplate.UnitFlags.WARRIOR))
+            {
+                nation?.AddTerritory(tile);
+            }
         }
 
         public void MoveTo(TileMap.Tile toPos, MoveAction.PostMoveAction? action = null)

@@ -29,6 +29,28 @@ namespace JuniorProject.Backend.WorldData
             {
                 get { return occupants; }
             }
+            public bool HasBuilding
+            {
+                get
+                {
+                    foreach (Mob mob in occupants)
+                    {
+                        if (mob is Building) return true;
+                    }
+                    return false;
+                }
+            }
+            public bool HasUnit
+            {
+                get
+                {
+					foreach (Mob mob in occupants)
+					{
+						if (mob is Unit) return true;
+					}
+					return false;
+				}
+            }
 
             Nation? _owner = null;
             public Nation? Owner
@@ -209,7 +231,7 @@ namespace JuniorProject.Backend.WorldData
                         totalLandPercentage += relativePercentage;
                         tile.terrainPercentages.Add(landType, relativePercentage);
                     }
-                    if (map.GetBiomeResources(tile.primaryBiome) != null)
+                    if (map.GetBiomeResources(tile.primaryBiome) != null && !tile.impassible)
                     {
                         tile.tileResources = map.GetBiomeResources(tile.primaryBiome);
                     }
@@ -221,7 +243,7 @@ namespace JuniorProject.Backend.WorldData
                         }
                     }
                     if (totalLandPercentage < 0.3) tile.impassible = true;
-                    tile.movementCost = movementCostTotal / (float)(tileSize * tileSize);
+                    tile.movementCost = tile.impassible ? 0.2f : movementCostTotal / (float)(tileSize * tileSize);
                     tiles[tileX, tileY] = tile;
                 }
             }

@@ -117,7 +117,8 @@ namespace JuniorProject.Backend.WorldData
         public List<Trade> potentialTrades;
 
         Dictionary<ulong, List<Resource>> itemsHistory; // Keep track of resources and their values every X ticks (putting it as 5 ticks initially)
-        const int TICK_INTERVAL_FOR_ITEM_HISTORY = 5;
+        const ulong TICK_INTERVAL_FOR_ITEM_HISTORY = 5;
+        Timer<ulong> historySave = new Timer<ulong>(0, TICK_INTERVAL_FOR_ITEM_HISTORY);
         List<Trade> tradesHistory; // Keep track of trades
         Dictionary<string, Dictionary<string, int>> nationResources = new Dictionary<string, Dictionary<string, int>>();
 
@@ -150,7 +151,6 @@ namespace JuniorProject.Backend.WorldData
                     startingAmount = results.GetInt32(1);
                     resources[type] = new Resource(initialPrice, startingAmount * 3, 0, type); // multiply by 3, there's three teams
                 }
-
                 foreach (var n in nations.Values)
                 {
                     demands[$"{n.color}-{type}"] = new Demand(type, startingAmount / (startingAmount * 3)); // Initializing demands
@@ -180,7 +180,7 @@ namespace JuniorProject.Backend.WorldData
                 InitiatePotentialTrades();
             }
             //Print();
-            if (tickCount % TICK_INTERVAL_FOR_ITEM_HISTORY == 0)
+            if (historySave.Tick(tickCount))
             {
                 ArchiveResourceInformation(tickCount);
             }
@@ -284,7 +284,6 @@ namespace JuniorProject.Backend.WorldData
         void UpdateNationResourcesData()
         {
             var nationResourcesData = new Dictionary<string, Dictionary<string, int>>();
-
             foreach (var nation in nations.Values)
             {
                 nationResourcesData[nation.color] = new Dictionary<string, int>(nation.resources);
@@ -381,7 +380,7 @@ namespace JuniorProject.Backend.WorldData
 
         public override void SerializeFields()
         {
-            SerializeField<ulong, Resource>((Dictionary<ulong, List<Resource>>)itemsHistory);
+            SerializeField<ulong, Resource>(itemsHistory);
             SerializeField<Trade>(tradesHistory);
             SerializeField<Trade>(potentialTrades);
             SerializeField<string, Resource>(resources);

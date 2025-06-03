@@ -10,7 +10,6 @@ namespace JuniorProject.Backend.Agents
 {
     public class Building : Mob
     {
-
         public class BuildingTemplate
         {
             [JsonPropertyName("BuildingName")]
@@ -28,11 +27,23 @@ namespace JuniorProject.Backend.Agents
             [JsonPropertyName("HasColor")] // Prevent changing color flag from JSON
             public bool hasColor { get; set; }
 
-            [JsonPropertyName("Capital")] // Prevent changing color flag from JSON
-            public int capital { get; set; }
-        }
+            [JsonPropertyName("UnitCap")] // Prevent changing color flag from JSON
+            public int unitCap { get; set; }
 
-        public static Dictionary<string, BuildingTemplate> buildingTemplates;
+            [Flags]
+            public enum BuildingFlags
+            {
+                NONE = 0,
+                CAPITAL = 1 << 0,
+                GARRISON = 1 << 1,
+                PRODUCTION = 1 << 2,
+            }
+			[JsonPropertyName("Flags")]
+			public BuildingFlags flags { get; set; }
+
+		}
+
+		public static Dictionary<string, BuildingTemplate> buildingTemplates;
         public static BuildingTemplate capitalTemplate;
         public static void LoadBuildingTemplates()
         {
@@ -50,6 +61,8 @@ namespace JuniorProject.Backend.Agents
                     maxHealth = results.GetInt32(2),
                     sprite = results.GetString(3),
                     hasColor = results.GetBoolean(4),
+                    unitCap = results.GetInt32(5),
+                    flags = (BuildingTemplate.BuildingFlags)results.GetInt32(6),
                 };
 
                 if (results.GetInt32(5) != 0)
@@ -152,13 +165,11 @@ namespace JuniorProject.Backend.Agents
                 case "House":
                     break;
                 case "Capital":
-                    string[] capitalResources = { "Food", "Iron", "Wood", "Gold" };
-                    foreach (var r in capitalResources)
-                    {
-                        double gatherRate = GetGatherRate(biome, r);
-                        nation.resources[r] += (int)Math.Round(gatherRate);
-                    }
-                    break;
+					nation.resources["Food"] -= 5;
+					nation.resources["Wood"] -= 5;
+					nation.resources["Gold"] -= 5;
+					nation.resources["Iron"] -= 5;
+					break;
                 case "Barracks":
                     break;
                 case "Mine":
@@ -178,8 +189,11 @@ namespace JuniorProject.Backend.Agents
                         double gatherRate = GetGatherRate(biome, r);
                         nation.resources[r] += (int)Math.Round(gatherRate);
                     }
+                    nation.resources["Gold"] -= 5;
+                    nation.resources["Iron"] -= 5;
                     break;
                 case "Port":
+                    nation.resources["Food"] += 10; //Hah
                     break;
                 default:
                     Debug.Print($"ERROR!!! Incorrect template name for nation {template.name}");
