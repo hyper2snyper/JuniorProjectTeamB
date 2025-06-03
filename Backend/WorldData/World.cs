@@ -11,9 +11,9 @@ namespace JuniorProject.Backend.WorldData
         public TileMap map;
         public Dictionary<string, Nation> nations = new Dictionary<string, Nation>();
         public List<GenericDrawable> debugCircles = new List<GenericDrawable>();
+        public EconomyManager economyManager;
 
         public Action RedrawAction;
-
 
         public World()
         {
@@ -22,6 +22,7 @@ namespace JuniorProject.Backend.WorldData
             Map.LoadTerrain();
             Unit.LoadUnitTemplates();
             Building.LoadBuildingTemplates();
+            economyManager = new EconomyManager();
         }
 
         public void GenerateWorld(int tileSize, Vector2Int mapPixelSize, string seed, float amp, float freq, int octaves, float seaLevel, float treeLine)
@@ -31,6 +32,7 @@ namespace JuniorProject.Backend.WorldData
             nations.Add("Red", new Nation("Team Red", "Red", 0, this));
             nations.Add("Green", new Nation("Team Green", "Green", 1, this));
             nations.Add("Yellow", new Nation("Team Yellow", "Yellow", 2, this));
+            economyManager.Initialize();
         }
 
         public void FreeWorld()
@@ -50,6 +52,7 @@ namespace JuniorProject.Backend.WorldData
                 nation.TakeTurn(tickCount);
                 RedrawAction?.Invoke();
             }
+            economyManager.TakeTurn(tickCount);
         }
 
         public void SaveWorld(string location)
@@ -94,6 +97,7 @@ namespace JuniorProject.Backend.WorldData
         {
             SerializeField(map);
             SerializeField<string, Nation>(nations);
+            SerializeField<EconomyManager>(economyManager);
         }
 
         public override void DeserializeFields()
@@ -103,6 +107,8 @@ namespace JuniorProject.Backend.WorldData
             {
                 n.World = this;
             });
+            economyManager = (EconomyManager)DeserializeObject();
+            //economyManager.Initialize();
         }
     }
 

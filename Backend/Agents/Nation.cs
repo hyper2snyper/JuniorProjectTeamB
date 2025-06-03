@@ -2,11 +2,15 @@
 using JuniorProject.Backend.Helpers;
 using JuniorProject.Backend.WorldData;
 using JuniorProject.Frontend.Components;
+using JuniorProject.Backend.WorldData;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Data.SQLite;
+using static JuniorProject.Backend.WorldData.EconomyManager;
+using static JuniorProject.Backend.WorldData.TileMap;
 
 namespace JuniorProject.Backend.Agents
 {
@@ -23,9 +27,9 @@ namespace JuniorProject.Backend.Agents
         public Building? capital;
         public List<Building> buildings = new List<Building>();
         public List<TileMap.Tile> territory = new List<TileMap.Tile>();
+        public Dictionary<string, int> resources = new Dictionary<string, int>();
 
         Timer<ulong> calculationTimer = new Timer<ulong>(0, 10);
-
 
         enum AIState
         { 
@@ -51,6 +55,12 @@ namespace JuniorProject.Backend.Agents
         }
         public Nation(string name, string color, int quadrant, World world) : this(name, color, world)
         {
+            SQLiteDataReader resourceResults = DatabaseManager.ReadDB("SELECT * FROM Resources;");
+            while (resourceResults.Read())
+            {
+                resources[resourceResults.GetString(0)] = resourceResults.GetInt32(1);
+            }
+
             PlaceStart(quadrant);
         }
 
@@ -94,7 +104,6 @@ namespace JuniorProject.Backend.Agents
             AddUnit(unit);
         }
 
-        
 
         public void CalculateObjectives()
         {
@@ -123,10 +132,6 @@ namespace JuniorProject.Backend.Agents
                     }
             }
         }
-
-
-
-
 
         public void TakeTurn(ulong tick)
         {
@@ -210,6 +215,31 @@ namespace JuniorProject.Backend.Agents
             }
         }
 
+        public void CheckToAddBuilding(string type, Tile tile)
+        {
+            using (var reader = DatabaseManager.ReadDB($"SELECT BuildingCost FROM Buildings WHERE BuildingName = '{type}'"))
+            {
+                if (reader.Read())
+                {
+                    int buildingCost = Convert.ToInt32(reader["BuildingCost"]);
+                    if (resources["Wood"] > buildingCost)
+                    {
+                        resources["Wood"] -= buildingCost;
+                        AddBuilding(new Building("Farm", world.map, tile, this));
+                    }
+                }
+            }
+        }
+
+        public void CheckToAddUnit(string type)
+        {
+            if (resources["Iron"] >= Unit.unitTemplates[type].ironCost && units.Count < maxUnits)
+            {
+                resources["Iron"] -= Unit.unitTemplates[type].ironCost;
+                AddUnit(new Unit(type, "", this, world.map, capital.pos));
+            }
+        }
+
         public void AddUnit(Unit unit)
         {
             units.Add(unit);
@@ -232,6 +262,12 @@ namespace JuniorProject.Backend.Agents
             units.Clear();
             territory.Clear();
             world.nations.Remove(color);
+
+            foreach (var r in resources)
+            {
+                world.economyManager.demands.Remove($"{color}-{r.Key}");
+            }
+            world.economyManager.potentialTrades.RemoveAll((Trade t) => t.initiator == color);
         }
 
         public override void SerializeFields()
@@ -246,6 +282,8 @@ namespace JuniorProject.Backend.Agents
             {
                 SerializeField(tile.pos);
             }
+            SerializeField<string, int>(resources);
+
         }
 
         public override void DeserializeFields()
@@ -269,7 +307,7 @@ namespace JuniorProject.Backend.Agents
             {
                 AddTerritory(world.map.getTile(DeserializeField<Vector2Int>()));
             }
-
+            resources = DeserializeDictionary<string, int>();
         }
     }
 }

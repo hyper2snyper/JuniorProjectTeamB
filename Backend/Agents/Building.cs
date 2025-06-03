@@ -144,7 +144,7 @@ namespace JuniorProject.Backend.Agents
                 return;
 
             // Find the largest terrain percentage of the tile and set as the biome
-            string biome = this.pos.terrainPercentages.Aggregate((l, r) => l.Value > r.Value ? l : r).Key;
+            string biome = this.pos.primaryBiome;
             string resource;
 
             switch (template.name)
@@ -152,17 +152,32 @@ namespace JuniorProject.Backend.Agents
                 case "House":
                     break;
                 case "Capital":
+                    string[] capitalResources = { "Food", "Iron", "Wood", "Gold" };
+                    foreach (var r in capitalResources)
+                    {
+                        double gatherRate = GetGatherRate(biome, r);
+                        nation.resources[r] += (int)Math.Round(gatherRate);
+                    }
                     break;
                 case "Barracks":
                     break;
                 case "Mine":
+                    string[] mineResources = { "Iron", "Gold" };
+                    foreach (var r in mineResources)
+                    {
+                        double gatherRate = GetGatherRate(biome, r);
+                        nation.resources[r] += (int)Math.Round(gatherRate);
+                    }
                     break;
                 case "Smith":
                     break;
                 case "Farm":
-                    resource = "Food";
-                    double gatherRate = GetGatherRate(biome, resource);
-                    nation.money += (int)Math.Round(gatherRate);
+                    string[] farmResources = { "Food", "Wood" };
+                    foreach (var r in farmResources)
+                    {
+                        double gatherRate = GetGatherRate(biome, r);
+                        nation.resources[r] += (int)Math.Round(gatherRate);
+                    }
                     break;
                 case "Port":
                     break;
@@ -174,6 +189,7 @@ namespace JuniorProject.Backend.Agents
 
         private double GetGatherRate(string biome, string resource)
         {
+            if (biome == null || resource == null) return 0;
             using (var reader = DatabaseManager.ReadDB(
                 $"SELECT GatherRate FROM BiomeResource WHERE BiomeID = '{biome}' AND ResourceID = '{resource}'"))
             {

@@ -38,14 +38,14 @@ namespace JuniorProject.Backend.WorldData
             public bool ignoreNoise = false;
             public BiomeData? requiredBiome = null;
             //Resource Data
-            public List<string> resources = new List<string>();
-            public List<int> collectRate = new List<int>();
+            public Dictionary<string, int> resourceData = new Dictionary<string, int>();
         }
         static Dictionary<string, BiomeData> biomeList = new Dictionary<string, BiomeData>(); //Loaded terrains from the DB
         static BiomeData defaultBiome;
         public static void LoadTerrain()
         {
             biomeList = new Dictionary<string, BiomeData>();
+
             Debug.Print("Loading Biome Data...");
             SQLiteDataReader results = DatabaseManager.ReadDB("SELECT * FROM Biomes;");
             Dictionary<BiomeData, string> biomeLinking = new Dictionary<BiomeData, string>();
@@ -74,14 +74,15 @@ namespace JuniorProject.Backend.WorldData
                 {
                     biomeLinking.Add(terrain, results.GetString(10));
                 }
+
                 //Get Resource Data for Biome
                 SQLiteDataReader resourceResults = DatabaseManager.ReadDB("SELECT * FROM BiomeResource;");
                 while (resourceResults.Read())
                 {
                     if (resourceResults.GetString(0) == terrain.name)
                     {
-                        terrain.resources.Add(resourceResults.GetString(1));
-                        terrain.collectRate.Add(resourceResults.GetInt32(2));
+                        string dbResource = resourceResults.GetString(1);
+                        terrain.resourceData[dbResource] = resourceResults.GetInt32(2);
                     }
                 }
                 biomeList.Add(terrain.name, terrain);
@@ -92,6 +93,7 @@ namespace JuniorProject.Backend.WorldData
                 biomeLinkPair.Key.requiredBiome = biomeList[biomeLinkPair.Value];
             }
         }
+
 
 
         BiomeData?[,] biomeMap;
@@ -240,6 +242,16 @@ namespace JuniorProject.Backend.WorldData
             }
 
         }
-    }
 
+        public Dictionary<string, int> GetBiomeResources(string biomeName)
+        {
+            if (!string.IsNullOrEmpty(biomeName))
+            {
+                if (biomeList.ContainsKey(biomeName)) { return biomeList[biomeName].resourceData; }
+                else { return null; }
+            }
+            else { return null; }
+        }
+
+    }
 }
