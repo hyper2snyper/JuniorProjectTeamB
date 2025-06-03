@@ -31,6 +31,13 @@ namespace JuniorProject.Backend.Agents
             [JsonPropertyName("Sprite")]
             public string sprite { get; set; }
 
+            public enum UnitFlags
+            {
+                NONE = 0,
+                BUILDER = 1 << 1,
+            }
+            [JsonPropertyName("Flags")]
+            public int flags {  get; set; }
         }
 
         public static Dictionary<string, UnitTemplate> unitTemplates;
@@ -49,6 +56,7 @@ namespace JuniorProject.Backend.Agents
                 template.attackRange = results.GetInt32(3);
                 template.maxHealth = results.GetInt32(4);
                 template.sprite = results.GetString(5);
+                template.flags = results.GetInt32(6);
                 unitTemplates.Add(template.name, template);
             }
         }
@@ -165,13 +173,26 @@ namespace JuniorProject.Backend.Agents
 
         }
 
-
-        public override void EnterTile(TileMap.Tile tile)
-        {
-            if (!tile.impassible && tile.Owner != nation)
+		public override bool TryEnter(TileMap.Tile tile)
+		{
+            if (tile.Occupants.Count == 0) return !tile.impassible;
+            if(pos.coast && tile.impassible)
             {
-                nation.AddTerritory(tile);
-            }
+				foreach (Mob mob in pos.Occupants)
+				{
+					if (mob is not Building) continue;
+					Building building = (Building)mob;
+					if (building.template.name != "Port") continue;
+                    return true;
+			    }
+                return false;
+			}
+            return !tile.impassible;
+		}
+
+
+		public override void EnterTile(TileMap.Tile tile)
+        {
             foreach (Mob m in tile.Occupants)
             {
                 if (m is Building b)
@@ -180,7 +201,10 @@ namespace JuniorProject.Backend.Agents
                     nation?.AddBuilding(b);
                 }
             }
+            if (tile.impassible) embarked = true;
+            if (embarked && !tile.impassible) embarked = false;
             base.EnterTile(tile);
+            
         }
 
         public void MoveTo(TileMap.Tile toPos, MoveAction.PostMoveAction? action = null)

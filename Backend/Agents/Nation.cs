@@ -24,12 +24,21 @@ namespace JuniorProject.Backend.Agents
         public List<Building> buildings = new List<Building>();
         public List<TileMap.Tile> territory = new List<TileMap.Tile>();
 
-        public List<TileMap.Tile> desiredLand = new List<TileMap.Tile>();
-
         Timer<ulong> calculationTimer = new Timer<ulong>(0, 10);
 
+
+        enum AIState
+        { 
+            EXPAND,
+            DEVELOP,
+            PREPARE,
+            WAR,
+        }
+        AIState state = AIState.EXPAND;
+        Nation? opponent = null; //Currently competing against.
+
         public int money = 0;
-        public int maxUnits = 3;
+
 
         public List<Mob> mobsToRemove = new List<Mob>();
 
@@ -40,7 +49,6 @@ namespace JuniorProject.Backend.Agents
             this.color = color;
             this.world = world;
         }
-
         public Nation(string name, string color, int quadrant, World world) : this(name, color, world)
         {
             PlaceStart(quadrant);
@@ -74,123 +82,51 @@ namespace JuniorProject.Backend.Agents
                 if (tile != null && tile.impassible == false) break;
             }
             AddTerritory(tile);
+            foreach(TileMap.Tile neighbor in world.map.getTileNeighbors(tile, (TileMap.Tile t) => t.impassible))
+            {
+                if (neighbor == null) continue;
+                AddTerritory(neighbor);
+            }
             Building castle = new Building("Capital", world.map, tile, this);
             AddBuilding(castle);
             capital = castle;
-            Unit unit = new Unit("Soldier", $"soldier{color}", this, world.map, tile);
+            Unit unit = new Unit("Builder", $"builder{color}", this, world.map, tile);
             AddUnit(unit);
         }
 
-        public Objective? UnitPostMove(TileMap.Tile tile, Unit unit)
-        {
-            Debug.Print($"{tile} has been claimed for team {name}");
-            if (desiredLand.Count == 0) return null;
-
-            if (tile.Occupants.Count <= 1)
-            {
-                if (tile.terrainPercentages.ContainsKey("Grassland") && tile.terrainPercentages["Grassland"] >= 0.8f)
-                {
-                    AddBuilding(new Building("Farm", world.map, tile, this));
-                }
-            }
-
-            MoveAction moveAction = new MoveAction(desiredLand[0], UnitPostMove);
-            desiredLand.Remove(desiredLand[0]);
-            moveAction.Attach(unit);
-            return moveAction;
-        }
+        
 
         public void CalculateObjectives()
         {
-            List<Unit> unassignedUnits = new List<Unit>();
-            foreach (Unit unit in units)
+
+            switch(state)
             {
-                if (unit.GetObjective() != null) continue;
-                unassignedUnits.Add(unit);
-            }
-            if (unassignedUnits.Count < desiredLand.Count) return;
-            desiredLand = GetBorderingTiles(
-                (TileMap.Tile x, TileMap.Tile y) =>
-                {
-                    if (x.Occupants.Count > y.Occupants.Count) return 10;
-                    if (x.terrainPercentages.ContainsKey("Grassland"))
+                case AIState.EXPAND:
                     {
-                        if (y.terrainPercentages.ContainsKey("Grassland"))
-                        {
-                            return (x.terrainPercentages["Grassland"] > y.terrainPercentages["Grassland"]) ? 50 : -50;
-                        }
-                        return 1;
-                    }
-                    if (x.movementCost == y.movementCost) return 0;
-                    return (x.movementCost > y.movementCost ? 1 : -1);
-                });
-            if (desiredLand.Count == 0)
-            {
-                Building? port = null;
-                foreach (Building building in buildings)
-                {
-                    if (building.template.name != "Port") continue;
-                    port = building;
-                    break;
-                }
-                if (port == null)
-                {
-                    TileMap.Tile? shoreTile = null;
-                    foreach (TileMap.Tile tile in territory)
-                    {
-                        if (!tile.coast || tile.Occupants.Count >= 1) continue;
-                        shoreTile = tile;
                         break;
                     }
-                    if (shoreTile == null) return; //Sucks to suck i guess.
-                    if (unassignedUnits.Count == 0) return;
-                    unassignedUnits[0].MoveTo(shoreTile,
-                        (TileMap.Tile tile, Unit unit) =>
-                        {
-                            AddBuilding(new Building("Port", world.map, shoreTile, this));
-                            return null;
-                        });
-                    return;
-                }
-                foreach (Unit unit in unassignedUnits)
-                {
-                    unit.MoveTo(port.pos,
-                        (TileMap.Tile tile, Unit u) =>
-                        {
-                            TileMap.Tile? nearestOcean = null;
-                            foreach (TileMap.Tile neighbor in world.map.getTileNeighbors(tile,
-                                (TileMap.Tile t) =>
-                                {
-                                    return !t.impassible;
-                                }))
-                            {
-                                nearestOcean = neighbor;
-                                if (nearestOcean == null) continue;
-                                Vector2Int dir = (nearestOcean.pos - tile.pos).Normalize;
-                                TileMap.Tile? currentTile = nearestOcean;
-                                while (nearestOcean.impassible)
-                                {
-                                    currentTile = world.map.getTile(currentTile.pos + dir);
-                                    if (currentTile == null) break;
-                                    if (!currentTile.impassible) break;
-                                }
-                                if (currentTile == null) continue;
-                                Sail sail = new Sail(currentTile);
-                                sail.Attach(u);
-                                return sail;
-                            }
-                            return null;
-                        });
-                }
-                return;
-            }
-            foreach (Unit unit in unassignedUnits)
-            {
-                unit.MoveTo(desiredLand[0], UnitPostMove);
-                desiredLand.Remove(desiredLand[0]);
-                if (desiredLand.Count == 0) break;
+                case AIState.DEVELOP:
+                    {
+                        break;
+                    }
+                case AIState.PREPARE:
+                    {
+                        break;
+                    }
+                case AIState.WAR:
+                    {
+                        break;
+                    }
+                default:
+                    {
+                        break;
+                    }
             }
         }
+
+
+
+
 
         public void TakeTurn(ulong tick)
         {
@@ -198,11 +134,6 @@ namespace JuniorProject.Backend.Agents
             {
                 Debug.Print("Calculating Objectives");
                 CalculateObjectives();
-                if (money >= 50 && units.Count < maxUnits)
-                {
-                    money -= 50;
-                    AddUnit(new Unit("Soldier", "", this, world.map, capital.pos));
-                }
             }
             foreach (Building building in buildings)
             {
@@ -248,21 +179,6 @@ namespace JuniorProject.Backend.Agents
         public List<TileMap.Tile> GetBorderingTiles(appraisalDelegate? appraisal = null)
         {
             List<TileMap.Tile> borderingTiles = new List<TileMap.Tile>();
-
-            foreach (TileMap.Tile tile in territory)
-            {
-                foreach (TileMap.Tile? possibleTile in world.map.getPassableTileNeighbors(tile))
-                {
-                    if (possibleTile == null) continue;
-                    if (possibleTile.Owner == this) continue;
-                    if (borderingTiles.Contains(possibleTile)) continue;
-                    borderingTiles.Add(possibleTile);
-                }
-            }
-            if (appraisal != null)
-            {
-                borderingTiles.Sort(new Comparison<TileMap.Tile>(appraisal));
-            }
             return borderingTiles;
         }
 
@@ -270,10 +186,7 @@ namespace JuniorProject.Backend.Agents
         {
             tile.Owner = this;
             territory.Add(tile);
-            if (desiredLand.Contains(tile))
-                desiredLand.Remove(tile);
         }
-
         public void RemoveTerritory(TileMap.Tile tile)
         {
             territory.Remove(tile);
@@ -288,7 +201,6 @@ namespace JuniorProject.Backend.Agents
             buildings.Add(building);
             building.nation = this;
         }
-
         public void RemoveBuilding(Building building)
         {
             buildings.Remove(building);
@@ -303,7 +215,6 @@ namespace JuniorProject.Backend.Agents
             units.Add(unit);
             unit.name = $"{color}{unit.unitType.name}{units.Count}";
         }
-
         public void RemoveUnit(Unit unit)
         {
             units.Remove(unit);
@@ -320,7 +231,6 @@ namespace JuniorProject.Backend.Agents
             }
             units.Clear();
             territory.Clear();
-            desiredLand.Clear();
             world.nations.Remove(color);
         }
 
@@ -336,7 +246,6 @@ namespace JuniorProject.Backend.Agents
             {
                 SerializeField(tile.pos);
             }
-
         }
 
         public override void DeserializeFields()

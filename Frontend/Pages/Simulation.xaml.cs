@@ -83,7 +83,8 @@ namespace JuniorProject
 
         private void StartClicked(object sender, RoutedEventArgs e)
         {
-
+            Debug.Print("Start Clicked");
+            ClientCommunicator.CallAction("Step"); //Temp
         }
 
         private void PauseClicked(object sender, RoutedEventArgs e)

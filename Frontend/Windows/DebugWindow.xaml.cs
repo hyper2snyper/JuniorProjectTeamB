@@ -55,6 +55,7 @@ namespace JuniorProject.Frontend.Windows
         public static readonly Regex helpRegex = new Regex("^help\\ *$");
 
         public static readonly Regex spawnUnitRegex = new Regex("^spawnUnit\\ *\\([a-zA-z]+,\\ *[a-zA-z]+,\\ *[0-9]+,\\ *[0-9]+\\,\\ *[a-zA-z]+\\)\\ *$");
+        public static readonly Regex spawnBuildingRegex = new Regex("^spawnBuilding\\ *\\([a-zA-z]+,\\ *[a-zA-z]+,\\ *[0-9]+,\\ *[0-9]+\\)\\ *$");
         public static readonly Regex deleteUnitRegex = new Regex("^deleteUnit\\ *\\([a-zA-z]+\\)\\ *$");
         public static readonly Regex printUnitsRegex = new Regex("^printUnits\\(\\)\\ *$");
         public static readonly Regex printPossibleSpritesRegex = new Regex("^printPossibleSprites\\(\\)\\ *$");
@@ -128,6 +129,24 @@ namespace JuniorProject.Frontend.Windows
                 finishCommand();
                 return;
             }
+
+            if(spawnBuildingRegex.IsMatch(Input.Text))
+            {
+				Console.Text += $"---> {Input.Text}\n";
+				List<Match> matches = stringParam.Matches(Input.Text).ToList();
+				string buildingType = stringInstance.Match(matches[0].Value).Value;
+				string buildingTeam = stringInstance.Match(matches[1].Value).Value;
+				matches = intParam.Matches(Input.Text).ToList();
+				int x = int.Parse(intInstance.Match(matches[0].Value).Value);
+				int y = int.Parse(intInstance.Match(matches[1].Value).Value);
+				World w = ClientCommunicator.GetData<World>("World");
+				if (!w.nations.ContainsKey(buildingTeam)) return;
+				Building u = new Building(buildingType, w.map, w.map.getTile(new Vector2Int(x,y)), w.nations[buildingTeam]);
+				w.nations[buildingTeam].AddBuilding(u);
+				Console.Text += $"Unit spawned at {x},{y} of type [{buildingType}]\n";
+				finishCommand();
+				return;
+			}
 
             if (printPossibleSpritesRegex.IsMatch(Input.Text))
             {
@@ -247,6 +266,7 @@ namespace JuniorProject.Frontend.Windows
 
                 Console.Text += "\nPossible commands (be mindful of Regex possibly not detecting input): \n\n";
                 Console.Text += "spawnUnit(<Unit Type>, <Team>, <gridX>, <gridY>, <Name>) -> Spawns a unit\n";
+                Console.Text += "spawnBuilding(<Building Type>, <Team>, <gridX>, <gridY>) -> Spawns a building\n";
                 Console.Text += "deleteUnit(<Name>) -> Removes a unit\n";
                 Console.Text += "printUnits() -> Prints current units\n";
                 Console.Text += "\n";

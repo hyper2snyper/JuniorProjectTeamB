@@ -200,6 +200,7 @@ namespace JuniorProject.Backend.WorldData
             }
             ClientCommunicator.RegisterData<TileMap>("TileMap", this);
         }
+
         public void SaveMapImage(Serializer serializer)
         {
             map.SaveMap(serializer);
