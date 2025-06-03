@@ -31,11 +31,20 @@ namespace JuniorProject.Backend.Agents
             [JsonPropertyName("Sprite")]
             public string sprite { get; set; }
 
+            [Flags]
+            public enum UnitFlags
+            {
+                NONE = 0,
+                BUILDER = 1 << 0,
+                WARRIOR = 1 << 1,
+                RANGED = 1 << 2,
+            }
+            [JsonPropertyName("Flags")]
+            public UnitFlags flags {  get; set; }
             [JsonPropertyName("IronCost")]
             public int ironCost { get; set; }
             [JsonPropertyName("FoodCost")]
             public int foodCost { get; set; }
-
         }
 
         public static Dictionary<string, UnitTemplate> unitTemplates;
@@ -54,6 +63,7 @@ namespace JuniorProject.Backend.Agents
                 template.attackRange = results.GetInt32(3);
                 template.maxHealth = results.GetInt32(4);
                 template.sprite = results.GetString(5);
+                template.flags = (UnitTemplate.UnitFlags)results.GetInt32(6);
                 template.ironCost = results.GetInt32(7);
                 template.foodCost = results.GetInt32(8);
                 unitTemplates.Add(template.name, template);
@@ -164,15 +174,10 @@ namespace JuniorProject.Backend.Agents
 
         public override void TakeTurn(ulong tick)
         {
-            if (nation.resources["Food"] >= unitType.foodCost)
+            base.TakeTurn(tick);
+            if (objective != null)
             {
-                Debug.Print($"Foodcost: {unitType.foodCost}");
-                nation.resources["Food"] -= unitType.foodCost;
-                base.TakeTurn(tick);
-                if (objective != null)
-                {
-                    objective = objective.PerformTurn(tick);
-                }
+                objective = objective.PerformTurn(tick);
             }
         }
 
@@ -181,13 +186,26 @@ namespace JuniorProject.Backend.Agents
 
         }
 
-
-        public override void EnterTile(TileMap.Tile tile)
-        {
-            if (!tile.impassible && tile.Owner != nation)
+		public override bool TryEnter(TileMap.Tile tile)
+		{
+            if (tile.Occupants.Count == 0) return !tile.impassible;
+            if(pos.coast && tile.impassible)
             {
-                nation.AddTerritory(tile);
-            }
+				foreach (Mob mob in pos.Occupants)
+				{
+					if (mob is not Building) continue;
+					Building building = (Building)mob;
+					if (building.template.name != "Port") continue;
+                    return true;
+			    }
+                return false;
+			}
+            return !tile.impassible;
+		}
+
+
+		public override void EnterTile(TileMap.Tile tile)
+        {
             foreach (Mob m in tile.Occupants)
             {
                 if (m is Building b)
@@ -196,7 +214,13 @@ namespace JuniorProject.Backend.Agents
                     nation?.AddBuilding(b);
                 }
             }
+            if (tile.impassible) embarked = true;
+            if (embarked && !tile.impassible) embarked = false;
             base.EnterTile(tile);
+            if(unitType != null && unitType.flags.HasFlag(UnitTemplate.UnitFlags.WARRIOR))
+            {
+                nation?.AddTerritory(tile);
+            }
         }
 
         public void MoveTo(TileMap.Tile toPos, MoveAction.PostMoveAction? action = null)

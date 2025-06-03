@@ -84,18 +84,13 @@ namespace JuniorProject
 
         private void StartClicked(object sender, RoutedEventArgs e)
         {
-            if (ClientCommunicator.GetData<bool>("Paused"))
-            {
-                ClientCommunicator.CallAction("TogglePause");
-            }
+            Debug.Print("Start Clicked");
+            ClientCommunicator.CallAction("Step"); //Temp
         }
 
         private void PauseClicked(object sender, RoutedEventArgs e)
         {
-            if (!ClientCommunicator.GetData<bool>("Paused"))
-            {
-                ClientCommunicator.CallAction("TogglePause");
-            }
+            ClientCommunicator.CallAction("TogglePause");
         }
 
         private void StepClicked(object sender, RoutedEventArgs e)

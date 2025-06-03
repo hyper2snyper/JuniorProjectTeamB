@@ -1,11 +1,6 @@
 ﻿using JuniorProject.Backend.Helpers;
 using JuniorProject.Backend.WorldData;
 using JuniorProject.Frontend.Components;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace JuniorProject.Backend.Agents
 {

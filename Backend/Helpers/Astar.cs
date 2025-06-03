@@ -9,12 +9,14 @@ namespace JuniorProject.Backend.Helpers
 {
     internal class Astar
     {
+        public delegate bool TileFilter(TileMap.Tile current, TileMap.Tile target);
+
         public static float CostCalc(TileMap.Tile tile, TileMap.Tile target)
         {
             return (target.pos - tile.pos).Magnitude;
         }
 
-        public static List<TileMap.Tile> FindPath(TileMap map, TileMap.Tile start, TileMap.Tile target)
+        public static List<TileMap.Tile> FindPath(TileMap map, TileMap.Tile start, TileMap.Tile target, TileFilter? filter = null)
         {
             PriorityQueue<TileMap.Tile, float> openSet = new PriorityQueue<TileMap.Tile, float>();
             openSet.Enqueue(start, 0);
@@ -44,7 +46,7 @@ namespace JuniorProject.Backend.Helpers
                 foreach (TileMap.Tile? neighbor in map.getTileNeighbors(current))
                 {
                     if (neighbor == null) continue;
-                    if (neighbor.impassible) continue;
+                    if (filter != null && filter(current, neighbor)) continue;
                     float tentativeGscore = gScore[current] + neighbor.movementCost;
                     float neighborGscore = float.PositiveInfinity;
                     if (gScore.ContainsKey(neighbor))

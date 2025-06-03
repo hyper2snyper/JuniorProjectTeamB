@@ -12,6 +12,10 @@ namespace JuniorProject.Backend.Helpers
             this.start = start;
             this.delay = delay;
         }
+        public Timer(T delay)
+        {
+            this.delay = delay;
+        }
 
         public bool Tick(T current)
         {
@@ -22,6 +26,14 @@ namespace JuniorProject.Backend.Helpers
             }
             return false;
         }
-
+        public bool Tick()
+        {
+            if(start++ >= delay)
+            {
+                start -= delay;
+                return true;
+            }
+            return false;
+        }
     }
 }
